@@ -1,6 +1,6 @@
 # Mangrove Mood
 
-A mood bot to display each day the mood's team.
+All our bots in one place!
 
 ## Usages
 
@@ -15,27 +15,35 @@ $ npm install
 
 Create a .env file with the following variables and their values:
 ```bash
-SLACK_CLIENT_ID=***************
-SLACK_CLIENT_SECRET=***************
-SLACK_CHANNEL_GENERAL_ID=***************
+MOODBOT_MONGODB_URI=***************
+MOODBOT_SLACK_CLIENT_ID=***************
+MOODBOT_SLACK_CLIENT_SECRET=***************
+MOODBOT_SLACK_CHANNEL_GENERAL_ID=***************
+MOODBOT_PORT=4000
+NEWSBOT_MONGODB_URI=***************
+NEWSBOT_SLACK_CLIENT_ID=***************
+NEWSBOT_SLACK_CLIENT_SECRET=***************
+NEWSBOT_PORT=5000
+LEARNINGBOT_MONGODB_URI=***************
+LEARNINGBOT_SLACK_CLIENT_ID=***************
+LEARNINGBOT_SLACK_CLIENT_SECRET=***************
+LEARNINGBOT_PORT=6000
 AIRTABLE_API_KEY=***************
 AIRTABLE_BASE_KEY=***************
 AIRTABLE_MEMBERS=***************
 AIRTABLE_MOOD=***************
-NEW_RELIC_LICENSE_KEY=***************
-NEW_RELIC_APP_NAME=***************
-NEW_RELIC_APDEX=***************
-NEW_RELIC_NO_CONFIG_FILE=***************
-MONGO_URL=***************
+AIRTABLE_APPLICANTS=***************
+AIRTABLE_PAIRING=***************
 NODE_ENV=DEVELOPMENT
-PORT=3000
 ```
 
-### Run the bot
+### Run bots
 
 In local for development:
 ```bash
-$ npm run start
+$ npm run start_moodbot
+$ npm run start_newsbot
+$ npm run start_learningbot
 ```
 
 Lint code:
@@ -53,12 +61,10 @@ Building:
 $ npm run build
 ```
 
-Running in production mode after building:
-```bash
-$ npm run serve
-```
-
 Heroku dynos:
 ```bash
-$ npm run web
+$ npm run build
+$ npm run moodbot
+$ npm run newsbot
+$ npm run learningbot
 ```

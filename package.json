@@ -51,18 +51,18 @@
     "mocha": "^3.3.0",
     "nodemon": "^1.11.0"
   },
-  "description": "A mood bot to display each day the mood's team.",
+  "description": "All our bots in one place!",
   "version": "1.0.0",
-  "main": "main/index.js",
+  "main": "main/moodbot/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MeetMangrove/mangrove-mood.git"
+    "url": "git+https://github.com/MeetMangrove/familybot.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MeetMangrove/mangrove-mood/issues"
+    "url": "https://github.com/MeetMangrove/familybot/issues"
   },
-  "homepage": "https://github.com/MeetMangrove/mangrove-mood#readme"
+  "homepage": "https://github.com/MeetMangrove/familybot#readme"
 }
