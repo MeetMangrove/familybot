@@ -3,7 +3,7 @@
  */
 
 import localTunnel from 'localtunnel'
-import Botkit from 'botkit'
+import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
 const bots = {}
@@ -16,14 +16,14 @@ const {
 } = process.env
 
 if (!NEWSBOT_SLACK_CLIENT_ID || !NEWSBOT_SLACK_CLIENT_SECRET || !NEWSBOT_PORT || !NEWSBOT_MONGODB_URI || !NODE_ENV) {
-  console.log('Error: Specify SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, NEWSBOT_PORT, NODE_ENV and NEWSBOT_MONGODB_URI in a .env file')
+  console.log('Error: Specify NEWSBOT_SLACK_CLIENT_ID, NEWSBOT_SLACK_CLIENT_SECRET, NEWSBOT_PORT, NODE_ENV and NEWSBOT_MONGODB_URI in a .env file')
   process.exit(1)
 }
 
 if (NODE_ENV === 'DEVELOPMENT') {
-  const tunnel = localTunnel(NEWSBOT_PORT, {subdomain: 'newsbot'}, (err, tunnel) => {
+  const tunnel = localTunnel(NEWSBOT_PORT, {subdomain: 'familybot'}, (err, tunnel) => {
     if (err) console.log(err)
-    console.log(`Bot running at the url: ${tunnel.url}`)
+    console.log(`Bot running at the url: ${tunnel.url}/newsbot`)
   })
   tunnel.on('close', () => {
     console.log('Tunnel is closed')
@@ -42,7 +42,8 @@ const controller = Botkit.slackbot({
   debug: false,
   interactive_replies: true,
   require_delivery: true,
-  storage: mongoStorage
+  storage: mongoStorage,
+  app_name: 'newsbot'
 })
 
 controller.configureSlackApp({

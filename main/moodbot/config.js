@@ -3,7 +3,7 @@
  */
 
 import localTunnel from 'localtunnel'
-import Botkit from 'botkit'
+import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
 require('dotenv').config()
@@ -23,7 +23,7 @@ if (!MOODBOT_SLACK_CLIENT_ID || !MOODBOT_SLACK_CLIENT_SECRET || !MOODBOT_PORT ||
 }
 
 if (NODE_ENV === 'DEVELOPMENT') {
-  const tunnel = localTunnel(MOODBOT_PORT, {subdomain: 'moodbot'}, (err, tunnel) => {
+  const tunnel = localTunnel(MOODBOT_PORT, {subdomain: 'familybot'}, (err, tunnel) => {
     if (err) console.log(err)
     console.log(`Bot running at the url: ${tunnel.url}`)
   })
@@ -44,7 +44,8 @@ const controller = Botkit.slackbot({
   debug: false,
   interactive_replies: true,
   require_delivery: true,
-  storage: mongoStorage
+  storage: mongoStorage,
+  app_name: 'moodbot'
 })
 
 controller.configureSlackApp({

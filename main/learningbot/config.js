@@ -3,7 +3,7 @@
  */
 
 import localTunnel from 'localtunnel'
-import Botkit from 'botkit'
+import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
 const _bots = {}
@@ -21,9 +21,9 @@ if (!LEARNINGBOT_SLACK_CLIENT_ID || !LEARNINGBOT_SLACK_CLIENT_SECRET || !LEARNIN
 }
 
 if (NODE_ENV === 'DEVELOPMENT') {
-  const tunnel = localTunnel(LEARNINGBOT_PORT, {subdomain: 'learningbot'}, (err, tunnel) => {
+  const tunnel = localTunnel(LEARNINGBOT_PORT, {subdomain: 'familybot'}, (err, tunnel) => {
     if (err) console.log(err)
-    console.log(`Bot running at the url: ${tunnel.url}`)
+    console.log(`Bots running at the url: ${tunnel.url}`)
   })
   tunnel.on('close', () => {
     console.log('Tunnel is closed')
@@ -42,7 +42,8 @@ const controller = Botkit.slackbot({
   debug: false,
   interactive_replies: true,
   require_delivery: true,
-  storage: mongoStorage
+  storage: mongoStorage,
+  app_name: 'learningbot'
 })
 
 controller.configureSlackApp({
