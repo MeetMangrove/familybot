@@ -3,4 +3,5 @@
  */
 
 import 'babel-polyfill'
-import './hears'
+import controller from './hears'
+export default controller

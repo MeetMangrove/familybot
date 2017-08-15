@@ -3,5 +3,6 @@
  */
 
 import 'babel-polyfill'
-import './hears'
+import controller from './hears'
 import './cron'
+export default controller

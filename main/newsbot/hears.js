@@ -122,3 +122,5 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
     errorMessage(e, bot, message)
   }
 })
+
+export default controller

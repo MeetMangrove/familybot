@@ -2,15 +2,10 @@
   "name": "mangrove-mood",
   "private": true,
   "scripts": {
-    "start_moodbot": "nodemon main/moodbot/index.js --exec babel-node",
-    "start_newsbot": "nodemon main/newsbot/index.js --exec babel-node",
-    "start_learningbot": "nodemon main/learningbot/index.js --exec babel-node",
+    "start": "npm run build && node dist/index.js",
     "lint": "./node_modules/.bin/eslint main test; exit 0",
     "fix": "./node_modules/.bin/eslint --fix main test; exit 0",
     "build": "babel main -d dist",
-    "moodbot": "node dist/moodbot/index.js ",
-    "newsbot": "node dist/newsbot/index.js ",
-    "learningbot": "node dist/learningbot/index.js ",
     "test": "mocha; exit 0"
   },
   "engines": {
@@ -25,6 +20,7 @@
     "babel-preset-stage-3": "6.24.1",
     "bipartite-matching": "1.0.0",
     "bluebird": "3.5.0",
+    "body-parser": "^1.17.2",
     "botkit-storage-mongo": "1.0.6",
     "cron": "1.2.1",
     "dotenv": "4.0.0",
@@ -36,7 +32,8 @@
     "moment": "2.18.1",
     "moment-timezone": "0.5.13",
     "mongodb": "2.2.28",
-    "request": "2.81.0"
+    "request": "2.81.0",
+    "vhost": "^3.0.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
