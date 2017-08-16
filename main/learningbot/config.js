@@ -52,17 +52,6 @@ controller.configureSlackApp({
   scopes: ['bot', 'chat:write:bot', 'groups:history', 'groups:read', 'groups:write', 'users:read', 'users:read.email']
 })
 
-controller.setupWebserver(LEARNINGBOT_PORT, (err) => {
-  if (err) return console.log(err)
-  controller
-    .createWebhookEndpoints(controller.webserver)
-    .createHomepageEndpoint(controller.webserver)
-    .createOauthEndpoints(controller.webserver, (err, req, res) => {
-      if (err) return res.status(500).send('ERROR: ' + err)
-      res.send('Success!')
-    })
-})
-
 controller.on('create_bot', (bot, config) => {
   if (_bots[bot.config.token]) {
     // already online! do nothing.

@@ -271,3 +271,5 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
     bot.reply(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
   }
 })
+
+export default controller
