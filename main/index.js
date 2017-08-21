@@ -25,6 +25,17 @@ const botSetups = [
   {controller: newsbot, hostname: (process.env.NEWSBOT_HOSTNAME || 'newsbot.local')}
 ]
 
+// Optional setting to override the hostname, makes the app behave as if
+// all requests were sent to a given Host (useful in development)
+if (process.env.FORCE_HOSTNAME) {
+  const hostname = process.env.FORCE_HOSTNAME
+  console.log(`WARNING hostname forced to env.FORCE_HOSTNAME=${hostname}`)
+  app.use((req, res, next) => {
+    req.headers.host = hostname
+    next()
+  })
+}
+
 // Mount the bots on the main app
 botSetups.forEach(({controller, hostname}) => {
   console.log(`Mounting ${controller.config.app_name} bot on ${hostname}`)
