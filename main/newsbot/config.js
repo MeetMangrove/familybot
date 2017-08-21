@@ -2,7 +2,6 @@
  * Created by thomasjeanneau on 08/02/2017.
  */
 
-import localTunnel from 'localtunnel'
 import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
@@ -10,24 +9,12 @@ const bots = {}
 const {
   NEWSBOT_SLACK_CLIENT_ID,
   NEWSBOT_SLACK_CLIENT_SECRET,
-  NEWSBOT_PORT,
-  NEWSBOT_MONGODB_URI,
-  NODE_ENV
+  NEWSBOT_MONGODB_URI
 } = process.env
 
-if (!NEWSBOT_SLACK_CLIENT_ID || !NEWSBOT_SLACK_CLIENT_SECRET || !NEWSBOT_PORT || !NEWSBOT_MONGODB_URI || !NODE_ENV) {
-  console.log('Error: Specify NEWSBOT_SLACK_CLIENT_ID, NEWSBOT_SLACK_CLIENT_SECRET, NEWSBOT_PORT, NODE_ENV and NEWSBOT_MONGODB_URI in a .env file')
+if (!NEWSBOT_SLACK_CLIENT_ID || !NEWSBOT_SLACK_CLIENT_SECRET || !NEWSBOT_MONGODB_URI) {
+  console.log('Error: Specify NEWSBOT_SLACK_CLIENT_ID, NEWSBOT_SLACK_CLIENT_SECRET and NEWSBOT_MONGODB_URI in a .env file')
   process.exit(1)
-}
-
-if (NODE_ENV === 'DEVELOPMENT') {
-  const tunnel = localTunnel(NEWSBOT_PORT, {subdomain: 'familybot'}, (err, tunnel) => {
-    if (err) console.log(err)
-    console.log(`Bot running at the url: ${tunnel.url}/newsbot`)
-  })
-  tunnel.on('close', () => {
-    console.log('Tunnel is closed')
-  })
 }
 
 const trackBot = (bot) => {

@@ -2,7 +2,6 @@
  * Created by thomasjeanneau on 08/02/2017.
  */
 
-import localTunnel from 'localtunnel'
 import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
@@ -12,24 +11,12 @@ const bots = {}
 const {
   MOODBOT_SLACK_CLIENT_ID,
   MOODBOT_SLACK_CLIENT_SECRET,
-  MOODBOT_PORT,
-  MOODBOT_MONGODB_URI,
-  NODE_ENV
+  MOODBOT_MONGODB_URI
 } = process.env
 
-if (!MOODBOT_SLACK_CLIENT_ID || !MOODBOT_SLACK_CLIENT_SECRET || !MOODBOT_PORT || !MOODBOT_MONGODB_URI || !NODE_ENV) {
-  console.log('Error: Specify MOODBOT_SLACK_CLIENT_ID, MOODBOT_SLACK_CLIENT_SECRET, MOODBOT_PORT and MOODBOT_MONGODB_URI in a .env file')
+if (!MOODBOT_SLACK_CLIENT_ID || !MOODBOT_SLACK_CLIENT_SECRET || !MOODBOT_MONGODB_URI) {
+  console.log('Error: Specify MOODBOT_SLACK_CLIENT_ID, MOODBOT_SLACK_CLIENT_SECRET and MOODBOT_MONGODB_URI in a .env file')
   process.exit(1)
-}
-
-if (NODE_ENV === 'DEVELOPMENT') {
-  const tunnel = localTunnel(MOODBOT_PORT, {subdomain: 'familybot'}, (err, tunnel) => {
-    if (err) console.log(err)
-    console.log(`Bot running at the url: ${tunnel.url}`)
-  })
-  tunnel.on('close', () => {
-    console.log('Tunnel is closed')
-  })
 }
 
 const trackBot = (bot) => {
