@@ -100,7 +100,7 @@ const askMood = new CronJob({
 })
 
 const sendMood = new CronJob({
-  cronTime: '00 19 10 * * *',
+  cronTime: '00 10 19 * * *',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       try {

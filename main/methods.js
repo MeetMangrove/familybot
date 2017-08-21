@@ -330,7 +330,7 @@ export const getAvailableMembers = async () => {
   }))
   const members = _.map(records, (record) => ({
     airtableId: record.id,
-    name: record.get('Slack Handle').replace(/^@/, ''),
+    name: record.get('Slack Handle') ? record.get('Slack Handle').replace(/^@/, '') : '',
     asked: record.get('Asked for news this month [weeklynews]')
   }))
   const numberMembers = Math.floor(members.length / 4)
