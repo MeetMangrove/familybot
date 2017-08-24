@@ -454,8 +454,12 @@ export const getUsersAskedByResponsible = async (bot, userId) => {
   const allMembers = await getAllMembers(bot)
   records.forEach((record) => {
     const name = record.get('Slack Handle').replace(/^@/, '')
-    const {id} = _.find(allMembers, {name})
-    users.push(id)
+    console.log(name)
+    if(name && name !== '') {
+      const {id} = _.find(allMembers, {name})
+      console.log(id)
+      users.push(id)
+    }
   })
   return users
 }
