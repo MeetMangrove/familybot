@@ -49,7 +49,7 @@ export default (bot, message, name, token) => new Promise((resolve, reject) => {
         attachments: [
           {
             title: 'Is it okay?',
-            callback_id: '123',
+            callback_id: 'send_message',
             attachment_type: 'default',
             actions: [
               {
