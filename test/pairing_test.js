@@ -3,7 +3,7 @@
 import 'babel-polyfill'
 import _ from 'lodash'
 import { expect } from './helper'
-import { generatePairing } from '../main/learningbot/pairing'
+import { generatePairing } from '../main/learnbot/pairing'
 
 // helpers to inspect a pairing
 function _pairingSize (pairing) {

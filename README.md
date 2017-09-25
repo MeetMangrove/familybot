@@ -22,9 +22,9 @@ MOODBOT_SLACK_CHANNEL_GENERAL_ID=***************
 NEWSBOT_MONGODB_URI=***************
 NEWSBOT_SLACK_CLIENT_ID=***************
 NEWSBOT_SLACK_CLIENT_SECRET=***************
-LEARNINGBOT_MONGODB_URI=***************
-LEARNINGBOT_SLACK_CLIENT_ID=***************
-LEARNINGBOT_SLACK_CLIENT_SECRET=***************
+LEARNBOT_MONGODB_URI=***************
+LEARNBOT_SLACK_CLIENT_ID=***************
+LEARNBOT_SLACK_CLIENT_SECRET=***************
 AIRTABLE_API_KEY=***************
 AIRTABLE_BASE_KEY=***************
 AIRTABLE_MEMBERS=***************
@@ -45,7 +45,7 @@ Use a tunnelling software like ngrok to expose each bot under its own domain.
 set up the domains in your ~/.ngrok2/ngrok.yml file
 ```
 tunnels:
-  learningbot:
+  learnbot:
     proto: http
     addr: 5000
     subdomain: learningbot
@@ -67,7 +67,7 @@ $ ngrok start moodbot newsbot
 
 Now set up the subdomains given by ngrok in your .env file
 ```
-LEARNINGBOT_HOSTNAME=learningbot.ngrok.com
+LEARNINGBOT_HOSTNAME=learnbot.ngrok.com
 MOODBOT_HOSTNAME=moodbot.ngrok.com
 NEWSBOT_HOSTNAME=newsbot.ngrok.com
 ```

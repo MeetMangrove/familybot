@@ -7,7 +7,7 @@ import Promise from 'bluebird'
 import asyncForEach from 'async-foreach'
 
 import { base, _getAllRecords } from './airtable'
-import firstTimeConversation from './learningbot/firstTimeConversation'
+import firstTimeConversation from './learnbot/firstTimeConversation'
 const {forEach} = asyncForEach
 
 const {
