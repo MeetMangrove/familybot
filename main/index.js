@@ -12,25 +12,37 @@ import activitybot from './activitybot'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
+const {
+  NODE_ENV,
+  PORT,
+  HOSTNAME,
+  FORCE_HOSTNAME,
+} = process.env
+
+if (!NODE_ENV || !PORT || !HOSTNAME) {
+  console.log('Error: Specify NODE_ENV, PORT, HOSTNAME in a .env file')
+  process.exit(1)
+}
+
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.set('port', process.env.PORT || 5000)
+app.set('port', PORT || 5000)
 
 // Map each bot to its own hostname
 // For development you can use ngrok and set up a dedicated *.ngrok.io domain for each bot
 // For production, you should set up your DNS to point different domain names to your server
 const botSetups = [
-  { controller: learnbot, hostname: (process.env.LEARNBOT_HOSTNAME || 'learnbot.local') },
-  { controller: moodbot, hostname: (process.env.MOODBOT_HOSTNAME || 'moodbot.local') },
-  { controller: newsbot, hostname: (process.env.NEWSBOT_HOSTNAME || 'newsbot.local') },
-  { controller: activitybot, hostname: (process.env.ACTIVITYBOT_HOSTNAME || 'activitybot.local') }
+  { controller: learnbot },
+  { controller: moodbot },
+  { controller: newsbot },
+  { controller: activitybot }
 ]
 
 // Optional setting to override the hostname, makes the app behave as if
 // all requests were sent to a given Host (useful in development)
-if (process.env.FORCE_HOSTNAME) {
-  const hostname = process.env.FORCE_HOSTNAME
+if (FORCE_HOSTNAME) {
+  const hostname = FORCE_HOSTNAME
   console.log(`WARNING hostname forced to env.FORCE_HOSTNAME=${hostname}`)
   app.use((req, res, next) => {
     req.headers.host = hostname
@@ -39,14 +51,14 @@ if (process.env.FORCE_HOSTNAME) {
 }
 
 // Mount the bots on the main app
-botSetups.forEach(({ controller, hostname }) => {
-  console.log(`Mounting ${controller.config.app_name} bot on ${hostname}`)
+botSetups.forEach(({ controller }) => {
+  console.log(`Mounting ${controller.config.app_name} bot on ${HOSTNAME}`)
   // create a dedicated express app for the bot
   const botApp = express()
   // force port and hostname, used by botkit
 
   controller.config.port = app.get('port')
-  controller.config.hostname = hostname
+  controller.config.hostname = HOSTNAME
   // use botkit to set up endpoints on the dedicated app
   controller
     .createWebhookEndpoints(botApp)
@@ -56,7 +68,7 @@ botSetups.forEach(({ controller, hostname }) => {
       res.send('Success!')
     })
   // mount the botApp on the main app, on its own hostname
-  app.use(vhost(hostname, botApp))
+  app.use(vhost(HOSTNAME, botApp))
 })
 
 // Start the main app
