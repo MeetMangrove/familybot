@@ -5,6 +5,9 @@
 import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
+import { getSlackUser } from '../methods'
+import firstTimeConversation from './firstTimeConversation'
+
 const _bots = {}
 const {
   LEARNBOT_SLACK_CLIENT_ID,
@@ -52,6 +55,11 @@ controller.on('create_bot', (bot, config) => {
       })
     })
   }
+})
+
+controller.on('team_join', async function(bot,message) {
+  const {name} = await getSlackUser(bot, message.user)
+  await firstTimeConversation(bot, message, {name})
 })
 
 controller.on('rtm_open', () => {

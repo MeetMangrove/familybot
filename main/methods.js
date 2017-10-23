@@ -60,6 +60,18 @@ export const getIdFromName = async (name) => {
   return records[0].id
 }
 
+export const meetingDone = async (learner, teacher) => {
+  const update = Promise.promisify(base(AIRTABLE_MOOD).update)
+  const id = getPairingAirtableId(learner, teacher)
+  await update(id, {'Met': true})
+}
+
+export const saveFeedback = async (feedback, learner, teacher) => {
+  const update = Promise.promisify(base(AIRTABLE_MOOD).update)
+  const id = getPairingAirtableId(learner, teacher)
+  await update(id, {'Feedback': feedback })
+}
+
 export const saveMood = async (id, level, comment) => {
   const create = Promise.promisify(base(AIRTABLE_MOOD).create)
   await create({
@@ -313,6 +325,14 @@ export const destroyPairing = async (tableName, pairingId) => {
     return destroy(record.getId())
   })
   return pairingId
+}
+
+export const getPairingAirtableId = async (learner, teacher) => {
+  const pairingRecords = await _getAllRecords(base('Pairings').select({
+    view: 'Main View',
+    filterByFormula: `{Teacher}='${teacher} && {Learner}='${learner} '`
+  }))
+  console.log(pairingRecords)
 }
 
 // update a airtable member

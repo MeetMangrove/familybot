@@ -29,16 +29,18 @@ export default async (bot, message, membersPaired) => {
     const skill = membersPaired[indexTeacher].teaching
     const {groups} = await apiGroups.listAsync({token})
     const groupName = `p2pl_${pairing.get('Id')}`
-    const group = _.find(groups, ['name', groupName])
+    let group = _.find(groups, ['name', groupName])
     let groupId
     if (group) {
       groupId = group.id
       if (group.is_archived === true) await apiGroups.unarchiveAsync({token, channel: groupId})
     } else {
-      const groupsCreate = await apiGroups.createAsync({token, name: groupName})
-      groupId = groupsCreate.group.id
+      const groupCreate = await apiGroups.createAsync({token, name: groupName})
+      group = groupCreate.group
+      groupId = groupCreate.group.id
     }
-    if (teacher.id !== message.user) {
+
+    if (_.indexOf(group.members, teacher.id) === -1) {
       await apiGroups.inviteAsync({
         token,
         channel: groupId,
@@ -46,7 +48,7 @@ export default async (bot, message, membersPaired) => {
       })
     }
 
-    if (learner.id !== message.user) {
+    if (_.indexOf(group.members, learner.id) === -1) {
       await apiGroups.inviteAsync({
         token,
         channel: groupId,

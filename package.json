@@ -1,5 +1,5 @@
 {
-  "name": "mangrove-mood",
+  "name": "familybot",
   "private": true,
   "scripts": {
     "start": "npm run build && node dist/index.js",
@@ -21,14 +21,16 @@
     "bipartite-matching": "1.0.0",
     "bluebird": "3.5.0",
     "body-parser": "^1.17.2",
+    "mangrove-botkit": "0.6.4",
+    "botkit-storage-firebase": "1.0.0",
     "botkit-storage-mongo": "1.0.6",
     "cron": "1.2.1",
     "dotenv": "4.0.0",
     "express": "4.15.4",
     "handlebars": "4.0.10",
+    "i18n": "0.8.3",
     "lodash": "4.17.4",
     "long-timeout": "0.1.1",
-    "mangrove-botkit": "0.5.71",
     "moment": "2.18.1",
     "moment-timezone": "0.5.13",
     "mongodb": "2.2.28",
@@ -50,7 +52,7 @@
   },
   "description": "All our bots in one place!",
   "version": "1.0.0",
-  "main": "main/moodbot/index.js",
+  "main": "main/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MeetMangrove/familybot.git"
