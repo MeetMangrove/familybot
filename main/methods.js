@@ -509,3 +509,21 @@ export const saveThanks = async (bySlackHandle, toSlackHandle, text, date) => {
     'Date': date
   })
 }
+
+export const getLastWeekDone = async () => {
+  const ping = Date.now() - 604800000
+  const records = await _getAllRecords(base(AIRTABLE_DONE).select({
+    view: 'Grid view',
+    filterByFormula: `{Date} >= ${ping}`
+  }))
+  return _.map(records, 'fields')
+}
+
+export const getLastWeekThanks = async () => {
+  const ping = Date.now() - 604800000
+  const records = await _getAllRecords(base(AIRTABLE_THANKS).select({
+    view: 'Grid view',
+    filterByFormula: `{Date} >= ${ping}`
+  }))
+  return _.map(records, 'fields')
+}
