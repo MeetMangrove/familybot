@@ -9,12 +9,12 @@ require('dotenv').config()
 
 const bots = {}
 const {
-  ACTIVITYBOT_SLACK_CLIENT_ID,
-  ACTIVITYBOT_SLACK_CLIENT_SECRET,
-  ACTIVITYBOT_FIREBASE_URI
+  FIRECRAB_SLACK_CLIENT_ID,
+  FIRECRAB_SLACK_CLIENT_SECRET,
+  FIRECRAB_FIREBASE_URI
 } = process.env
 
-if (!ACTIVITYBOT_SLACK_CLIENT_ID || !ACTIVITYBOT_SLACK_CLIENT_SECRET || !ACTIVITYBOT_FIREBASE_URI) {
+if (!FIRECRAB_SLACK_CLIENT_ID || !FIRECRAB_SLACK_CLIENT_SECRET || !FIRECRAB_FIREBASE_URI) {
   console.log('Error: Specify ACTIVITYBOT_SLACK_CLIENT_ID, ACTIVITYBOT_SLACK_CLIENT_SECRET, ACTIVITYBOT_INCOMING_WEBHOOK and ACTIVITYBOT_FIREBASE_URI in a .env file')
   process.exit(1)
 }
@@ -24,7 +24,7 @@ const trackBot = (bot) => {
 }
 
 const mongoStorage = new FirebaseStorage({
-  firebase_uri: ACTIVITYBOT_FIREBASE_URI
+  firebase_uri: FIRECRAB_FIREBASE_URI
 })
 
 const controller = Botkit.slackbot({
@@ -32,13 +32,13 @@ const controller = Botkit.slackbot({
   interactive_replies: true,
   require_delivery: true,
   storage: mongoStorage,
-  app_name: 'activitybot'
+  app_name: 'firecrab'
 })
 
 controller.configureSlackApp({
-  clientId: ACTIVITYBOT_SLACK_CLIENT_ID,
-  clientSecret: ACTIVITYBOT_SLACK_CLIENT_SECRET,
-  scopes: ['bot', 'chat:write:bot', 'users:read']
+  clientId: FIRECRAB_SLACK_CLIENT_ID,
+  clientSecret: FIRECRAB_SLACK_CLIENT_SECRET,
+  scopes: ['bot', 'chat:write:bot', 'users:read', 'commands']
 })
 
 controller.on('create_bot', (bot, config) => {

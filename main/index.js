@@ -8,7 +8,7 @@ import vhost from 'vhost'
 import learnbot from './learnbot'
 import moodbot from './moodbot'
 import newsbot from './newsbot'
-import activitybot from './activitybot'
+import firecrab from './firecrab'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
@@ -36,7 +36,7 @@ const botSetups = [
   { controller: learnbot },
   { controller: moodbot },
   { controller: newsbot },
-  { controller: activitybot }
+  { controller: firecrab }
 ]
 
 // Optional setting to override the hostname, makes the app behave as if

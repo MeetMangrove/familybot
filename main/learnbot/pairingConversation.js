@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Promise from 'bluebird'
 import asyncForEach from 'async-foreach'
 
-import { base } from '../airtable/index'
+import { base } from '../airtable'
 import { getPairingsNotIntroduced } from '../methods'
 
 const {AIRTABLE_PAIRING} = process.env

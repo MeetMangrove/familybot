@@ -4,24 +4,9 @@ import { controller } from './config'
 
 import { saveDone, saveThanks } from '../methods'
 
-require('dotenv').config()
-
-const {
-  ACTIVITYBOT_COMMAND_TOKEN_1,
-  ACTIVITYBOT_COMMAND_TOKEN_2,
-} = process.env
-
-if (!ACTIVITYBOT_COMMAND_TOKEN_1 || !ACTIVITYBOT_COMMAND_TOKEN_2) {
-  console.log('Error: Specify ACTIVITYBOT_COMMAND_TOKEN_1 & ACTIVITYBOT_COMMAND_TOKEN_2 in a .env file')
-  process.exit(1)
-}
-
 controller.on('slash_command', async function (bot, message) {
   bot.replyAcknowledge()
   try {
-    if (message.token !== ACTIVITYBOT_COMMAND_TOKEN_1 && message.token !== ACTIVITYBOT_COMMAND_TOKEN_2) {
-      return bot.res.send(401, 'Unauthorized')
-    }
 
     const { text } = message
     const date = Date.now()
@@ -31,7 +16,7 @@ controller.on('slash_command', async function (bot, message) {
       case '/done':
         bot.whisper(message, 'Your */done* is saving...')
         await saveDone(message.user_name, text, date)
-        const { user: { profile: { real_name, image_72 } } } = await apiUser.infoAsync({ user: message.user })
+        const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
           if(err) console.log(err)
           bot.say({
@@ -39,7 +24,7 @@ controller.on('slash_command', async function (bot, message) {
               'author_name': `${real_name}`,
               'text': `*done* ${text}`,
               'color': '#81C784',
-              'thumb_url': image_72,
+              'thumb_url': image_192,
               'mrkdwn_in': ['text']
             }],
             channel: '#done'
