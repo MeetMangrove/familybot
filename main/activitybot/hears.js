@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import moment from 'moment'
 import Promise from 'bluebird'
 import { controller } from './config'
 
@@ -20,7 +19,6 @@ if (!ACTIVITYBOT_COMMAND_TOKEN_1 || !ACTIVITYBOT_COMMAND_TOKEN_2) {
 controller.on('slash_command', async function (bot, message) {
   bot.replyAcknowledge()
   try {
-    // Validate Slack verify token
     if (message.token !== ACTIVITYBOT_COMMAND_TOKEN_1 && message.token !== ACTIVITYBOT_COMMAND_TOKEN_2) {
       return bot.res.send(401, 'Unauthorized')
     }
@@ -34,16 +32,18 @@ controller.on('slash_command', async function (bot, message) {
         bot.whisper(message, 'Your */done* is saving...')
         await saveDone(message.user_name, text, date)
         const { user: { profile: { real_name, image_72 } } } = await apiUser.infoAsync({ user: message.user })
-        bot.whisper(message, 'Your */done* has been saved :clap:')
-        bot.say({
-          attachments: [{
-            'author_name': `${real_name}`,
-            'text': `*done* ${text}`,
-            'color': '#81C784',
-            'thumb_url': image_72,
-            'mrkdwn_in': ['text']
-          }],
-          channel: '#done'
+        bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
+          if(err) console.log(err)
+          bot.say({
+            attachments: [{
+              'author_name': `${real_name}`,
+              'text': `*done* ${text}`,
+              'color': '#81C784',
+              'thumb_url': image_72,
+              'mrkdwn_in': ['text']
+            }],
+            channel: '#done'
+          })
         })
         break
       case '/thanks':
@@ -55,17 +55,19 @@ controller.on('slash_command', async function (bot, message) {
           bot.whisper(message, `<@${thanksTo}> is not a valid name, try again!`)
         } else {
           await saveThanks(message.user_name, thanksTo, thanksText, date)
-          const { user: { profile: { real_name, image_72 } } } = await apiUser.infoAsync({ user: message.user })
-          bot.whisper(message, 'Your */thanks* has been saved :relaxed:')
-          bot.say({
-            attachments: [{
-              'author_name': `${real_name}`,
-              'text': `*thanks* <@${thanksTo}> ${thanksText}`,
-              'color': '#E57373',
-              'thumb_url': image_72,
-              'mrkdwn_in': ['text']
-            }],
-            channel: '#thanks'
+          const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
+          bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
+            if(err) console.log(err)
+            bot.say({
+              attachments: [{
+                'author_name': `${real_name}`,
+                'text': `*thanks* <@${thanksTo}> ${thanksText}`,
+                'color': '#E57373',
+                'thumb_url': image_192,
+                'mrkdwn_in': ['text']
+              }],
+              channel: '#thanks'
+            })
           })
         }
         break
