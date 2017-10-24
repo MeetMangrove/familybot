@@ -3,6 +3,8 @@ import moment from 'moment'
 import Promise from 'bluebird'
 import { controller } from './config'
 
+import { saveDone, saveThanks } from '../methods'
+
 require('dotenv').config()
 
 const {
@@ -31,6 +33,7 @@ controller.on('slash_command', async function (bot, message) {
 
     switch (message.command) {
       case '/done':
+        await saveDone(message.user_name, text, date)
         bot.replyPrivate(message, 'Your */done* has been saved :clap:')
         bot.say({
           attachments: [{
@@ -45,15 +48,17 @@ controller.on('slash_command', async function (bot, message) {
         break
       case '/thanks':
         const thanksTo = text.substring(text.indexOf('@') + 1, text.indexOf(' '))
+        const thanksText = text.substring(text.indexOf(' ') + 1)
         const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
         if (!thanksTo || _.map(members, 'name').indexOf(thanksTo) === -1) {
           bot.replyPrivate(message, `<@${thanksTo}> is not a valid name, try again!`)
         } else {
+          await saveThanks(message.user_name, thanksTo, thanksText, date)
           bot.replyPrivate(message, 'Your */thanks* has been saved :relaxed:')
           bot.say({
             attachments: [{
               'author_name': `${real_name} `,
-              'text': `*thanks* <@${thanksTo}> ${text.substring(text.indexOf(' ') + 1)}\n_${displayDate}_`,
+              'text': `*thanks* <@${thanksTo}> ${thanksText}\n_${displayDate}_`,
               'color': '#E57373',
               'thumb_url': image_72,
               'mrkdwn_in': ['text']
@@ -67,7 +72,7 @@ controller.on('slash_command', async function (bot, message) {
     }
   } catch (e) {
     console.log(e)
-    bot.reply(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+    bot.replyPrivate(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
   }
 })
 

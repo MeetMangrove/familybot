@@ -14,11 +14,13 @@ const {
   AIRTABLE_MEMBERS,
   AIRTABLE_MOOD,
   AIRTABLE_APPLICANTS,
-  AIRTABLE_PAIRING
+  AIRTABLE_PAIRING,
+  AIRTABLE_DONE,
+  AIRTABLE_THANKS,
 } = process.env
 
-if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING) {
-  console.log('Error: Specify AIRTABLE_MEMBERS, AIRTABLE_APPLICANTS and AIRTABLE_PAIRING in a .env file')
+if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_DONE && !AIRTABLE_THANKS) {
+  console.log('Error: Specify AIRTABLE_MEMBERS, AIRTABLE_APPLICANTS, AIRTABLE_DONE, AIRTABLE_THANKS and AIRTABLE_PAIRING in a .env file')
   process.exit(1)
 }
 
@@ -484,4 +486,26 @@ export const getUsersAskedByResponsible = async (bot, userId) => {
     }
   })
   return users
+}
+
+export const saveDone = async (bySlackHandle, text, date) => {
+  const by = await getIdFromName(bySlackHandle)
+  const create = Promise.promisify(base(AIRTABLE_DONE).create)
+  await create({
+    'By': [by],
+    'Text': text,
+    'Date': date
+  })
+}
+
+export const saveThanks = async (bySlackHandle, toSlackHandle, text, date) => {
+  const by = await getIdFromName(bySlackHandle)
+  const to = await getIdFromName(toSlackHandle)
+  const create = Promise.promisify(base(AIRTABLE_THANKS).create)
+  await create({
+    'By': [by],
+    'To': [to],
+    'Text': text,
+    'Date': date
+  })
 }
