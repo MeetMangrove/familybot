@@ -20,7 +20,7 @@ export default async (bot, message) => {
           }, 'default')
 
           convo.addQuestion({
-            text: 'Follow this link to authorize your account: https://news.mangrove.io/newsbot/login',
+            text: 'Follow this link to authorize your account: https://news.mangrove.io/freshmanatee/login',
             attachments: [
               {
                 title: 'Is it done?',

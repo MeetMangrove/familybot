@@ -7,7 +7,7 @@ import vhost from 'vhost'
 // Import controllers for each bot
 import learnbot from './learnbot'
 import moodbot from './moodbot'
-import newsbot from './newsbot'
+import newsbot from './freshmanatee'
 import firecrab from './firecrab'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })

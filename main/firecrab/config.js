@@ -69,7 +69,7 @@ controller.storage.teams.all((err, teams) => {
       controller
         .spawn(teams[t])
         .startRTM((err, bot) => {
-          if (err) return console.log('Error connecting moodbot to Slack:', err)
+          if (err) return console.log('Error connecting firecrab to Slack:', err)
           trackBot(bot)
         })
     }

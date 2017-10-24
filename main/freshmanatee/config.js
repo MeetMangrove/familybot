@@ -3,16 +3,16 @@
  */
 
 import Botkit from 'mangrove-botkit'
-import BotkitStorageMongo from 'botkit-storage-mongo'
+import FirebaseStorage from 'botkit-storage-firebase'
 
 const bots = {}
 const {
-  NEWSBOT_SLACK_CLIENT_ID,
-  NEWSBOT_SLACK_CLIENT_SECRET,
-  NEWSBOT_MONGODB_URI
+  FRESHMANATEE_SLACK_CLIENT_ID,
+  FRESHMANATEE_SLACK_CLIENT_SECRET,
+  FRESHMANATEE_FIREBASE_URI
 } = process.env
 
-if (!NEWSBOT_SLACK_CLIENT_ID || !NEWSBOT_SLACK_CLIENT_SECRET || !NEWSBOT_MONGODB_URI) {
+if (!FRESHMANATEE_SLACK_CLIENT_ID || !FRESHMANATEE_SLACK_CLIENT_SECRET || !FRESHMANATEE_FIREBASE_URI) {
   console.log('Error: Specify NEWSBOT_SLACK_CLIENT_ID, NEWSBOT_SLACK_CLIENT_SECRET and NEWSBOT_MONGODB_URI in a .env file')
   process.exit(1)
 }
@@ -21,8 +21,8 @@ const trackBot = (bot) => {
   bots[bot.config.token] = bot
 }
 
-const mongoStorage = new BotkitStorageMongo({
-  mongoUri: NEWSBOT_MONGODB_URI
+const mongoStorage = new FirebaseStorage({
+  firebase_uri: FRESHMANATEE_FIREBASE_URI
 })
 
 const controller = Botkit.slackbot({
@@ -30,12 +30,12 @@ const controller = Botkit.slackbot({
   interactive_replies: true,
   require_delivery: true,
   storage: mongoStorage,
-  app_name: 'newsbot'
+  app_name: 'freshmanatee'
 })
 
 controller.configureSlackApp({
-  clientId: NEWSBOT_SLACK_CLIENT_ID,
-  clientSecret: NEWSBOT_SLACK_CLIENT_SECRET,
+  clientId: FRESHMANATEE_SLACK_CLIENT_ID,
+  clientSecret: FRESHMANATEE_SLACK_CLIENT_SECRET,
   scopes: ['bot', 'chat:write:user', 'im:history', 'im:read', 'users:read']
 })
 
@@ -47,7 +47,7 @@ controller.on('create_bot', (bot, config) => {
       if (!err) trackBot(bot)
       bot.startPrivateConversation({user: config.createdBy}, (err, convo) => {
         if (err) return console.log(err)
-        convo.say('I am a newsbot that has just joined your team')
+        convo.say('Hello, I\'m a new Mangrove Bot!')
         convo.say('You must now /invite me to a channel so that I can be of use!')
       })
     })
@@ -66,9 +66,11 @@ controller.storage.teams.all((err, teams) => {
   if (err) throw new Error(err)
   for (let t in teams) {
     if (teams[t].bot) {
-      controller.spawn(teams[t]).startRTM((err, bot) => {
-        if (err) return console.log('Error connecting newsbot to Slack:', err)
-        trackBot(bot)
+      controller
+        .spawn(teams[t])
+        .startRTM((err, bot) => {
+          if (err) return console.log('Error connecting freshmanatee to Slack:', err)
+          trackBot(bot)
       })
     }
   }
