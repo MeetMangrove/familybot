@@ -15,7 +15,7 @@ const {
 } = process.env
 
 if (!ACTIVITYBOT_SLACK_CLIENT_ID || !ACTIVITYBOT_SLACK_CLIENT_SECRET || !ACTIVITYBOT_FIREBASE_URI) {
-  console.log('Error: Specify ACTIVITYBOT_SLACK_CLIENT_ID, ACTIVITYBOT_SLACK_CLIENT_SECRET and ACTIVITYBOT_FIREBASE_URI in a .env file')
+  console.log('Error: Specify ACTIVITYBOT_SLACK_CLIENT_ID, ACTIVITYBOT_SLACK_CLIENT_SECRET, ACTIVITYBOT_INCOMING_WEBHOOK and ACTIVITYBOT_FIREBASE_URI in a .env file')
   process.exit(1)
 }
 
@@ -45,7 +45,7 @@ controller.on('create_bot', (bot, config) => {
   if (!bots[bot.config.token]) {
     bot.startRTM((err) => {
       if (!err) trackBot(bot)
-      bot.startPrivateConversation({user: config.createdBy}, (err, convo) => {
+      bot.startPrivateConversation({ user: config.createdBy }, (err, convo) => {
         if (err) return console.log(err)
         convo.say('Hello, I\'m a new Mangrove Bot!')
         convo.say('You must now /invite me to a channel so that I can be of use!')
@@ -66,10 +66,12 @@ controller.storage.teams.all((err, teams) => {
   if (err) throw new Error(err)
   for (let t in teams) {
     if (teams[t].bot) {
-      controller.spawn(teams[t]).startRTM((err, bot) => {
-        if (err) return console.log('Error connecting moodbot to Slack:', err)
-        trackBot(bot)
-      })
+      controller
+        .spawn(teams[t])
+        .startRTM((err, bot) => {
+          if (err) return console.log('Error connecting moodbot to Slack:', err)
+          trackBot(bot)
+        })
     }
   }
 })
