@@ -36,7 +36,7 @@ const controller = Botkit.slackbot({
 controller.configureSlackApp({
   clientId: FRESHMANATEE_SLACK_CLIENT_ID,
   clientSecret: FRESHMANATEE_SLACK_CLIENT_SECRET,
-  scopes: ['bot', 'chat:write:user', 'im:history', 'im:read', 'users:read']
+  scopes: ['bot', 'chat:write:bot']
 })
 
 controller.on('create_bot', (bot, config) => {

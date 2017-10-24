@@ -4,39 +4,32 @@
 
 import _ from 'lodash'
 import cron from 'cron'
-import Promise from 'bluebird'
+import moment from 'moment'
 
 import { bots } from './config'
-import { getResponsibles, updateMember } from '../methods'
+import askForUpdate from './askForUpdate'
+import { getAllMembers } from '../methods'
 
-const {CronJob} = cron
+const { CronJob } = cron
 
-const job = new CronJob({
-  cronTime: '00 00 09 * * 1',
+const sendMessage = new CronJob({
+  cronTime: '* * 09 * * 1',
   onTick: function () {
     _.forEach(bots, async (bot) => {
-      try {
-        const {responsibleId, nextResponsibleId, airtableId, nextAirtableId} = await getResponsibles(bot)
-        const apiChat = Promise.promisifyAll(bot.api.chat)
-        await apiChat.postMessageAsync({
-          token: bot.config.bot.token,
-          channel: responsibleId,
-          text: `Hey <@${responsibleId}> ! It's the turn of <@${nextResponsibleId}> to take responsability for the weeklynews\n Don't forget to warn <@${nextResponsibleId}> :wink:`,
-          as_user: false
-        })
-        await updateMember(airtableId, {
-          'Is responsible ? [weeklynews]': false
-        })
-        await updateMember(nextAirtableId, {
-          'Is responsible ? [weeklynews]': true
-        })
-      } catch (e) {
-        console.log(e)
+      const members = await getAllMembers(bot)
+      const weekNb = moment().format('ww')
+      const chunk = _.chunk(members, members.length / 2)
+      let list
+      if (weekNb % 2 === 1) {
+        list = chunk[0]
+      } else {
+        list = chunk[1]
       }
+      _.forEach(list, async (params) => await askForUpdate({bot, ...params}))
     })
   },
   start: false,
   timeZone: 'Europe/Paris'
 })
 
-job.start()
+sendMessage.start()
