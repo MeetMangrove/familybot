@@ -17,16 +17,8 @@ import {
 } from '../methods'
 import giveMood from './giveMood'
 
-require('dotenv').config()
-
 const { CronJob } = cron
 const { forEach } = asyncForEach
-const { MOODBOT_SLACK_CHANNEL_GENERAL_ID } = process.env
-
-if (!MOODBOT_SLACK_CHANNEL_GENERAL_ID) {
-  console.log('Error: Specify SLACK_CHANNEL_GENERAL_ID in a .env file')
-  process.exit(1)
-}
 
 const askMood = new CronJob({
   cronTime: '00 00 15 * * *',
@@ -71,7 +63,7 @@ const sendMood = new CronJob({
           done()
         }, () => bot.say({
           'text': 'Hi dream team! Here is your mood daily digest :sparkles:',
-          'channel': MOODBOT_SLACK_CHANNEL_GENERAL_ID,
+          'channel': '#moods',
           'attachments': attachments
         }, (err, res) => {
           console.log(err)
@@ -79,7 +71,10 @@ const sendMood = new CronJob({
         }))
       } catch (e) {
         console.log(e)
-        bot.reply({ user: MOODBOT_SLACK_CHANNEL_GENERAL_ID }, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+        bot.say({
+          text: `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``,
+          channel: '#moods'
+        })
       }
     })
   },

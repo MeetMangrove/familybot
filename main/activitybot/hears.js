@@ -18,14 +18,13 @@ if (!ACTIVITYBOT_COMMAND_TOKEN_1 || !ACTIVITYBOT_COMMAND_TOKEN_2) {
 }
 
 controller.on('slash_command', async function (bot, message) {
+  bot.replyAcknowledge()
   try {
-    console.log(message)
     // Validate Slack verify token
     if (message.token !== ACTIVITYBOT_COMMAND_TOKEN_1 && message.token !== ACTIVITYBOT_COMMAND_TOKEN_2) {
       return bot.res.send(401, 'Unauthorized')
     }
 
-    bot.replyAcknowledge()
     const { text } = message
     const date = Date.now()
     const apiUser = Promise.promisifyAll(bot.api.users)
@@ -71,11 +70,11 @@ controller.on('slash_command', async function (bot, message) {
         }
         break
       default:
-        bot.replyPrivate(message, 'Sorry, I\'m not sure what that command is')
+        bot.whisper(message, 'Sorry, I\'m not sure what that command is')
     }
   } catch (e) {
     console.log(e)
-    bot.replyPrivate(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+    bot.whisper(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
   }
 })
 

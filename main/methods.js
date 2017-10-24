@@ -8,7 +8,8 @@ import asyncForEach from 'async-foreach'
 
 import { base, _getAllRecords } from './airtable'
 import firstTimeConversation from './learnbot/firstTimeConversation'
-const {forEach} = asyncForEach
+
+const { forEach } = asyncForEach
 
 const {
   AIRTABLE_MEMBERS,
@@ -27,7 +28,7 @@ if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_
 // get slack user info by id
 export const getSlackUser = async (bot, id) => {
   const apiUser = Promise.promisifyAll(bot.api.users)
-  const {user} = await apiUser.infoAsync({user: id})
+  const { user } = await apiUser.infoAsync({ user: id })
   return user
 }
 
@@ -42,14 +43,14 @@ export const getMember = async (id) => {
 export const checkIfBot = async (bot, id) => {
   if (id === 'USLACKBOT') return true
   const apiUsers = Promise.promisifyAll(bot.api.users)
-  const {user: {is_bot: isBot}} = await apiUsers.infoAsync({token: bot.config.bot.app_token, user: id})
+  const { user: { is_bot: isBot } } = await apiUsers.infoAsync({ token: bot.config.bot.app_token, user: id })
   return isBot
 }
 
 // get all slack members
 export const getAllMembers = async (bot) => {
   const apiUser = Promise.promisifyAll(bot.api.users)
-  const {members} = await apiUser.listAsync({token: bot.config.bot.app_token})
+  const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
   _.remove(members, ({ id }) => checkIfBot(bot, id) === true)
   return members
 }
@@ -65,13 +66,13 @@ export const getIdFromName = async (name) => {
 export const meetingDone = async (learner, teacher) => {
   const update = Promise.promisify(base(AIRTABLE_MOOD).update)
   const id = getPairingAirtableId(learner, teacher)
-  await update(id, {'Met': true})
+  await update(id, { 'Met': true })
 }
 
 export const saveFeedback = async (feedback, learner, teacher) => {
   const update = Promise.promisify(base(AIRTABLE_MOOD).update)
   const id = getPairingAirtableId(learner, teacher)
-  await update(id, {'Feedback': feedback })
+  await update(id, { 'Feedback': feedback })
 }
 
 export const saveMood = async (id, level, comment) => {
@@ -139,17 +140,28 @@ export const getEmoji = (level) => {
 
 export const getColor = (level) => {
   switch (level) {
-    case 1: return '#B71C1C'
-    case 2: return '#D32F2F'
-    case 3: return '#F44336'
-    case 4: return '#F57F17'
-    case 5: return '#FBC02D'
-    case 6: return '#FFEB3B'
-    case 7: return '#CDDC39'
-    case 8: return '#9CCC65'
-    case 9: return '#7CB342'
-    case 10: return '#558B2F'
-    default: return '#9CCC65'
+    case 1:
+      return '#B71C1C'
+    case 2:
+      return '#D32F2F'
+    case 3:
+      return '#F44336'
+    case 4:
+      return '#F57F17'
+    case 5:
+      return '#FBC02D'
+    case 6:
+      return '#FFEB3B'
+    case 7:
+      return '#CDDC39'
+    case 8:
+      return '#9CCC65'
+    case 9:
+      return '#7CB342'
+    case 10:
+      return '#558B2F'
+    default:
+      return '#9CCC65'
   }
 }
 
@@ -165,7 +177,7 @@ export const getApplicant = async (slackHandle) => {
 // update applicant with slack handle
 export const updateApplicant = async (slackHandle, obj) => {
   const update = Promise.promisify(base(AIRTABLE_APPLICANTS).update)
-  const {id} = await getApplicant(slackHandle)
+  const { id } = await getApplicant(slackHandle)
   const applicant = update(id, obj)
   return applicant
 }
@@ -202,19 +214,19 @@ export const getAllApplicants = async () => {
  */
 export const getAllNoApplicants = async (bot) => {
   const apiUser = Promise.promisifyAll(bot.api.users)
-  const {members} = await apiUser.listAsync({token: bot.config.bot.app_token})
+  const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
   const applicants = await getAllApplicants()
-  const listMember = _.map(members, ({id, name}) => ({id, name}))
-  const listApplicants = _.map(applicants, ({name}) => name)
-  _.remove(listMember, ({name}) => listApplicants.indexOf(name) >= 0)
+  const listMember = _.map(members, ({ id, name }) => ({ id, name }))
+  const listApplicants = _.map(applicants, ({ name }) => name)
+  _.remove(listMember, ({ name }) => listApplicants.indexOf(name) >= 0)
   return listMember
 }
 
 export const checkIfFirstTime = async (bot, message) => {
-  const {name} = await getSlackUser(bot, message.user)
+  const { name } = await getSlackUser(bot, message.user)
   const applicant = await getApplicant(name)
   if (!!applicant === false) {
-    await firstTimeConversation(bot, message, {name})
+    await firstTimeConversation(bot, message, { name })
   }
   return !!applicant
 }
@@ -232,7 +244,7 @@ export const checkIfAdmin = async (bot, message) => {
     const name = record.get('Slack Handle')[0]
     admins.push(name.replace(/^@/, ''))
   })
-  const {user: {name}} = await apiUser.infoAsync({user: message.user})
+  const { user: { name } } = await apiUser.infoAsync({ user: message.user })
   return admins.indexOf(name) >= 0
 }
 
@@ -247,7 +259,7 @@ export const checkIfAdmin = async (bot, message) => {
  */
 export const getMembersPaired = async () => {
   const applicants = await getAllApplicants()
-  const members = _.map(applicants, ({name}) => ({name, isLearner: false, isTeacher: false}))
+  const members = _.map(applicants, ({ name }) => ({ name, isLearner: false, isTeacher: false }))
   const pairings = await getPairingsNotIntroduced()
   pairings.forEach((record) => {
     const learner = record.get('Learner')
@@ -356,25 +368,27 @@ export const getAvailableMembers = async () => {
     asked: record.get('Asked for news this month [weeklynews]')
   }))
   const numberMembers = Math.floor(members.length / 4)
-  const membersAvailable = _.filter(members, {asked: undefined})
-  return {members, numberMembers, membersAvailable}
+  const membersAvailable = _.filter(members, { asked: undefined })
+  return { members, numberMembers, membersAvailable }
 }
 
 // get 25% random available members
 export const getRandomMembers = (bot, message) => new Promise(async (resolve, reject) => {
   try {
     const getResult = async (params) => {
-      let {numberMembers, membersAvailable} = params
+      let { numberMembers, membersAvailable } = params
       const list = []
       for (let i = 0; i < numberMembers; i = i + 1) {
         const member = membersAvailable[Math.floor(Math.random() * membersAvailable.length)]
-        _.remove(membersAvailable, ({name}) => { return name === member.name })
+        _.remove(membersAvailable, ({ name }) => {
+          return name === member.name
+        })
         if (member && member.name !== '') list.push(member)
       }
       const allSlackUser = await getAllMembers(bot)
-      return _.map(list, ({name, airtableId}) => {
-        const {id, profile: {first_name: firstName}} = _.find(allSlackUser, {name})
-        return {airtableId, id, name, firstName}
+      return _.map(list, ({ name, airtableId }) => {
+        const { id, profile: { first_name: firstName } } = _.find(allSlackUser, { name })
+        return { airtableId, id, name, firstName }
       })
     }
     let res = await getAvailableMembers()
@@ -441,19 +455,19 @@ export const getResponsibles = async (bot) => {
     if (a.lastName > b.lastName) return 1
     return 0
   })
-  const index = _.findIndex(members, {isResponsible: true})
-  const {slackName: responsibleName, airtableId} = members[index]
+  const index = _.findIndex(members, { isResponsible: true })
+  const { slackName: responsibleName, airtableId } = members[index]
   const nextIndex = index + 1 === members.length ? 0 : index + 1
-  const {slackName: nextResponsibleName, airtableId: nextAirtableId} = members[nextIndex]
+  const { slackName: nextResponsibleName, airtableId: nextAirtableId } = members[nextIndex]
   const allMembers = await getAllMembers(bot)
-  const {id: responsibleId} = _.find(allMembers, {name: responsibleName})
-  const {id: nextResponsibleId} = _.find(allMembers, {name: nextResponsibleName})
-  return {responsibleId, nextResponsibleId, airtableId, nextAirtableId}
+  const { id: responsibleId } = _.find(allMembers, { name: responsibleName })
+  const { id: nextResponsibleId } = _.find(allMembers, { name: nextResponsibleName })
+  return { responsibleId, nextResponsibleId, airtableId, nextAirtableId }
 }
 
 // get the last weekly news message's timestamp of a user
 export const getTimestamp = async (bot, userId, allMembers) => {
-  const {name} = _.find(allMembers, {id: userId})
+  const { name } = _.find(allMembers, { id: userId })
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Main View',
     fields: ['Message Timestamp [weeklynews]'],
@@ -477,9 +491,9 @@ export const getUsersAskedByResponsible = async (bot, userId) => {
   records.forEach((record) => {
     const name = record.get('Slack Handle').replace(/^@/, '')
     console.log(name)
-    if(name && name !== '') {
-      const member = _.find(allMembers, {name})
-      if(member && member.id) {
+    if (name && name !== '') {
+      const member = _.find(allMembers, { name })
+      if (member && member.id) {
         console.log(member.id)
         users.push(member.id)
       }
@@ -526,4 +540,35 @@ export const getLastWeekThanks = async () => {
     filterByFormula: `{Date} >= ${ping}`
   }))
   return _.map(records, 'fields')
+}
+
+export const getActivities = async (listDone, listThanks) => {
+  const activities = []
+  const inactives = []
+  const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
+    view: 'Main View',
+    fields: ['Slack Handle'],
+    filterByFormula: 'FIND(\'Cofounder\', {Status})'
+  }))
+  const allRecords = []
+  records.forEach(({id, fields: { 'Slack Handle': slackHandle } }) => allRecords.push({ id, slackHandle }))
+  for (let record of allRecords) {
+    const { id, slackHandle } = record
+    const member = slackHandle.substring(slackHandle.indexOf('@') + 1)
+    const dones = []
+    listDone.forEach(done => (done['By'][0] === id ? dones.push(done['Text']) : null))
+    const helps = []
+    for (let help of listThanks) {
+      if (help['To'][0] === id) {
+        const { fields } = await getMember(help['By'][0])
+        helps.push(fields['Slack Handle'].substring(fields['Slack Handle'].indexOf('@') + 1))
+      }
+    }
+    if (dones.length > 1 || helps.length > 1) {
+      activities.push({ member, dones, helps })
+    } else {
+      inactives.push(member)
+    }
+  }
+  return { activities, inactives }
 }
