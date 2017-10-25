@@ -584,4 +584,8 @@ export const saveProfile = async (name, newProfile) => {
     'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
     'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
   })
+  return !_.isEqual(oldProfile.get('Bio'), newProfile['Bio'])
+    || !_.isEqual(oldProfile.get('Location'), newProfile['Location'])
+    || !_.isEqual(oldProfile.get('Focus'), newProfile['Focus'])
+    || !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges'])
 }

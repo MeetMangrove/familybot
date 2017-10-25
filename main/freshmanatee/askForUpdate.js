@@ -66,30 +66,30 @@ export default ({ bot, convo, name, id }) => {
           }
         ]
       }]
-    }, function (message, convo) {
-      if (message.callback_id === 'update_info') {
-        if (message.actions[0].value === 'yes') {
+    }, function (reply, convo) {
+      if (reply.callback_id === 'update_info') {
+        if (reply.actions[0].value === 'yes') {
           const dialog = bot
             .createDialog(
               'Fresh your profile',
               'fresh_profile',
               'Fresh')
-            .addTextarea('Bio', 'Bio', profile.get('Bio'), {
+            .addTextarea('Bio', 'Bio', convo.vars.profile.bio, {
               max_length: 500,
               placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
             })
-            .addText('Location', 'Location', profile.get('Location'))
-            .addTextarea('Focus', 'Focus', profile.get('Focus'), {
+            .addText('Location', 'Location', convo.vars.profile.location)
+            .addTextarea('Focus', 'Focus', convo.vars.profile.focus, {
               max_length: 300,
               placeholder: 'Your main focus for the next two weeks? (private)'
             })
-            .addTextarea('Challenges', 'Challenges', profile.get('Challenges'), {
+            .addTextarea('Challenges', 'Challenges', convo.vars.profile.challenges, {
               max_length: 300,
               placeholder: 'What challenges do you currently face in your projects and life? (private)'
             })
-          bot.replyWithDialog(message, dialog.asObject(), (err) => {
+          bot.replyWithDialog(reply, dialog.asObject(), (err) => {
             if (err) console.log(err)
-            convo.say({
+            bot.replyInteractive(reply, {
               attachments: [{
                 title: 'Do you want to update these information?',
                 text: 'Okay, Let\'s fresh your profile! :wave:',
@@ -100,7 +100,7 @@ export default ({ bot, convo, name, id }) => {
             convo.next()
           })
         } else {
-          convo.say({
+          bot.replyInteractive(reply, {
             attachments: [
               {
                 title: 'Do you want to update these information?',

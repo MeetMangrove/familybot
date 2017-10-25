@@ -18,7 +18,7 @@ controller.hears(['^fresh'], ['direct_message', 'direct_mention'], async (bot, m
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
       convo.addMessage(`Hi ${name}!`, 'default')
-      convo.addMessage(`Let's update your information.`, 'default')
+      convo.addMessage(`Let's check your information.`, 'default')
       askForUpdate({ bot, convo, name, id: message.user })
     })
   } catch (e) {
@@ -54,17 +54,21 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
 })
 
 controller.on('dialog_submission', async function (bot, message) {
+  bot.dialogOk()
   try {
     const submission = message.submission;
     const { name } = await getSlackUser(bot, message.user)
-    await saveProfile(name, submission)
-    bot.reply(message, 'Your profile has been freshed! :raised_hands:', () => {
+    const isUpdated = await saveProfile(name, submission)
+    if(isUpdated === true) {
       bot.say({
-        text: 'See you in two weeks! :wave:',
-        channel: message.channel
-      })
-    })
-    bot.dialogOk()
+          text: 'Your profile has been freshed! :raised_hands:',
+          channel: message.channel
+        }, () => bot.say({
+          text: 'See you in two weeks! :wave:',
+          channel: message.channel
+        })
+      )
+    }
   } catch (e) {
     errorMessage(e, bot, message)
   }
