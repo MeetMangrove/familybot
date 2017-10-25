@@ -572,3 +572,8 @@ export const getActivities = async (listDone, listThanks) => {
   }
   return { activities, inactives }
 }
+
+
+export const saveProfile = async (oldProfile, newProfile) => {
+
+}

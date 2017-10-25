@@ -4,6 +4,8 @@
 
 import { getIdFromName, getMember } from '../methods'
 
+export let profile = {}
+
 export default async ({ bot, name, id }) => {
   try {
     bot.say({
@@ -12,20 +14,20 @@ export default async ({ bot, name, id }) => {
     }, async (err, res) => {
       if (err) console.log(res)
       const airtableId = await getIdFromName(name)
-      const profile = await getMember(airtableId)
+      profile = await getMember(airtableId)
       bot.api.chat.update({
         token: bot.config.bot.token,
         as_user: true,
         text: `Okay, so this is your current information:`,
         attachments: [
           {
-            'title': ':closed_book: Public bio',
-            'text': profile.get('Public bio'),
+            'title': ':closed_book: Bio',
+            'text': profile.get('Bio'),
             'color': '#E57373'
           },
           {
             'title': ':house_with_garden: Location',
-            'text': profile.get('Current location'),
+            'text': profile.get('Location'),
             'color': '#81C784'
           },
           {
