@@ -7,7 +7,7 @@ import { getLastWeekDone, getLastWeekThanks, getActivities } from '../methods'
 const { CronJob } = cron
 
 const sendActivityDigest = new CronJob({
-  cronTime: '00 00 12 * * 1',
+  cronTime: '00 00 12 * * 4',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const listDone = await getLastWeekDone()
@@ -45,7 +45,7 @@ const sendActivityDigest = new CronJob({
       if (inactives.length > 0) text = text.concat(`\n\nNo activity recorded this week: ${textInactives} :surfer:`)
       bot.say({
         text,
-        channel: '#done'
+        channel: '#general'
       })
     })
   },

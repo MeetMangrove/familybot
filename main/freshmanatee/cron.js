@@ -13,7 +13,7 @@ import { getAllMembers, getUpdates, cleanUpdates } from '../methods'
 const { CronJob } = cron
 
 const sendMessage = new CronJob({
-  cronTime: '00 28 18 * * 3',
+  cronTime: '00 00 09 * * 1',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getAllMembers(bot)
