@@ -579,13 +579,29 @@ export const saveProfile = async (name, newProfile) => {
   const update = Promise.promisify(base(AIRTABLE_MOOD).update)
   await update(oldProfile.id, {
     ...newProfile,
-    'Is new bio?': !_.isEqual(oldProfile.get('Bio'), newProfile['Bio']),
     'Is new location?': !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
     'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
     'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
   })
-  return !_.isEqual(oldProfile.get('Bio'), newProfile['Bio'])
-    || !_.isEqual(oldProfile.get('Location'), newProfile['Location'])
+  return !_.isEqual(oldProfile.get('Location'), newProfile['Location'])
     || !_.isEqual(oldProfile.get('Focus'), newProfile['Focus'])
     || !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges'])
+}
+
+export const getUpdates = async () => {
+  const members = []
+  const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
+    view: 'Main View',
+    fields: ['Slack Handle', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
+    filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1)'
+  }))
+  records.forEach((member) => {
+    members.push({
+      name: member.get('Slack Handle'),
+      location: member.get('Is new location?') === true ? member.get('Location') : null,
+      focus: member.get('Is new focus?') === true ? member.get('Focus') : null,
+      challenges: member.get('Is new challenges?') === true ? member.get('Challenges') : null
+    })
+  })
+  return members
 }

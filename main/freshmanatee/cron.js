@@ -8,12 +8,12 @@ import moment from 'moment'
 
 import { bots } from './config'
 import askForUpdate from './askForUpdate'
-import { getAllMembers } from '../methods'
+import { getAllMembers, getUpdates } from '../methods'
 
 const { CronJob } = cron
 
 const sendMessage = new CronJob({
-  cronTime: '* * 09 * * 1',
+  cronTime: '00 00 09 * * 1',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getAllMembers(bot)
@@ -37,4 +37,26 @@ const sendMessage = new CronJob({
   timeZone: 'Europe/Paris'
 })
 
+const postDigest = new CronJob({
+  cronTime: '00 * 17 * * 3',
+  onTick: function () {
+    _.forEach(bots, async (bot) => {
+      const members = await getUpdates()
+      let text = `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`
+      members.forEach((member) => {
+        const { name, bio, location, focus, challenges } = member
+        text = text.concat(`\n\n${location ? `<@${name}> just moved to ${location}` : ''}${bio ? `<@${name}> has a new focus: \`\`\`${focus}\`\`\`` : ''}${challenges ? `<@${name}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`` : ''}`)
+      })
+      text = text.concat(`\n\nGo Mangrove :facepunch:`)
+      bot.say({
+        text,
+        channel: '#general'
+      })
+    })
+  },
+  start: false,
+  timeZone: 'Europe/Paris'
+})
+
 sendMessage.start()
+postDigest.start()

@@ -56,9 +56,8 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
 controller.on('dialog_submission', async function (bot, message) {
   bot.dialogOk()
   try {
-    const submission = message.submission;
     const { name } = await getSlackUser(bot, message.user)
-    const isUpdated = await saveProfile(name, submission)
+    const isUpdated = await saveProfile(name, message.submission)
     if(isUpdated === true) {
       bot.say({
           text: 'Your profile has been freshed! :raised_hands:',
