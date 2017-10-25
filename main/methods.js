@@ -597,6 +597,7 @@ export const getUpdates = async () => {
   }))
   records.forEach((member) => {
     members.push({
+      id: member.id,
       name: member.get('Slack Handle'),
       location: member.get('Is new location?') === true ? member.get('Location') : null,
       focus: member.get('Is new focus?') === true ? member.get('Focus') : null,
@@ -604,4 +605,15 @@ export const getUpdates = async () => {
     })
   })
   return members
+}
+
+export const cleanUpdates = async (members) => {
+  members.forEach((member) => {
+    const update = Promise.promisify(base(AIRTABLE_MEMBERS).update)
+    update(member.id, {
+      'Is new location?': false,
+      'Is new focus?': false,
+      'Is new challenges?': false,
+    })
+  })
 }

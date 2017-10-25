@@ -8,12 +8,12 @@ import moment from 'moment'
 
 import { bots } from './config'
 import askForUpdate from './askForUpdate'
-import { getAllMembers, getUpdates } from '../methods'
+import { getAllMembers, getUpdates, cleanUpdates } from '../methods'
 
 const { CronJob } = cron
 
 const sendMessage = new CronJob({
-  cronTime: '00 00 09 * * 1',
+  cronTime: '00 25 18 * * 3',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getAllMembers(bot)
@@ -25,12 +25,16 @@ const sendMessage = new CronJob({
       } else {
         list = chunk[1]
       }
-      _.forEach(list, (params) => bot.startPrivateConversation({ user: params.id }, function (err, convo) {
-        if (err) return console.log(err)
-        convo.addMessage(`Hi ${params.name}!`, 'default')
-        convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
-        askForUpdate({ bot, convo, ...params })
-      }))
+      _.forEach(list, (params) => {
+        if(params.name === 'thomas') {
+          bot.startPrivateConversation({ user: params.id }, function (err, convo) {
+            if (err) return console.log(err)
+            convo.addMessage(`Hi ${params.name}!`, 'default')
+            convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
+            askForUpdate({ bot, convo, ...params })
+          })
+        }
+      })
     })
   },
   start: false,
@@ -38,19 +42,22 @@ const sendMessage = new CronJob({
 })
 
 const postDigest = new CronJob({
-  cronTime: '00 * 17 * * 3',
+  cronTime: '00 00 19 * * 3',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getUpdates()
-      let text = `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`
+      let text = `*Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`
       members.forEach((member) => {
-        const { name, bio, location, focus, challenges } = member
-        text = text.concat(`\n\n${location ? `<@${name}> just moved to ${location}` : ''}${bio ? `<@${name}> has a new focus: \`\`\`${focus}\`\`\`` : ''}${challenges ? `<@${name}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`` : ''}`)
+        const { name, location, focus, challenges } = member
+        text = text.concat(`\n\n${location ? `<${name}> just moved to ${location}\n` : ''}${focus ? `<${name}> has a new focus: \`\`\`${focus}\`\`\`\n` : ''}${challenges ? `<${name}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`\n` : ''}`)
       })
       text = text.concat(`\n\nGo Mangrove :facepunch:`)
       bot.say({
         text,
         channel: '#general'
+      }, async (err) => {
+        if (err) return console.log(err)
+        await cleanUpdates(members)
       })
     })
   },

@@ -92,7 +92,7 @@ export default ({ bot, convo, name, id }) => {
             bot.replyInteractive(reply, {
               attachments: [{
                 title: 'Do you want to update these information?',
-                text: 'Okay, Let\'s fresh your profile! :wave:',
+                text: 'Okay, let\'s fresh your profile! :facepunch:',
                 callback_id: 'update_info',
                 attachment_type: 'default',
               }]
