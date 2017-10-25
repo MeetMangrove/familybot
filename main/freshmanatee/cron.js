@@ -13,7 +13,7 @@ import { getAllMembers, getUpdates, cleanUpdates } from '../methods'
 const { CronJob } = cron
 
 const sendMessage = new CronJob({
-  cronTime: '00 25 18 * * 3',
+  cronTime: '00 28 18 * * 3',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getAllMembers(bot)
@@ -26,14 +26,12 @@ const sendMessage = new CronJob({
         list = chunk[1]
       }
       _.forEach(list, (params) => {
-        if(params.name === 'thomas') {
-          bot.startPrivateConversation({ user: params.id }, function (err, convo) {
-            if (err) return console.log(err)
-            convo.addMessage(`Hi ${params.name}!`, 'default')
-            convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
-            askForUpdate({ bot, convo, ...params })
-          })
-        }
+        bot.startPrivateConversation({ user: params.id }, function (err, convo) {
+          if (err) return console.log(err)
+          convo.addMessage(`Hi ${params.name}!`, 'default')
+          convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
+          askForUpdate({ bot, convo, ...params })
+        })
       })
     })
   },
