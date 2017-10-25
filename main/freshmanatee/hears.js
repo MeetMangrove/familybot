@@ -2,10 +2,9 @@
  * Created by thomasjeanneau on 09/04/2017.
  */
 
-import { getSlackUser } from '../methods'
+import { getSlackUser, saveProfile } from '../methods'
 import { controller } from './config'
-import askForUpdate from './askForUpdate'
-import updateProfile from './updateProfile'
+import askForUpdate, { profile } from './askForUpdate'
 
 const errorMessage = (e, bot, message) => {
   console.log(e)
@@ -13,7 +12,6 @@ const errorMessage = (e, bot, message) => {
 }
 
 // Responsible Commands
-
 controller.hears(['^fresh'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     const { name } = await getSlackUser(bot, message.user)
@@ -24,7 +22,6 @@ controller.hears(['^fresh'], ['direct_message', 'direct_mention'], async (bot, m
 })
 
 // User Commands
-
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     const { name } = await getSlackUser(bot, message.user)
@@ -54,7 +51,28 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
 controller.on('interactive_message_callback', function (bot, message) {
   if (message.callback_id === 'update_info') {
     if (message.actions[0].value === 'yes') {
-      updateProfile({ bot, message })
+      const dialog = bot
+        .createDialog(
+          'Fresh your profile',
+          'fresh_profile',
+          'Fresh')
+        .addTextarea('Bio', 'Bio', profile.get('Bio'), {
+          max_length: 500,
+          placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
+        })
+        .addText('Location', 'Location', profile.get('Location'))
+        .addTextarea('Focus', 'Focus', profile.get('Focus'), {
+          max_length: 300,
+          placeholder: 'Your main focus for the next two weeks? (private)'
+        })
+        .addTextarea('Challenges', 'Challenges', profile.get('Challenges'), {
+          max_length: 300,
+          placeholder: 'What challenges do you currently face in your projects and life? (private)'
+        })
+      bot.replyWithDialog(message, dialog.asObject(), (err, res) => {
+        if (err) console.log(err)
+        console.log(res)
+      })
     } else {
       bot.replyInteractive(message, {
         text: 'See you in two weeks! :wave:',
@@ -69,29 +87,20 @@ controller.on('interactive_message_callback', function (bot, message) {
   }
 })
 
-// use a receive middleware hook to validate a form submission
-// and use bot.dialogError to respond with an error before the submission
-// can be sent to the handler
-controller.middleware.receive.use(function validateDialog(bot, message, next) {
-  if (message.type === 'dialog_submission') {
-    if (message.submission.number > 100) {
-      bot.dialogError({
-        "name":"number",
-        "error":"Please specify a value below 100"
-      });
-      return;
-    }
+controller.on('dialog_submission', async function (bot, message) {
+  try {
+    const submission = message.submission;
+    await saveProfile(profile, submission)
+    bot.reply(message, 'Your profile has been freshed! :raised_hands:', () => {
+      bot.say({
+        text: 'See you in two weeks! :wave:',
+        channel: message.channel
+      })
+    })
+    bot.dialogOk()
+  } catch (e) {
+    errorMessage(e, bot, message)
   }
-  next();
-})
-
-controller.on('dialog_submission', function(bot, message) {
-  const submission = message.submission;
-  console.log(submission)
-  bot.reply(message, 'Got it!');
-
-  // call dialogOk or else Slack will think this is an error
-  bot.dialogOk();
 })
 
 export default controller
