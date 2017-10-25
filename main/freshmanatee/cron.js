@@ -25,7 +25,12 @@ const sendMessage = new CronJob({
       } else {
         list = chunk[1]
       }
-      _.forEach(list, async (params) => await askForUpdate({bot, ...params}))
+      _.forEach(list, (params) => bot.startPrivateConversation({ user: params.id }, function (err, convo) {
+        if (err) return console.log(err)
+        convo.addMessage(`Hi ${params.name}!`, 'default')
+        convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
+        askForUpdate({ bot, convo, ...params })
+      }))
     })
   },
   start: false,

@@ -573,13 +573,15 @@ export const getActivities = async (listDone, listThanks) => {
   return { activities, inactives }
 }
 
-export const saveProfile = async (oldProfile, newProfile) => {
+export const saveProfile = async (name, newProfile) => {
+  const airtableId = await getIdFromName(name)
+  const oldProfile = await getMember(airtableId)
   const update = Promise.promisify(base(AIRTABLE_MOOD).update)
   await update(oldProfile.id, {
     ...newProfile,
-    'Is new bio?': _.isEqual(oldProfile.get('Bio'), newProfile['Bio']),
-    'Is new location?': _.isEqual(oldProfile.get('Location'), newProfile['Location']),
-    'Is new focus?': _.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
-    'Is new challenges?': _.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
+    'Is new bio?': !_.isEqual(oldProfile.get('Bio'), newProfile['Bio']),
+    'Is new location?': !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
+    'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
+    'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
   })
 }
