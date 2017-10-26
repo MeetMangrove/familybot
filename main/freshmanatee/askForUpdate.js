@@ -13,7 +13,7 @@ export default ({ bot, convo, name, id }) => {
     convo.beforeThread('search', async (convo, next) => {
       const airtableId = await getIdFromName(name)
       const profile = await getMember(airtableId)
-      convo.setVar('profile',{
+      convo.setVar('profile', {
         bio: profile.get('Bio'),
         location: profile.get('Location'),
         focus: profile.get('Focus'),
@@ -45,6 +45,10 @@ export default ({ bot, convo, name, id }) => {
           'color': '#E0E0E0'
         }]
     }, 'search')
+    const timeout = setTimeout((bot, channel, convo) => {
+      bot.say({ text: 'Hum... you seem busy. Come back say `fresh` when you want!', channel })
+      convo.stop()
+    }, 1800000, bot, id, convo)
     convo.addQuestion({
       attachments: [{
         title: 'Do you want to update these information?',
@@ -68,6 +72,7 @@ export default ({ bot, convo, name, id }) => {
       }]
     }, function (reply, convo) {
       if (reply.callback_id === 'update_info') {
+        clearTimeout(timeout)
         if (reply.actions[0].value === 'yes') {
           const dialog = bot
             .createDialog(
@@ -117,6 +122,6 @@ export default ({ bot, convo, name, id }) => {
     convo.activate()
   } catch (e) {
     console.log(e)
-    bot.reply({ user: id }, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+    bot.say({ user: id }, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
   }
 }
