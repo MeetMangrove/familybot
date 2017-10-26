@@ -44,7 +44,7 @@ const postDigest = new CronJob({
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getUpdates()
-      let text = `*Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`
+      let text = `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`
       members.forEach((member) => {
         const { name, location, focus, challenges } = member
         text = text.concat(`\n\n${location ? `<${name}> just moved to ${location}\n` : ''}${focus ? `<${name}> has a new focus: \`\`\`${focus}\`\`\`\n` : ''}${challenges ? `<${name}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`\n` : ''}`)

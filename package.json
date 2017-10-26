@@ -20,8 +20,7 @@
     "babel-preset-stage-3": "6.24.1",
     "bipartite-matching": "1.0.0",
     "bluebird": "3.5.0",
-    "body-parser": "^1.17.2",
-    "mangrove-botkit": "0.6.4",
+    "body-parser": "1.18.2",
     "botkit-storage-firebase": "1.0.0",
     "botkit-storage-mongo": "1.0.6",
     "cron": "1.2.1",
@@ -31,6 +30,7 @@
     "i18n": "0.8.3",
     "lodash": "4.17.4",
     "long-timeout": "0.1.1",
+    "mangrove-botkit": "0.6.4",
     "moment": "2.18.1",
     "moment-timezone": "0.5.13",
     "mongodb": "2.2.28",
@@ -46,9 +46,7 @@
     "eslint-plugin-node": "4.2.2",
     "eslint-plugin-promise": "3.5.0",
     "eslint-plugin-standard": "3.0.1",
-    "localtunnel": "1.8.3",
-    "mocha": "^3.3.0",
-    "nodemon": "^1.11.0"
+    "mocha": "3.5.3"
   },
   "description": "All our bots in one place!",
   "version": "1.0.0",

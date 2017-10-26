@@ -563,8 +563,8 @@ export const getActivities = async (listDone, listThanks) => {
         helps.push(fields['Slack Handle'].substring(fields['Slack Handle'].indexOf('@') + 1))
       }
     }
-    if (dones.length > 1 || helps.length > 1) {
-      activities.push({ member, dones, helps })
+    if (dones.length >= 1 || helps.length >= 1) {
+      activities.push({ member, dones, helps: _.uniq(helps) })
     } else {
       inactives.push(member)
     }
