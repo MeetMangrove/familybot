@@ -86,9 +86,7 @@ export default (convo, name, id) => {
       }
     })
 
-    convo.addMessage({ text: 'Bravo :surfer:' }, 'five')
-    convo.addMessage({ text: 'Today is YOUR day!' }, 'five')
-    convo.addMessage({ text: 'Enjoy it :wink:', action: 'description' }, 'five')
+    convo.addMessage({ text: 'Bravo! :surfer:', action: 'description' }, 'five')
 
     convo.addMessage({ text: 'Oh, I love this mood! :hugging_face:', action: 'description' }, 'four')
 
