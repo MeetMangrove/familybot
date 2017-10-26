@@ -3,19 +3,19 @@
  */
 
 import Botkit from 'mangrove-botkit'
-import BotkitStorageMongo from 'botkit-storage-mongo'
+import FirebaseStorage from 'botkit-storage-firebase'
 
 require('dotenv').config()
 
 const bots = {}
 const {
-  MOODBOT_SLACK_CLIENT_ID,
-  MOODBOT_SLACK_CLIENT_SECRET,
-  MOODBOT_MONGODB_URI
+  RACHID_SLACK_CLIENT_ID,
+  RACHID_SLACK_CLIENT_SECRET,
+  RACHID_FIREBASE_URI
 } = process.env
 
-if (!MOODBOT_SLACK_CLIENT_ID || !MOODBOT_SLACK_CLIENT_SECRET || !MOODBOT_MONGODB_URI) {
-  console.log('Error: Specify MOODBOT_SLACK_CLIENT_ID, MOODBOT_SLACK_CLIENT_SECRET and MOODBOT_MONGODB_URI in a .env file')
+if (!RACHID_SLACK_CLIENT_ID || !RACHID_SLACK_CLIENT_SECRET || !RACHID_FIREBASE_URI) {
+  console.log('Error: Specify RACHID_SLACK_CLIENT_ID, RACHID_SLACK_CLIENT_SECRET and RACHID_FIREBASE_URI in a .env file')
   process.exit(1)
 }
 
@@ -23,8 +23,8 @@ const trackBot = (bot) => {
   bots[bot.config.token] = bot
 }
 
-const mongoStorage = new BotkitStorageMongo({
-  mongoUri: MOODBOT_MONGODB_URI
+const mongoStorage = new FirebaseStorage({
+  firebase_uri: RACHID_FIREBASE_URI
 })
 
 const controller = Botkit.slackbot({
@@ -32,12 +32,12 @@ const controller = Botkit.slackbot({
   interactive_replies: true,
   require_delivery: true,
   storage: mongoStorage,
-  app_name: 'moodbot'
+  app_name: 'rachid'
 })
 
 controller.configureSlackApp({
-  clientId: MOODBOT_SLACK_CLIENT_ID,
-  clientSecret: MOODBOT_SLACK_CLIENT_SECRET,
+  clientId: RACHID_SLACK_CLIENT_ID,
+  clientSecret: RACHID_SLACK_CLIENT_SECRET,
   scopes: ['bot', 'chat:write:bot', 'users:read']
 })
 
@@ -49,7 +49,7 @@ controller.on('create_bot', (bot, config) => {
       if (!err) trackBot(bot)
       bot.startPrivateConversation({user: config.createdBy}, (err, convo) => {
         if (err) return console.log(err)
-        convo.say('I am a moodbot that has just joined your team')
+        convo.say('Hello, I\'m a new Mangrove Bot!')
         convo.say('You must now /invite me to a channel so that I can be of use!')
       })
     })
@@ -69,7 +69,7 @@ controller.storage.teams.all((err, teams) => {
   for (let t in teams) {
     if (teams[t].bot) {
       controller.spawn(teams[t]).startRTM((err, bot) => {
-        if (err) return console.log('Error connecting moodbot to Slack:', err)
+        if (err) return console.log('Error connecting rachid to Slack:', err)
         trackBot(bot)
       })
     }

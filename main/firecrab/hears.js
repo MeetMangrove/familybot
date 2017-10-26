@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Promise from 'bluebird'
 import { controller } from './config'
 
-import { saveDone, saveThanks } from '../methods'
+import { saveDone, saveThanks, errorMessage, getSlackUser } from '../methods'
 
 controller.on('slash_command', async function (bot, message) {
   bot.replyAcknowledge()
@@ -62,6 +62,35 @@ controller.on('slash_command', async function (bot, message) {
   } catch (e) {
     console.log(e)
     bot.whisper(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+  }
+})
+
+// User Commands
+controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+  try {
+    const { name } = await getSlackUser(bot, message.user)
+    bot.startConversation(message, function (err, convo) {
+      if (err) return console.log(err)
+      convo.say(`Hi ${name}! I'm Fire Crab!`)
+      convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
+      convo.say(`I'll share your activity every sunday at 7PM :fire:`)
+    })
+  } catch (e) {
+    errorMessage(e, bot, message)
+  }
+})
+
+controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, message) => {
+  try {
+    const { name } = await getSlackUser(bot, message.user)
+    bot.startConversation(message, function (err, convo) {
+      if (err) return console.log(err)
+      convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
+      convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
+      convo.say(`I'll share your activity every sunday at 7PM :fire:`)
+    })
+  } catch (e) {
+    errorMessage(e, bot, message)
   }
 })
 

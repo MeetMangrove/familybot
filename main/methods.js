@@ -25,6 +25,11 @@ if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_
   process.exit(1)
 }
 
+export const errorMessage = (e, bot, message) => {
+  console.log(e)
+  bot.reply(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+}
+
 // get slack user info by id
 export const getSlackUser = async (bot, id) => {
   const apiUser = Promise.promisifyAll(bot.api.users)

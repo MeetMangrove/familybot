@@ -2,18 +2,13 @@
  * Created by thomasjeanneau on 09/04/2017.
  */
 
-import { getSlackUser } from '../methods'
+import { getSlackUser, errorMessage } from '../methods'
 import { controller } from './config'
 import giveMood from './giveMood'
 import askForMood from "./askForMood"
 
-const errorMessage = (e, bot, message) => {
-  console.log(e)
-  bot.reply(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
-}
-
 // User Commands
-controller.hears(['^give my mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+controller.hears(['^mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     const {name} = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {

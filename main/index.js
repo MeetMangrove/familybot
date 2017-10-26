@@ -6,36 +6,35 @@ import vhost from 'vhost'
 
 // Import controllers for each bot
 import learnbot from './learnbot'
-import moodbot from './moodbot'
-import newsbot from './freshmanatee'
+import rachid from './rachid'
+import freshmanatee from './freshmanatee'
 import firecrab from './firecrab'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
 const {
   NODE_ENV,
-  PORT,
   HOSTNAME,
   FORCE_HOSTNAME,
 } = process.env
 
-if (!NODE_ENV || !PORT || !HOSTNAME) {
-  console.log('Error: Specify NODE_ENV, PORT, HOSTNAME in a .env file')
+if (!NODE_ENV || !HOSTNAME) {
+  console.log('Error: Specify NODE_ENV and HOSTNAME in a .env file')
   process.exit(1)
 }
 
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.set('port', PORT || 5000)
+app.set('port', process.env.PORT || 5000)
 
 // Map each bot to its own hostname
 // For development you can use ngrok and set up a dedicated *.ngrok.io domain for each bot
 // For production, you should set up your DNS to point different domain names to your server
 const botSetups = [
   { controller: learnbot },
-  { controller: moodbot },
-  { controller: newsbot },
+  { controller: rachid },
+  { controller: freshmanatee },
   { controller: firecrab }
 ]
 

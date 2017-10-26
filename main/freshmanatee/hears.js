@@ -2,14 +2,9 @@
  * Created by thomasjeanneau on 09/04/2017.
  */
 
-import { getSlackUser, saveProfile } from '../methods'
+import { getSlackUser, saveProfile, errorMessage } from '../methods'
 import { controller } from './config'
 import askForUpdate from './askForUpdate'
-
-const errorMessage = (e, bot, message) => {
-  console.log(e)
-  bot.reply(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
-}
 
 // Responsible Commands
 controller.hears(['^fresh'], ['direct_message', 'direct_mention'], async (bot, message) => {
@@ -32,8 +27,9 @@ controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_messag
     const { name } = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      convo.say(`Hi ${name}! I'm Fresh Manatee :tada:`)
-      convo.say(`Say \`fresh\` if you want me to update your profile :wink:`)
+      convo.say(`Hi ${name}! I'm Fresh Manatee!`)
+      convo.say(`Say \`fresh\` if you want me to update your profile`)
+      convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
@@ -46,7 +42,8 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
       convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
-      convo.say(`Say \`fresh\` if you want me to update your profile :wink:`)
+      convo.say(`Say \`fresh\` if you want me to update your profile`)
+      convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
