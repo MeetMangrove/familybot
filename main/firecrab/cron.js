@@ -7,7 +7,7 @@ import { getLastWeekDone, getLastWeekThanks, getActivities } from '../methods'
 const { CronJob } = cron
 
 const sendActivityDigest = new CronJob({
-  cronTime: '10,20,30,40,50 * * * * 4',
+  cronTime: '00 00 19 * * 0',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const listDone = await getLastWeekDone()
@@ -44,7 +44,7 @@ const sendActivityDigest = new CronJob({
       bot.say({
         text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
         attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ["text"] })),
-        channel: '#dev-test'
+        channel: '#general'
       }, (err) => {
         if (err) return console.log(err)
         if (inactives.length > 0) {
@@ -60,7 +60,7 @@ const sendActivityDigest = new CronJob({
           })
           bot.say({
             text: `No activity recorded this week: ${textInactives} :surfer:`,
-            channel: '#dev-test'
+            channel: '#general'
           })
         }
       })
