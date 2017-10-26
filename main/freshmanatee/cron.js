@@ -40,7 +40,7 @@ const sendMessage = new CronJob({
 })
 
 const postDigest = new CronJob({
-  cronTime: '00,10,20,30,40,50 * * * * 4',
+  cronTime: '00 00 19 * * 3',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getUpdates()
@@ -56,14 +56,14 @@ const postDigest = new CronJob({
       bot.say({
         text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
         attachments,
-        channel: '#dev-test'
+        channel: '#general'
       }, async (err) => {
         if (err) return console.log(err)
         bot.say({
           text: `Go Mangrove :facepunch:`,
-          channel: '#dev-test'
+          channel: '#general'
         })
-        // cleanUpdates(members)
+        cleanUpdates(members)
       })
     })
   },
