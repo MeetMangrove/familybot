@@ -548,7 +548,6 @@ export const getActivities = async (listDone, listThanks) => {
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Main View',
     fields: ['Slack Handle'],
-    filterByFormula: 'FIND(\'Cofounder\', {Status})'
   }))
   const allRecords = []
   records.forEach(({id, fields: { 'Slack Handle': slackHandle } }) => allRecords.push({ id, slackHandle }))
