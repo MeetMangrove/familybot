@@ -606,10 +606,9 @@ export const getUpdates = async () => {
   return members
 }
 
-export const cleanUpdates = async (members) => {
-  members.forEach((member) => {
-    const update = Promise.promisify(base(AIRTABLE_MEMBERS).update)
-    update(member.id, {
+export const cleanUpdates = (members) => {
+  members.forEach(({ id }) => {
+    base(AIRTABLE_MEMBERS).update(id, {
       'Is new location?': false,
       'Is new focus?': false,
       'Is new challenges?': false,

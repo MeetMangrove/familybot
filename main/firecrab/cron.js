@@ -29,7 +29,7 @@ const sendActivityDigest = new CronJob({
             textHelps = textHelps.concat(`, <@${help}>`)
           }
         })
-        const template = ` ${dones.length > 0 ? `\`\`\`${textDones}\`\`\`` : ''} ${helps.length > 0 ? `${dones.length > 0 ? 'and also helped' : `helped` } ${textHelps}${dones.length > 0 ? '!' : ' :pray:' }` : ''}`
+        const template = ` ${dones.length > 0 ? `\`\`\`${textDones}\`\`\`` : ''} ${helps.length > 0 ? `${dones.length > 0 ? 'also ' : '' }helped ${textHelps}${dones.length > 0 ? '!' : ' :pray:' }` : ''}`
         sortActivities.push({
           text: template,
           title: `<@${member}>`,

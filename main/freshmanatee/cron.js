@@ -40,22 +40,30 @@ const sendMessage = new CronJob({
 })
 
 const postDigest = new CronJob({
-  cronTime: '00 00 19 * * 3',
+  cronTime: '00,10,20,30,40,50 * * * * 4',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getUpdates()
-      let text = `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`
+      const attachments = []
       members.forEach((member) => {
         const { name, location, focus, challenges } = member
-        text = text.concat(`\n\n${location ? `<${name}> just moved to ${location}\n` : ''}${focus ? `<${name}> has a new focus: \`\`\`${focus}\`\`\`\n` : ''}${challenges ? `<${name}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`\n` : ''}`)
+        attachments.push({
+          title: `<${name}>`,
+          text: `${location ? `:house_with_garden: just moved to *${location}*\n` : ''}${focus ? `:rocket: has a new focus: \`\`\`${focus}\`\`\`\n` : ''}${challenges ? `:tornado: is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`` : ''}`,
+          mrkdwn_in: ["text"]
+        })
       })
-      text = text.concat(`\n\nGo Mangrove :facepunch:`)
       bot.say({
-        text,
-        channel: '#general'
+        text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
+        attachments,
+        channel: '#dev-test'
       }, async (err) => {
         if (err) return console.log(err)
-        await cleanUpdates(members)
+        bot.say({
+          text: `Go Mangrove :facepunch:`,
+          channel: '#dev-test'
+        })
+        // cleanUpdates(members)
       })
     })
   },
