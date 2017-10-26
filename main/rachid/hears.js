@@ -5,6 +5,7 @@
 import { getSlackUser, errorMessage } from '../methods'
 import { controller } from './config'
 import giveMood from './giveMood'
+import getMood from './getMood'
 
 // User Commands
 controller.hears(['^mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
@@ -22,11 +23,7 @@ controller.hears(['^mood$'], ['direct_message', 'direct_mention'], async (bot, m
 controller.hears(['^daily'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     const {name} = await getSlackUser(bot, message.user)
-    bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
-      giveMood(convo, name)
-      convo.transitionTo('give_mood', `Hello ${name}! :smile:`);
-    })
+    await getMood(bot, message.user, name)
   } catch (e) {
     errorMessage(e, bot, message)
   }
@@ -40,7 +37,7 @@ controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_messag
       convo.say(`Hi ${name}! I'm Rachid!`)
       convo.say(`You can say \`mood\` to save your mood`)
       convo.say(`And also \`daily\` to see last Mangrovers' mood`)
-      convo.say(`I'll share your mood every day at 7PM :sunglasses:`)
+      convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :sunglasses:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
@@ -55,7 +52,7 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
       convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
       convo.say(`You can say \`mood\` to save your mood`)
       convo.say(`And also \`daily\` to see last Mangrovers' mood`)
-      convo.say(`I'll share your mood every day at 7PM :sunglasses:`)
+      convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :sunglasses:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)

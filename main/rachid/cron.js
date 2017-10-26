@@ -4,21 +4,15 @@
 
 import _ from 'lodash'
 import cron from 'cron'
-import moment from 'moment-timezone'
-import asyncForEach from 'async-foreach'
 
 import { bots } from './config'
 import {
   getAllMembers,
-  getMoods,
-  getMember,
-  getEmoji,
-  getColor
 } from '../methods'
 import giveMood from './giveMood'
+import getMood from './getMood'
 
 const { CronJob } = cron
-const { forEach } = asyncForEach
 
 const askMood = new CronJob({
   cronTime: '00 00 15 * * 1-5',
@@ -38,39 +32,10 @@ const askMood = new CronJob({
 })
 
 const sendMood = new CronJob({
-  cronTime: '00,10,20,30,40,50 * * * * *',
+  cronTime: '00 00 19 * * *',
   onTick: function () {
     _.forEach(bots, async (bot) => {
-      try {
-        const moods = await getMoods()
-        const attachments = []
-        if (moods.length >= 1) {
-          forEach(moods, async function (mood) {
-            const done = this.async()
-            const { fields: user } = await getMember(mood['Member'][0])
-            attachments.push({
-              'title': `${getEmoji(mood['Level'])} <${user['Slack Handle']}> is at ${mood['Level']}/5`,
-              'text': mood['Comment'],
-              'color': getColor(mood['Level']),
-              'thumb_url': user['Profile Picture'][0].url,
-              'footer': moment(mood['Date']).tz('Europe/Paris').format('MMM Do [at] h:mm A')
-            })
-            done()
-          }, () => bot.say({
-            text: 'Hi dream team! Here is your mood daily digest :sparkles:',
-            channel: '#dev-test',
-            attachments
-          }, (err) => {
-            if (err) console.log(err)
-          }))
-        }
-      } catch (e) {
-        console.log(e)
-        bot.say({
-          text: `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``,
-          channel: '#moods'
-        })
-      }
+      await getMood(bot, '#moods')
     })
   },
   start: false,
