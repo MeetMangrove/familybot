@@ -80,14 +80,20 @@ export const saveFeedback = async (feedback, learner, teacher) => {
   await update(id, { 'Feedback': feedback })
 }
 
-export const saveMood = async (id, level, comment) => {
+export const saveMood = async (name, level) => {
+  const id = await getIdFromName(name)
   const create = Promise.promisify(base(AIRTABLE_MOOD).create)
-  await create({
+  const mood = await create({
     'Member': [id],
     'Level': parseInt(level, 10),
-    'Comment': /^\s*no+\s*$/i.test(comment) ? '' : comment,
     'Date': Date.now()
   })
+  return mood.id
+}
+
+export const saveMoodDescription = async (id, comment) => {
+  const update = Promise.promisify(base(AIRTABLE_MOOD).update)
+  await update(id, { 'Comment': comment })
 }
 
 export const getMoods = async () => {
@@ -114,31 +120,25 @@ export const getMoods = async () => {
 }
 
 export const getEmoji = (level) => {
+  console.log(level)
   switch (level) {
-    case 1:
-    case 2:
+    case 1: {
+      return ':skull:'
+    }
+    case 2: {
+      return ':persevere:'
+    }
     case 3: {
-      return ':sos:'
+      return ':neutral_face:'
     }
-    case 4:
-    case 5:
-    case 6: {
-      return ':warning:'
-    }
-    case 7: {
-      return ':slightly_smiling_face:'
-    }
-    case 8: {
-      return ':simple_smile:'
-    }
-    case 9: {
+    case 4: {
       return ':smile:'
     }
-    case 10: {
+    case 5: {
       return ':sunglasses:'
     }
     default: {
-      return ':simple_smile: '
+      return ':rocket: '
     }
   }
 }
@@ -148,25 +148,15 @@ export const getColor = (level) => {
     case 1:
       return '#B71C1C'
     case 2:
-      return '#D32F2F'
-    case 3:
       return '#F44336'
-    case 4:
-      return '#F57F17'
-    case 5:
+    case 3:
       return '#FBC02D'
-    case 6:
-      return '#FFEB3B'
-    case 7:
-      return '#CDDC39'
-    case 8:
-      return '#9CCC65'
-    case 9:
+    case 4:
       return '#7CB342'
-    case 10:
+    case 5:
       return '#558B2F'
     default:
-      return '#9CCC65'
+      return '#FBC02D'
   }
 }
 

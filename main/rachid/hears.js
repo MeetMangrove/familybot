@@ -5,10 +5,21 @@
 import { getSlackUser, errorMessage } from '../methods'
 import { controller } from './config'
 import giveMood from './giveMood'
-import askForMood from "./askForMood"
 
 // User Commands
 controller.hears(['^mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+  try {
+    const {name} = await getSlackUser(bot, message.user)
+    bot.startConversation(message, function (err, convo) {
+      if (err) return console.log(err)
+      giveMood(convo, name, message.user)
+    })
+  } catch (e) {
+    errorMessage(e, bot, message)
+  }
+})
+
+controller.hears(['^daily'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     const {name} = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
@@ -26,9 +37,10 @@ controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_messag
     const {name} = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      convo.addMessage(`Hey ${name}!`, 'default')
-      convo.addMessage(`My name is Rachid, I'm the <@moodbot> :smile:`, 'default')
-      askForMood(convo, name)
+      convo.say(`Hi ${name}! I'm Rachid!`)
+      convo.say(`You can say \`mood\` to save your mood`)
+      convo.say(`And also \`daily\` to see last Mangrovers' mood`)
+      convo.say(`I'll share your mood every day at 7PM :sunglasses:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
@@ -40,8 +52,10 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
     const {name} = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      convo.addMessage(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`, 'default')
-      askForMood(convo, name)
+      convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
+      convo.say(`You can say \`mood\` to save your mood`)
+      convo.say(`And also \`daily\` to see last Mangrovers' mood`)
+      convo.say(`I'll share your mood every day at 7PM :sunglasses:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)

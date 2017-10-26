@@ -21,21 +21,15 @@ const { CronJob } = cron
 const { forEach } = asyncForEach
 
 const askMood = new CronJob({
-  cronTime: '00 00 15 * * *',
+  cronTime: '00 00 15 * * 1-5',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const members = await getAllMembers(bot)
       _.forEach(members, ({ name, id }) => {
-        try {
-          bot.startPrivateConversation({ user: id }, (err, convo) => {
-            if (err) return console.log(err)
-            giveMood(convo, name)
-            convo.transitionTo('give_mood', `Hello ${name}! :smile:`);
-          })
-        } catch (e) {
-          console.log(e)
-          bot.reply({ user: id }, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
-        }
+        bot.startPrivateConversation({ user: id }, (err, convo) => {
+          if (err) return console.log(err)
+          giveMood(convo, name, id)
+        })
       })
     })
   },
@@ -50,25 +44,26 @@ const sendMood = new CronJob({
       try {
         const moods = await getMoods()
         const attachments = []
-        forEach(moods, async function (mood) {
-          const done = this.async()
-          const { fields: user } = await getMember(mood['Member'][0])
-          attachments.push({
-            'title': `<${user['Slack Handle']}> is at ${mood['Level']}/10 ${getEmoji(mood['Level'])}`,
-            'text': mood['Comment'],
-            'color': getColor(mood['Level']),
-            'thumb_url': user['Profile Picture'][0].url,
-            'footer': moment(mood['Date']).tz('Europe/Paris').format('MMM Do [at] h:mm A')
-          })
-          done()
-        }, () => bot.say({
-          'text': 'Hi dream team! Here is your mood daily digest :sparkles:',
-          'channel': '#moods',
-          'attachments': attachments
-        }, (err, res) => {
-          console.log(err)
-          console.log(res)
-        }))
+        if (moods.length >= 1) {
+          forEach(moods, async function (mood) {
+            const done = this.async()
+            const { fields: user } = await getMember(mood['Member'][0])
+            attachments.push({
+              'title': `<${user['Slack Handle']}> is at ${mood['Level']}/10`,
+              'text': mood['Comment'],
+              'color': getColor(mood['Level']),
+              'thumb_url': user['Profile Picture'][0].url,
+              'footer': moment(mood['Date']).tz('Europe/Paris').format('MMM Do [at] h:mm A')
+            })
+            done()
+          }, () => bot.say({
+            text: 'Hi dream team! Here is your mood daily digest :sparkles:',
+            channel: '#moods',
+            attachments
+          }, (err) => {
+            if (err) console.log(err)
+          }))
+        }
       } catch (e) {
         console.log(e)
         bot.say({
