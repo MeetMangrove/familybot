@@ -99,8 +99,8 @@ export default (convo, name, id) => {
     convo.addMessage({ text: 'Don\'t worry, I guess it\'s not the end of the world :wink:' }, 'two')
     convo.addMessage({ text: 'Maybe sharing your feelings could make you more peaceful?', action: 'description' }, 'two')
 
-    convo.addMessage({ text: 'Okay, so you have a real problem.' }, 'one')
-    convo.addMessage({ text: 'I hope it is not to bad.' }, 'one')
+    convo.addMessage({ text: 'Okay, so there is a real problem.' }, 'one')
+    convo.addMessage({ text: 'I hope it\'s not too bad.' }, 'one')
     convo.addMessage({ text: 'Maybe talking about it could help you to feel good.', action: 'description' }, 'one')
 
     convo.beforeThread('description', async function (convo, next) {

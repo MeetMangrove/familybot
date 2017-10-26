@@ -120,7 +120,6 @@ export const getMoods = async () => {
 }
 
 export const getEmoji = (level) => {
-  console.log(level)
   switch (level) {
     case 1: {
       return ':skull:'

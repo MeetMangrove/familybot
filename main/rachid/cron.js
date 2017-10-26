@@ -38,7 +38,7 @@ const askMood = new CronJob({
 })
 
 const sendMood = new CronJob({
-  cronTime: '00 00 19 * * *',
+  cronTime: '00,10,20,30,40,50 * * * * *',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       try {
@@ -49,7 +49,7 @@ const sendMood = new CronJob({
             const done = this.async()
             const { fields: user } = await getMember(mood['Member'][0])
             attachments.push({
-              'title': `<${user['Slack Handle']}> is at ${mood['Level']}/10`,
+              'title': `${getEmoji(mood['Level'])} <${user['Slack Handle']}> is at ${mood['Level']}/5`,
               'text': mood['Comment'],
               'color': getColor(mood['Level']),
               'thumb_url': user['Profile Picture'][0].url,
@@ -58,7 +58,7 @@ const sendMood = new CronJob({
             done()
           }, () => bot.say({
             text: 'Hi dream team! Here is your mood daily digest :sparkles:',
-            channel: '#moods',
+            channel: '#dev-test',
             attachments
           }, (err) => {
             if (err) console.log(err)
