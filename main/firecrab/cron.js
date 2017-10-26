@@ -7,7 +7,7 @@ import { getLastWeekDone, getLastWeekThanks, getActivities } from '../methods'
 const { CronJob } = cron
 
 const sendActivityDigest = new CronJob({
-  cronTime: '00 00 12 * * 4',
+  cronTime: '00 30 12 * * 4',
   onTick: function () {
     _.forEach(bots, async (bot) => {
       const listDone = await getLastWeekDone()
