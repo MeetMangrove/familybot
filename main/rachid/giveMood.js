@@ -39,7 +39,7 @@ export default (convo, name, id) => {
           },
           {
             name: 'three',
-            text: ':neutral_face:',
+            text: ':simple_smile:',
             type: 'button',
             value: '3'
           },
@@ -88,18 +88,17 @@ export default (convo, name, id) => {
 
     convo.addMessage({ text: 'Bravo! :surfer:', action: 'description' }, 'five')
 
-    convo.addMessage({ text: 'Oh, I love this mood! :hugging_face:', action: 'description' }, 'four')
+    convo.addMessage({ text: 'Oh, looking good! :hugging_face:', action: 'description' }, 'four')
 
-    convo.addMessage({ text: 'Why don\'t you smile?' }, 'three')
-    convo.addMessage({ text: 'Life is full of shining things :blush:', action: 'description' }, 'three')
+    convo.addMessage({ text: 'Thanks for recording your mood :)' }, 'three')
+    convo.addMessage({ text: 'Do you want to share with us what\'s going on?', action: 'description' }, 'three')
 
-    convo.addMessage({ text: 'Something wrong?' }, 'two')
-    convo.addMessage({ text: 'Don\'t worry, I guess it\'s not the end of the world :wink:' }, 'two')
-    convo.addMessage({ text: 'Maybe sharing your feelings could make you more peaceful?', action: 'description' }, 'two')
+    convo.addMessage({ text: ':bow: Something\'s wrong?' }, 'two')
+    convo.addMessage({ text: 'Do you feel like sharing what makes you feel this way?', action: 'description' }, 'two')
 
-    convo.addMessage({ text: 'Okay, so there is a real problem.' }, 'one')
-    convo.addMessage({ text: 'I hope it\'s not too bad.' }, 'one')
-    convo.addMessage({ text: 'Maybe talking about it could help you to feel good.', action: 'description' }, 'one')
+    convo.addMessage({ text: 'Oh no, sad to hear that :worried:' }, 'one')
+    convo.addMessage({ text: 'I hope it\'ll get better soon.' }, 'one')
+    convo.addMessage({ text: 'We\'re here to help you, if you feel like sharing :couple_with_heart:', action: 'description' }, 'one')
 
     convo.beforeThread('description', async function (convo, next) {
       const moodId = await saveMood(name, convo.vars.level)
