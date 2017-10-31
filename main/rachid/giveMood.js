@@ -39,7 +39,7 @@ export default (convo, name, id) => {
           },
           {
             name: 'three',
-            text: ':simple_smile:',
+            text: ':slightly_smiling_face:',
             type: 'button',
             value: '3'
           },
@@ -143,6 +143,7 @@ export default (convo, name, id) => {
           convo.gotoThread('comments')
           convo.next()
         } else {
+          clearTimeout(timeout)
           bot.replyInteractive(reply, {
             attachments: [{
               title: 'Do you want to describe your feelings?',

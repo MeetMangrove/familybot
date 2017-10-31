@@ -128,7 +128,7 @@ export const getEmoji = (level) => {
       return ':persevere:'
     }
     case 3: {
-      return ':neutral_face:'
+      return ':slightly_smiling_face:'
     }
     case 4: {
       return ':smile:'
