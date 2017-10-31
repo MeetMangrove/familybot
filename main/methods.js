@@ -159,6 +159,21 @@ export const getColor = (level) => {
   }
 }
 
+export const getTitle = (level) => {
+  switch (level) {
+    case 1:
+    case 2:
+      return 'Do you feel like sharing what makes you feel this way?'
+    case 3:
+      return 'Do you want to share with us what\'s going on?'
+    case 4:
+    case 5:
+      return 'Do you want to describe your feelings?'
+    default:
+      return 'Do you want to describe your feelings?'
+  }
+}
+
 // get applicant with slack handle
 export const getApplicant = async (slackHandle) => {
   const applicant = await _getAllRecords(base(AIRTABLE_APPLICANTS).select({
@@ -544,7 +559,7 @@ export const getActivities = async (listDone, listThanks) => {
     fields: ['Slack Handle'],
   }))
   const allRecords = []
-  records.forEach(({id, fields: { 'Slack Handle': slackHandle } }) => allRecords.push({ id, slackHandle }))
+  records.forEach(({ id, fields: { 'Slack Handle': slackHandle } }) => allRecords.push({ id, slackHandle }))
   for (let record of allRecords) {
     const { id, slackHandle } = record
     const member = slackHandle.substring(slackHandle.indexOf('@') + 1)

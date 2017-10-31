@@ -1,5 +1,6 @@
 import {
   getEmoji,
+  getTitle,
   saveMood,
   saveMoodDescription,
 } from '../methods'
@@ -90,11 +91,9 @@ export default (convo, name, id) => {
 
     convo.addMessage({ text: 'Oh, looking good! :hugging_face:', action: 'description' }, 'four')
 
-    convo.addMessage({ text: 'Thanks for recording your mood :)' }, 'three')
-    convo.addMessage({ text: 'Do you want to share with us what\'s going on?', action: 'description' }, 'three')
+    convo.addMessage({ text: 'Thanks for recording your mood :slightly_smiling_face:', action: 'description' }, 'three')
 
-    convo.addMessage({ text: ':bow: Something\'s wrong?' }, 'two')
-    convo.addMessage({ text: 'Do you feel like sharing what makes you feel this way?', action: 'description' }, 'two')
+    convo.addMessage({ text: ':bow: Something\'s wrong?', action: 'description' }, 'two')
 
     convo.addMessage({ text: 'Oh no, sad to hear that :worried:' }, 'one')
     convo.addMessage({ text: 'I hope it\'ll get better soon.' }, 'one')
@@ -109,7 +108,7 @@ export default (convo, name, id) => {
 
     convo.addQuestion({
       attachments: [{
-        title: 'Do you want to describe your feelings?',
+        title: getTitle(convo.vars.moodId),
         callback_id: 'describe_feelings',
         attachment_type: 'default',
         actions: [
@@ -133,7 +132,7 @@ export default (convo, name, id) => {
         if (reply.actions[0].value === 'yes') {
           bot.replyInteractive(reply, {
             attachments: [{
-              title: 'Do you want to describe your feelings?',
+              title: getTitle(convo.vars.moodId),
               callback_id: 'describe_feelings',
               attachment_type: 'default',
               text: '_Yes_',
@@ -146,7 +145,7 @@ export default (convo, name, id) => {
           clearTimeout(timeout)
           bot.replyInteractive(reply, {
             attachments: [{
-              title: 'Do you want to describe your feelings?',
+              title: getTitle(convo.vars.moodId),
               callback_id: 'describe_feelings',
               attachment_type: 'default',
               text: '_No_',
