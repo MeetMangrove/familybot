@@ -13,7 +13,7 @@ controller.hears(['^mood$'], ['direct_message', 'direct_mention'], async (bot, m
     const {name} = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      giveMood(convo, name, message.user)
+      giveMood({ bot, convo, name, id: message.user })
     })
   } catch (e) {
     errorMessage(e, bot, message)

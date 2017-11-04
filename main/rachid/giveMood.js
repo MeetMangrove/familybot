@@ -10,7 +10,7 @@ const delayMessage = (bot, id, convo) => setTimeout((bot, channel, convo) => {
   convo.stop()
 }, 1800000, bot, id, convo)
 
-export default (convo, name, id) => {
+export default ({ bot, convo, name, id }) => {
   try {
     let timeout = delayMessage(bot, id, convo)
 
@@ -93,7 +93,10 @@ export default (convo, name, id) => {
 
     convo.addMessage({ text: 'Oh no, sad to hear that :worried:' }, 'one')
     convo.addMessage({ text: 'I hope it\'ll get better soon.' }, 'one')
-    convo.addMessage({ text: 'We\'re here to help you, if you feel like sharing :couple_with_heart:', action: 'description' }, 'one')
+    convo.addMessage({
+      text: 'We\'re here to help you, if you feel like sharing :couple_with_heart:',
+      action: 'description'
+    }, 'one')
 
     convo.beforeThread('description', async function (convo, next) {
       const moodId = await saveMood(name, convo.vars.level)

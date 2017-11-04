@@ -22,7 +22,7 @@ const askMood = new CronJob({
       _.forEach(members, ({ name, id }) => {
         bot.startPrivateConversation({ user: id }, (err, convo) => {
           if (err) return console.log(err)
-          giveMood(convo, name, id)
+          giveMood({ bot, convo, name, id })
         })
       })
     })
