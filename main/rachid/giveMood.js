@@ -5,7 +5,6 @@ import {
   saveMoodDescription,
 } from '../methods'
 
-let timeout
 const delayMessage = (bot, id, convo) => setTimeout((bot, channel, convo) => {
   bot.say({ text: 'Hum... you seem busy. Come back say `mood` when you want!', channel })
   convo.stop()
@@ -13,10 +12,7 @@ const delayMessage = (bot, id, convo) => setTimeout((bot, channel, convo) => {
 
 export default (convo, name, id) => {
   try {
-    convo.beforeThread('default', async function (convo, next) {
-      timeout = delayMessage(bot, id, convo)
-      next()
-    })
+    let timeout = delayMessage(bot, id, convo)
 
     convo.addQuestion({
       text: `Hello ${name}!`,
@@ -27,20 +23,20 @@ export default (convo, name, id) => {
         actions: [
           {
             name: 'one',
-            text: ':skull:',
+            text: ':rage:',
             type: 'button',
             style: 'danger',
             value: '1'
           },
           {
             name: 'two',
-            text: ':persevere:',
+            text: ':sob:',
             type: 'button',
             value: '2'
           },
           {
             name: 'three',
-            text: ':slightly_smiling_face:',
+            text: ':neutral_face:',
             type: 'button',
             value: '3'
           },
@@ -52,7 +48,7 @@ export default (convo, name, id) => {
           },
           {
             name: 'five',
-            text: ':sunglasses:',
+            text: ':tada:',
             type: 'button',
             style: 'primary',
             value: '5'
@@ -85,7 +81,7 @@ export default (convo, name, id) => {
         }
         convo.next()
       }
-    })
+    }, {}, 'default')
 
     convo.addMessage({ text: 'Bravo! :surfer:', action: 'description' }, 'five')
 

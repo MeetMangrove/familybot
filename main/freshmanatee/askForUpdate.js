@@ -6,10 +6,16 @@ import { getIdFromName, getMember } from '../methods'
 
 export default ({ bot, convo, name, id }) => {
   try {
+    const timeout = setTimeout((bot, channel, convo) => {
+      bot.say({ text: 'Hum... you seem busy. Come back say `fresh` when you want!', channel })
+      convo.stop()
+    }, 1800000, bot, id, convo)
+
     convo.addMessage({
       text: 'I\'m searching your profile :sleuth_or_spy:',
       action: 'search'
     }, 'default')
+
     convo.beforeThread('search', async (convo, next) => {
       const airtableId = await getIdFromName(name)
       const profile = await getMember(airtableId)
@@ -21,6 +27,7 @@ export default ({ bot, convo, name, id }) => {
       })
       next()
     })
+
     convo.addMessage({
       text: `Okay, so this is your current information:`,
       attachments: [
@@ -45,10 +52,7 @@ export default ({ bot, convo, name, id }) => {
           'color': '#E0E0E0'
         }]
     }, 'search')
-    const timeout = setTimeout((bot, channel, convo) => {
-      bot.say({ text: 'Hum... you seem busy. Come back say `fresh` when you want!', channel })
-      convo.stop()
-    }, 1800000, bot, id, convo)
+
     convo.addQuestion({
       attachments: [{
         title: 'Do you want to update these information?',
