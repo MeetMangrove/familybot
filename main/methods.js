@@ -122,10 +122,10 @@ export const getMoods = async () => {
 export const getEmoji = (level) => {
   switch (level) {
     case 1: {
-      return ':rage:'
+      return ':skull:'
     }
     case 2: {
-      return ':sob:'
+      return ':cold_sweat:'
     }
     case 3: {
       return ':neutral_face:'

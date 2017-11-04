@@ -23,14 +23,14 @@ export default ({ bot, convo, name, id }) => {
         actions: [
           {
             name: 'one',
-            text: ':rage:',
+            text: ':skull:',
             type: 'button',
             style: 'danger',
             value: '1'
           },
           {
             name: 'two',
-            text: ':sob:',
+            text: ':cold_sweat:',
             type: 'button',
             value: '2'
           },
