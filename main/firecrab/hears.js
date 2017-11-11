@@ -1,17 +1,12 @@
 import _ from 'lodash'
 import Promise from 'bluebird'
+
 import { controller } from './config'
-
-import { saveDone, saveThanks, errorMessage, getSlackUser } from '../methods'
-
-String.prototype.splice = function(idx, rem, str) {
-  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
-}
+import { saveDone, saveThanks, errorMessage, getSlackUser, parseSlackMessage } from '../methods'
 
 controller.on('slash_command', async function (bot, message) {
   bot.replyAcknowledge()
   try {
-
     const { text } = message
     const date = Date.now()
     const apiUser = Promise.promisifyAll(bot.api.users)
@@ -26,7 +21,7 @@ controller.on('slash_command', async function (bot, message) {
           bot.say({
             attachments: [{
               'author_name': `${real_name}`,
-              'text': `*done* ${text}`,
+              'text': `*done* ${parseSlackMessage(text)}`,
               'color': '#81C784',
               'thumb_url': image_192,
               'mrkdwn_in': ['text']
@@ -40,17 +35,10 @@ controller.on('slash_command', async function (bot, message) {
         const thanksTo = []
         const regEx = /\s?@[a-z._]+/g
         let name
-        let embed = text
         do {
-          name = regEx.exec(embed)
+          name = regEx.exec(text)
           if (name) {
             thanksTo.push(name[0].trim().replace(/^@/, ''))
-            if (name[0].match(/\s@[a-z._]+/g)) {
-              embed = embed.splice(name.index + 1, 0, '<')
-            } else {
-              embed = embed.splice(name.index, 0, '<')
-            }
-            embed = embed.splice(name.index + name[0].length + 1, 0, '>')
           }
         } while (name)
         const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
@@ -58,7 +46,7 @@ controller.on('slash_command', async function (bot, message) {
           const notValid= _.difference(thanksTo, _.map(members, 'name'))
           bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)
         } else {
-          const thanksText = embed.slice(embed.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length + 1).trim()
+          const thanksText = text.slice(text.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length).trim()
           await saveThanks(message.user_name, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
@@ -66,7 +54,7 @@ controller.on('slash_command', async function (bot, message) {
             bot.say({
               attachments: [{
                 'author_name': `${real_name}`,
-                'text': `*thanks* ${embed}`,
+                'text': `*thanks* ${parseSlackMessage(text)}`,
                 'color': '#E57373',
                 'thumb_url': image_192,
                 'mrkdwn_in': ['text']

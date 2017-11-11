@@ -24,6 +24,10 @@ if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_
   process.exit(1)
 }
 
+String.prototype.splice = function(idx, rem, str) {
+  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+}
+
 export const errorMessage = (e, bot, message) => {
   console.log(e)
   bot.reply(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
@@ -507,4 +511,22 @@ export const getNewsletter = async () => {
     filterByFormula: `{Sending Date}='${moment().format('DD/MM/YYYY')}'`
   }))
   return newsletter[0]
+}
+
+export const parseSlackMessage = (text) => {
+  const regEx = /\s?@[a-z._]+/g
+  let name
+  let embed = text
+  do {
+    name = regEx.exec(embed)
+    if (name) {
+      if (name[0].match(/\s@[a-z._]+/g)) {
+        embed = embed.splice(name.index + 1, 0, '<')
+      } else {
+        embed = embed.splice(name.index, 0, '<')
+      }
+      embed = embed.splice(name.index + name[0].length + 1, 0, '>')
+    }
+  } while (name)
+  return embed
 }
