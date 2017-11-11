@@ -1,4 +1,4 @@
-# Mangrove Mood
+# Mangrove Familybot
 
 All our bots in one place!
 
@@ -56,7 +56,7 @@ Start ngrok
 $ ngrok http 5000
 ```
 
-Then set the HOSTNAME env to the ngrok url.
+Then set the HOSTNAME env to the new ngrok url.
 
 ### Run bots
 
