@@ -4,6 +4,10 @@ import { controller } from './config'
 
 import { saveDone, saveThanks, errorMessage, getSlackUser } from '../methods'
 
+String.prototype.splice = function(idx, rem, str) {
+  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+}
+
 controller.on('slash_command', async function (bot, message) {
   bot.replyAcknowledge()
   try {
@@ -33,12 +37,28 @@ controller.on('slash_command', async function (bot, message) {
         break
       case '/thanks':
         bot.whisper(message, 'Your */thanks* is saving...')
-        const thanksTo = text.substring(text.indexOf('@') + 1, text.indexOf(' '))
-        const thanksText = text.substring(text.indexOf(' ') + 1)
+        const thanksTo = []
+        const regEx = /\s?@[a-z._]+/g
+        let name
+        let embed = text
+        do {
+          name = regEx.exec(embed)
+          if (name) {
+            thanksTo.push(name[0].trim().replace(/^@/, ''))
+            if (name[0].match(/\s@[a-z._]+/g)) {
+              embed = embed.splice(name.index + 1, 0, '<')
+            } else {
+              embed = embed.splice(name.index, 0, '<')
+            }
+            embed = embed.splice(name.index + name[0].length + 1, 0, '>')
+          }
+        } while (name)
         const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
-        if (!thanksTo || _.map(members, 'name').indexOf(thanksTo) === -1) {
-          bot.whisper(message, `<@${thanksTo}> is not a valid name, try again!`)
+        if (thanksTo.length === 0 || _.difference(thanksTo, _.map(members, 'name')).length !== 0) {
+          const notValid= _.difference(thanksTo, _.map(members, 'name'))
+          bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)
         } else {
+          const thanksText = embed.slice(embed.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length + 1).trim()
           await saveThanks(message.user_name, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
@@ -46,12 +66,12 @@ controller.on('slash_command', async function (bot, message) {
             bot.say({
               attachments: [{
                 'author_name': `${real_name}`,
-                'text': `*thanks* <@${thanksTo}> ${thanksText}`,
+                'text': `*thanks* ${embed}`,
                 'color': '#E57373',
                 'thumb_url': image_192,
                 'mrkdwn_in': ['text']
               }],
-              channel: '#thanks'
+              channel: '#dev-test'
             })
           })
         }
