@@ -71,7 +71,7 @@ controller.on('slash_command', async function (bot, message) {
                 'thumb_url': image_192,
                 'mrkdwn_in': ['text']
               }],
-              channel: '#dev-test'
+              channel: '#thanks'
             })
           })
         }

@@ -61,6 +61,7 @@ export const getAllMembers = async (bot) => {
 }
 
 export const getIdFromName = async (name) => {
+  console.log(name)
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Familybot View',
     filterByFormula: `{Slack Handle} = '@${name}'`
