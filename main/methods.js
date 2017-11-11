@@ -4,12 +4,10 @@
 
 import _ from 'lodash'
 import Promise from 'bluebird'
-import asyncForEach from 'async-foreach'
+import moment from 'moment'
 
 import { base, _getAllRecords } from './airtable'
 import firstTimeConversation from './learnbot/firstTimeConversation'
-
-const { forEach } = asyncForEach
 
 const {
   AIRTABLE_MEMBERS,
@@ -18,10 +16,11 @@ const {
   AIRTABLE_PAIRING,
   AIRTABLE_DONE,
   AIRTABLE_THANKS,
+  AIRTABLE_NEWSLETTER,
 } = process.env
 
-if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_DONE && !AIRTABLE_THANKS) {
-  console.log('Error: Specify AIRTABLE_MEMBERS, AIRTABLE_APPLICANTS, AIRTABLE_DONE, AIRTABLE_THANKS and AIRTABLE_PAIRING in a .env file')
+if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_DONE && !AIRTABLE_THANKS && !AIRTABLE_NEWSLETTER) {
+  console.log('Error: Specify AIRTABLE_MEMBERS, AIRTABLE_APPLICANTS, AIRTABLE_DONE, AIRTABLE_THANKS, AIRTABLE_NEWSLETTER and AIRTABLE_PAIRING in a .env file')
   process.exit(1)
 }
 
@@ -448,13 +447,15 @@ export const getUpdates = async () => {
   const members = []
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Familybot View',
-    fields: ['Slack Username', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
+    fields: ['Name', 'Email', 'Slack Username', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
     filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1)'
   }))
   records.forEach((member) => {
     members.push({
       id: member.id,
       name: member.get('Slack Username'),
+      fullName: member.get('Name'),
+      email: member.get('Email'),
       location: member.get('Is new location?') === true ? member.get('Location') : null,
       focus: member.get('Is new focus?') === true ? member.get('Focus') : null,
       challenges: member.get('Is new challenges?') === true ? member.get('Challenges') : null
@@ -471,4 +472,39 @@ export const cleanUpdates = (members) => {
       'Is new challenges?': false,
     })
   })
+}
+
+export const createNewsletter = async (members) => {
+  let text = 'Hi there!\n' +
+    'Here is a small digest of some Mangrove members update! I\'m sure you can help out one of them! You may make a difference!\n\n' +
+    '⬇️------------------------------⬇️\n'
+  members.forEach((member) => {
+    const { fullName, email, location, focus, challenges } = member
+    text = text.concat(`\n${fullName} (${email})\n${location ? `🏡 just moved to *${location}*\n` : ''}${focus ? `🚀 has a new focus:\n${focus}\n` : ''}${challenges ? `🌪 is currently dealing with the following challenge(s): \n${challenges}\n` : ''}`)
+  })
+  text = text.concat('\n\nGo Mangrove 👊\nTake care ❤️\n\nYour Fresh Manatee')
+  const create = Promise.promisify(base(AIRTABLE_NEWSLETTER).create)
+  const { id } = await create({
+    'Content': text,
+    'Title': 'Some news from Fresh Manatee!',
+    'Sending Date': moment().isoWeekday(4).format('DD/MM/YYYY')
+  })
+  return { id, text }
+}
+
+export const getEmails = async (status) => {
+  const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
+    view: 'Familybot View',
+    fields: ['Email'],
+    filterByFormula: `FIND('${status}', {Status})`
+  }))
+  return _.map(records, record => record.get('Email'))
+}
+
+export const getNewsletter = async () => {
+  const newsletter = await _getAllRecords(base(AIRTABLE_NEWSLETTER).select({
+    view: 'Grid view',
+    filterByFormula: `{Sending Date}='${moment().format('DD/MM/YYYY')}'`
+  }))
+  return newsletter[0]
 }

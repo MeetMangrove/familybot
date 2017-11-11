@@ -8,9 +8,15 @@ import moment from 'moment'
 
 import { bots } from './config'
 import askForUpdate from './askForUpdate'
-import { getAllMembers, getUpdates, cleanUpdates } from '../methods'
+import { getAllMembers, getUpdates, cleanUpdates, createNewsletter, getEmails, getNewsletter } from '../methods'
 
 const { CronJob } = cron
+const { MAILGUN_API_KEY } = process.env
+
+if (!MAILGUN_API_KEY) {
+  console.log('Error: Specify MAILGUN_API_KEY in a .env file')
+  process.exit(1)
+}
 
 const sendMessage = new CronJob({
   cronTime: '00 00 09 * * 1',
@@ -59,12 +65,53 @@ const postDigest = new CronJob({
         channel: '#general'
       }, async (err) => {
         if (err) return console.log(err)
+        cleanUpdates(members)
         bot.say({
           text: `Go Mangrove :facepunch:`,
           channel: '#general'
         })
-        cleanUpdates(members)
+        const { text, id } = await createNewsletter(members)
+        bot.say({
+          text: `Hi <!subteam^S7W60V3L6|connectors>!\nHere is the content of the Veteran Newsletter to be sent tomorrow :love_letter:`,
+          attachments: [{
+            title: 'Draft Veteran Newsletter',
+            text: `\`\`\`${text}\`\`\``,
+            mrkdwn_in: ["text"]
+          }],
+          channel: '#track-connectors'
+        }, (err) => {
+          if (err) return console.log(err)
+          bot.say({
+            text: `If you want to change it, <https://airtable.com/tblBsCEc45GtppbBP/viwIUnStSvSIhxqhv/${id}|click here to update the content field>.\n` +
+            'You have 24 hours before, it\'s automatically sent !\n' +
+            ':information_source: Good update includes :\n' +
+            '- Correcting typos\n' +
+            '- Removing private stuff\n' +
+            '- Adding infos about next event',
+            channel: '#track-connectors'
+          })
+        })
       })
+    })
+  },
+  start: false,
+  timeZone: 'Europe/Paris'
+})
+
+const sendNewsletter = new CronJob({
+  cronTime: '00 00 14 * * 4',
+  onTick: async function () {
+    const emails = await getEmails('Veteran')
+    const newsletter = await getNewsletter()
+    const mailgun = require('mailgun-js')({apiKey: MAILGUN_API_KEY, domain: 'family.mangrove.io'})
+    const data = {
+      from: 'Fresh Manatee <hello@meetmangrove.com>',
+      to: emails,
+      subject: newsletter.get('Title'),
+      text: newsletter.get('Content')
+    }
+    mailgun.messages().send(data, function (error, body) {
+      console.log(body)
     })
   },
   start: false,
@@ -73,3 +120,4 @@ const postDigest = new CronJob({
 
 sendMessage.start()
 postDigest.start()
+sendNewsletter.start()
