@@ -56,7 +56,7 @@ const postDigest = new CronJob({
         attachments.push({
           title: `<${name}>`,
           text: `${location ? `:house_with_garden: just moved to *${location}*\n` : ''}${focus ? `:rocket: has a new focus: \`\`\`${focus}\`\`\`\n` : ''}${challenges ? `:tornado: is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\`` : ''}`,
-          mrkdwn_in: ["text"]
+          mrkdwn_in: ['text']
         })
       })
       bot.say({
@@ -76,7 +76,7 @@ const postDigest = new CronJob({
           attachments: [{
             title: 'Draft Veteran Newsletter',
             text: `\`\`\`${text}\`\`\``,
-            mrkdwn_in: ["text"]
+            mrkdwn_in: ['text']
           }],
           channel: '#track-connectors'
         }, (err) => {
@@ -103,14 +103,15 @@ const sendNewsletter = new CronJob({
   onTick: async function () {
     const emails = await getEmails('Veteran')
     const newsletter = await getNewsletter()
-    const mailgun = require('mailgun-js')({apiKey: MAILGUN_API_KEY, domain: 'family.mangrove.io'})
+    const mailgun = require('mailgun-js')({ apiKey: MAILGUN_API_KEY, domain: 'family.mangrove.io' })
     const data = {
       from: 'Fresh Manatee <hello@meetmangrove.com>',
       to: emails,
       subject: newsletter.get('Title'),
       text: newsletter.get('Content')
     }
-    mailgun.messages().send(data, function (error, body) {
+    mailgun.messages().send(data, function (err, body) {
+      if (err) console.log(err)
       console.log(body)
     })
   },

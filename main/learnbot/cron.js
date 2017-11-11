@@ -1,4 +1,4 @@
-import cron from 'cron'
+/* import cron from 'cron'
 
 import { pairAllApplicants } from './pairing'
 import pairingConversation from './pairingConversation'
@@ -52,4 +52,4 @@ const thirdAsk = new CronJob({
 pairing.start()
 firstAsk.start()
 secondAsk.start()
-thirdAsk.start()
+thirdAsk.start() */

@@ -23,7 +23,7 @@ export default ({ bot, convo, name, id }) => {
         bio: profile.get('Bio'),
         location: profile.get('Location'),
         focus: profile.get('Focus'),
-        challenges: profile.get('Challenges'),
+        challenges: profile.get('Challenges')
       })
       next()
     })
@@ -103,7 +103,7 @@ export default ({ bot, convo, name, id }) => {
                 title: 'Do you want to update these information?',
                 text: 'Okay, let\'s fresh your profile! :facepunch:',
                 callback_id: 'update_info',
-                attachment_type: 'default',
+                attachment_type: 'default'
               }]
             })
             convo.next()
@@ -115,7 +115,7 @@ export default ({ bot, convo, name, id }) => {
                 title: 'Do you want to update these information?',
                 text: 'Okay, see you in two weeks! :wave:',
                 callback_id: 'update_info',
-                attachment_type: 'default',
+                attachment_type: 'default'
               }
             ]
           })

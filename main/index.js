@@ -15,7 +15,7 @@ dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 const {
   NODE_ENV,
   HOSTNAME,
-  FORCE_HOSTNAME,
+  FORCE_HOSTNAME
 } = process.env
 
 if (!NODE_ENV || !HOSTNAME) {

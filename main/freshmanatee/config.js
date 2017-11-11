@@ -71,7 +71,7 @@ controller.storage.teams.all((err, teams) => {
         .startRTM((err, bot) => {
           if (err) return console.log('Error connecting freshmanatee to Slack:', err)
           trackBot(bot)
-      })
+        })
     }
   }
 })

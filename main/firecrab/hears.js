@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import _ from 'lodash'
 import Promise from 'bluebird'
 
@@ -17,7 +18,7 @@ controller.on('slash_command', async function (bot, message) {
         await saveDone(message.user_name, text, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
-          if(err) console.log(err)
+          if (err) console.log(err)
           bot.say({
             attachments: [{
               'author_name': `${real_name}`,
@@ -43,14 +44,14 @@ controller.on('slash_command', async function (bot, message) {
         } while (name)
         const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
         if (thanksTo.length === 0 || _.difference(thanksTo, _.map(members, 'name')).length !== 0) {
-          const notValid= _.difference(thanksTo, _.map(members, 'name'))
+          const notValid = _.difference(thanksTo, _.map(members, 'name'))
           bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)
         } else {
           const thanksText = text.slice(text.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length).trim()
           await saveThanks(message.user_name, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             bot.say({
               attachments: [{
                 'author_name': `${real_name}`,

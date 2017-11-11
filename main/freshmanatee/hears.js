@@ -55,14 +55,14 @@ controller.on('dialog_submission', async function (bot, message) {
   try {
     const { name } = await getSlackUser(bot, message.user)
     const isUpdated = await saveProfile(name, message.submission)
-    if(isUpdated === true) {
+    if (isUpdated === true) {
       bot.say({
-          text: 'Your profile has been freshed! :raised_hands:',
-          channel: message.channel
-        }, () => bot.say({
-          text: 'See you in two weeks! :wave:',
-          channel: message.channel
-        })
+        text: 'Your profile has been freshed! :raised_hands:',
+        channel: message.channel
+      }, () => bot.say({
+        text: 'See you in two weeks! :wave:',
+        channel: message.channel
+      })
       )
     }
   } catch (e) {

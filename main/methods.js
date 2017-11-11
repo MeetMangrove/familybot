@@ -16,7 +16,7 @@ const {
   AIRTABLE_PAIRING,
   AIRTABLE_DONE,
   AIRTABLE_THANKS,
-  AIRTABLE_NEWSLETTER,
+  AIRTABLE_NEWSLETTER
 } = process.env
 
 if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_DONE && !AIRTABLE_THANKS && !AIRTABLE_NEWSLETTER) {
@@ -24,8 +24,9 @@ if (!AIRTABLE_MEMBERS && !AIRTABLE_APPLICANTS && !AIRTABLE_PAIRING && !AIRTABLE_
   process.exit(1)
 }
 
-String.prototype.splice = function(idx, rem, str) {
-  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+// eslint-disable-next-line no-extend-native
+String.prototype.splice = function (idx, rem, str) {
+  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem))
 }
 
 export const errorMessage = (e, bot, message) => {
@@ -407,7 +408,7 @@ export const getActivities = async (listDone, listThanks) => {
   const inactives = []
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Familybot View',
-    fields: ['Slack Username'],
+    fields: ['Slack Username']
   }))
   const allRecords = []
   records.forEach(({ id, fields: { 'Slack Username': slackHandle } }) => allRecords.push({ id, slackHandle }))
@@ -440,11 +441,11 @@ export const saveProfile = async (name, newProfile) => {
     ...newProfile,
     'Is new location?': !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
     'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
-    'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
+    'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges'])
   })
-  return !_.isEqual(oldProfile.get('Location'), newProfile['Location'])
-    || !_.isEqual(oldProfile.get('Focus'), newProfile['Focus'])
-    || !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges'])
+  return !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
+    !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
+    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges'])
 }
 
 export const getUpdates = async () => {
@@ -473,7 +474,7 @@ export const cleanUpdates = (members) => {
     base(AIRTABLE_MEMBERS).update(id, {
       'Is new location?': false,
       'Is new focus?': false,
-      'Is new challenges?': false,
+      'Is new challenges?': false
     })
   })
 }

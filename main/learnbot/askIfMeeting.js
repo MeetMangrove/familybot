@@ -18,7 +18,7 @@ export default (convo) => {
             'text': 'No',
             'value': 'no',
             'type': 'button'
-          },
+          }
         ]
       }
     ]
@@ -47,16 +47,16 @@ export default (convo) => {
   ], {}, 'default')
 
   convo.beforeThread('feedback', async function (convo, next) {
-    await meetingDone(id)
+    // await meetingDone(id)
     next()
   })
 
   convo.addQuestion({
-    text: 'Awesome 🎉 how was it ? Give me some feedback! Even a word is fine.',
+    text: 'Awesome 🎉 how was it ? Give me some feedback! Even a word is fine.'
   }, (response, convo) => {
-    saveFeedback()
+    // saveFeedback()
     convo.addMessage({
       text: `Thank you ❤`
     }, 'feedback')
-  }, { key: 'feedback'}, 'feedback')
+  }, { key: 'feedback' }, 'feedback')
 }

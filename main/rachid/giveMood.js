@@ -2,7 +2,7 @@ import {
   getEmoji,
   getTitle,
   saveMood,
-  saveMoodDescription,
+  saveMoodDescription
 } from '../methods'
 
 const delayMessage = (bot, id, convo) => setTimeout((bot, channel, convo) => {
@@ -64,7 +64,7 @@ export default ({ bot, convo, name, id }) => {
             title: 'What is your mood today?',
             text: `Your mood today is ${getEmoji(value)}`,
             callback_id: 'update_info',
-            attachment_type: 'default',
+            attachment_type: 'default'
           }]
         })
         convo.setVar('level', value)
@@ -123,7 +123,7 @@ export default ({ bot, convo, name, id }) => {
             text: 'No',
             type: 'button',
             value: 'no'
-          },
+          }
         ]
       }]
     }, (reply, convo) => {
@@ -135,7 +135,7 @@ export default ({ bot, convo, name, id }) => {
               callback_id: 'describe_feelings',
               attachment_type: 'default',
               text: '_Yes_',
-              mrkdwn_in: ["text"]
+              mrkdwn_in: ['text']
             }]
           })
           convo.gotoThread('comments')
@@ -148,7 +148,7 @@ export default ({ bot, convo, name, id }) => {
               callback_id: 'describe_feelings',
               attachment_type: 'default',
               text: '_No_',
-              mrkdwn_in: ["text"]
+              mrkdwn_in: ['text']
             }]
           })
           convo.gotoThread('bye')
@@ -172,13 +172,12 @@ export default ({ bot, convo, name, id }) => {
 
     convo.addMessage({
       text: `Awesome, it has been successfully saved!`,
-      action: 'bye',
+      action: 'bye'
     }, 'saved')
 
     convo.addMessage({
       text: `See you tomorrow, take care :heart:`
     }, 'bye')
-
   } catch (e) {
     console.log(e)
     bot.say({ user: id }, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)

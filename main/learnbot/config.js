@@ -57,7 +57,7 @@ controller.on('create_bot', (bot, config) => {
   }
 })
 
-controller.on('team_join', async function(bot,message) {
+controller.on('team_join', async function (bot, message) {
   const {name} = await getSlackUser(bot, message.user)
   await firstTimeConversation(bot, message, {name})
 })

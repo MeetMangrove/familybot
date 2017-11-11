@@ -7,7 +7,7 @@ import cron from 'cron'
 
 import { bots } from './config'
 import {
-  getAllMembers,
+  getAllMembers
 } from '../methods'
 import giveMood from './giveMood'
 import getMood from './getMood'
