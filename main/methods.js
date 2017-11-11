@@ -64,7 +64,7 @@ export const getIdFromName = async (name) => {
   console.log(name)
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Familybot View',
-    filterByFormula: `{Slack Handle} = '@${name}'`
+    filterByFormula: `{Slack Username} = '@${name}'`
   }))
   return records[0] ? records[0].id : null
 }
@@ -175,16 +175,16 @@ export const getTitle = (level) => {
   }
 }
 
-// get applicant with slack handle
+// get applicant with Slack Username
 export const getApplicant = async (slackHandle) => {
   const applicant = await _getAllRecords(base(AIRTABLE_APPLICANTS).select({
     maxRecords: 1,
-    filterByFormula: `{Slack Handle}='@${slackHandle}'`
+    filterByFormula: `{Slack Username}='@${slackHandle}'`
   }))
   return applicant[0]
 }
 
-// update applicant with slack handle
+// update applicant with Slack Username
 export const updateApplicant = async (slackHandle, obj) => {
   const update = Promise.promisify(base(AIRTABLE_APPLICANTS).update)
   const { id } = await getApplicant(slackHandle)
@@ -200,11 +200,11 @@ export const updateApplicant = async (slackHandle, obj) => {
 export const getAllApplicants = async () => {
   const records = await _getAllRecords(base(AIRTABLE_APPLICANTS).select({
     view: 'Main View',
-    fields: ['Slack Handle', 'Interests', 'Skills', 'Admin', 'Applicant'],
+    fields: ['Slack Username', 'Interests', 'Skills', 'Admin', 'Applicant'],
     filterByFormula: '{Inactive}=0'
   }))
   return _.reduce(records, (people, r) => {
-    const name = (r.get('Slack Handle') || [])[0]
+    const name = (r.get('Slack Username') || [])[0]
     if (name && name.length) {
       people.push({
         name: name.replace(/^@/, ''),
@@ -251,7 +251,7 @@ export const checkIfAdmin = async (bot, message) => {
     filterByFormula: '{Admin}=1'
   }))
   records.forEach((record) => {
-    const name = record.get('Slack Handle')[0]
+    const name = record.get('Slack Username')[0]
     admins.push(name.replace(/^@/, ''))
   })
   const { user: { name } } = await apiUser.infoAsync({ user: message.user })
@@ -404,10 +404,10 @@ export const getActivities = async (listDone, listThanks) => {
   const inactives = []
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Familybot View',
-    fields: ['Slack Handle'],
+    fields: ['Slack Username'],
   }))
   const allRecords = []
-  records.forEach(({ id, fields: { 'Slack Handle': slackHandle } }) => allRecords.push({ id, slackHandle }))
+  records.forEach(({ id, fields: { 'Slack Username': slackHandle } }) => allRecords.push({ id, slackHandle }))
   for (let record of allRecords) {
     const { id, slackHandle } = record
     const member = slackHandle.substring(slackHandle.indexOf('@') + 1)
@@ -417,7 +417,7 @@ export const getActivities = async (listDone, listThanks) => {
     for (let help of listThanks) {
       if (help['To'][0] === id) {
         const { fields } = await getMember(help['By'][0])
-        helps.push(fields['Slack Handle'].substring(fields['Slack Handle'].indexOf('@') + 1))
+        helps.push(fields['Slack Username'].substring(fields['Slack Username'].indexOf('@') + 1))
       }
     }
     if (dones.length >= 1 || helps.length >= 1) {
@@ -448,13 +448,13 @@ export const getUpdates = async () => {
   const members = []
   const records = await _getAllRecords(base(AIRTABLE_MEMBERS).select({
     view: 'Familybot View',
-    fields: ['Slack Handle', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
+    fields: ['Slack Username', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
     filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1)'
   }))
   records.forEach((member) => {
     members.push({
       id: member.id,
-      name: member.get('Slack Handle'),
+      name: member.get('Slack Username'),
       location: member.get('Is new location?') === true ? member.get('Location') : null,
       focus: member.get('Is new focus?') === true ? member.get('Focus') : null,
       challenges: member.get('Is new challenges?') === true ? member.get('Challenges') : null

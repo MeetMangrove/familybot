@@ -19,7 +19,7 @@ export default async (bot, channel, name) => {
         const done = this.async()
         const { fields: user } = await getMember(mood['Member'][0])
         attachments.push({
-          'title': `${getEmoji(mood['Level'])} <${user['Slack Handle']}> is at ${mood['Level']}/5`,
+          'title': `${getEmoji(mood['Level'])} <${user['Slack Username']}> is at ${mood['Level']}/5`,
           'text': mood['Comment'],
           'color': getColor(mood['Level']),
           'thumb_url': user['Profile Picture'][0].url,
