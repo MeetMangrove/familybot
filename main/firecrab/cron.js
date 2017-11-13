@@ -51,7 +51,7 @@ const sendActivityDigest = new CronJob({
 
       // Catalyst Thanks KPI
       bot.say({
-        text: `Hi <!subteam^S7WBYB6TZ|catalysts>!\nThere is a total of *${listThanks.length} thanks* this week :heavy_heart_exclamation_mark_ornament:\n`,
+        text: `Hi <!subteam^S7WBYB6TZ|catalysts>!\nThere is a total of *${listThanks.length} thanks* this week :heavy_heart_exclamation_mark_ornament:`,
         channel: '#track-catalysts'
       }, (err) => {
         if (err) return console.log(err)
@@ -67,7 +67,7 @@ const sendActivityDigest = new CronJob({
             }
           })
           bot.say({
-            text: `No activity recorded this week: ${textInactives} :surfer:`,
+            text: `No activity recorded this week: ${textInactives}.`,
             channel: '#track-catalysts'
           })
         }
