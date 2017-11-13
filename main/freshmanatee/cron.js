@@ -54,6 +54,8 @@ const postDigest = new CronJob({
           mrkdwn_in: ['text']
         })
       })
+
+      // General Message
       bot.say({
         text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
         attachments,
@@ -65,43 +67,43 @@ const postDigest = new CronJob({
           text: `Go Mangrove :facepunch:`,
           channel: '#general'
         })
+      })
 
-        // Catalyst Challenges
-        bot.say({
-          text: `Hi <!subteam^S7WBYB6TZ|catalysts>!\nHere is the currents Mangrovers' challenges :tornado:`,
-          channel: '#track-catalysts'
-        }, (err) => {
-          if (err) return console.log(err)
-          members.forEach((member) => {
-            const { name, challenges } = member
-            bot.say({
-              text: `${name} is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``,
-              channel: '#track-catalysts'
-            })
+      // Catalyst Challenges
+      bot.say({
+        text: `Hi <!subteam^S7WBYB6TZ|catalysts>!\nHere is the currents Mangrovers' challenges :tornado:`,
+        channel: '#track-catalysts'
+      }, (err) => {
+        if (err) return console.log(err)
+        members.forEach((member) => {
+          const { name, challenges } = member
+          bot.say({
+            text: `${name} is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``,
+            channel: '#track-catalysts'
           })
         })
+      })
 
-        // Connector Newsletter
-        const { text, id } = await createNewsletter(members)
+      // Connector Newsletter
+      const { text, id } = await createNewsletter(members)
+      bot.say({
+        text: `Hi <!subteam^S7W60V3L6|connectors>!\nHere is the content of the Veteran Newsletter to be sent :love_letter:`,
+        attachments: [{
+          title: 'Draft Veteran Newsletter',
+          text: `\`\`\`${text}\`\`\``,
+          mrkdwn_in: ['text']
+        }],
+        channel: '#track-connectors'
+      }, (err) => {
+        if (err) return console.log(err)
         bot.say({
-          text: `Hi <!subteam^S7W60V3L6|connectors>!\nHere is the content of the Veteran Newsletter to be sent :love_letter:`,
-          attachments: [{
-            title: 'Draft Veteran Newsletter',
-            text: `\`\`\`${text}\`\`\``,
-            mrkdwn_in: ['text']
-          }],
+          text: `If you want to change it, <https://airtable.com/tblBsCEc45GtppbBP/viwIUnStSvSIhxqhv/${id}|click here to update the content field>.\n` +
+          'It will be automatically sent tomorrow at 2PM!\n' +
+          ':information_source: Good update includes :\n' +
+          '- Correcting typos\n' +
+          '- Removing private stuff\n' +
+          '- Adding infos about next event',
           channel: '#track-connectors'
-        }, (err) => {
-          if (err) return console.log(err)
-          bot.say({
-            text: `If you want to change it, <https://airtable.com/tblBsCEc45GtppbBP/viwIUnStSvSIhxqhv/${id}|click here to update the content field>.\n` +
-            'It will be automatically sent tomorrow at 2PM!\n' +
-            ':information_source: Good update includes :\n' +
-            '- Correcting typos\n' +
-            '- Removing private stuff\n' +
-            '- Adding infos about next event',
-            channel: '#track-connectors'
-          })
         })
       })
     })

@@ -41,10 +41,18 @@ const sendActivityDigest = new CronJob({
         if (a.nbActivities < b.nbActivities) return 1
         return 0
       })
+
+      // General Message
       bot.say({
         text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
         attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ['text'] })),
         channel: '#general'
+      })
+
+      // Catalyst Thanks KPI
+      bot.say({
+        text: `Hi <!subteam^S7WBYB6TZ|catalysts>!\nThere is a total of *${listThanks.length} thanks* this week :heavy_heart_exclamation_mark_ornament:\n`,
+        channel: '#track-catalysts'
       }, (err) => {
         if (err) return console.log(err)
         if (inactives.length > 0) {
@@ -60,7 +68,7 @@ const sendActivityDigest = new CronJob({
           })
           bot.say({
             text: `No activity recorded this week: ${textInactives} :surfer:`,
-            channel: '#general'
+            channel: '#track-catalysts'
           })
         }
       })

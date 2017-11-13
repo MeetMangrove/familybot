@@ -520,7 +520,7 @@ export const parseSlackMessage = (text) => {
   let embed = text
   do {
     name = regEx.exec(embed)
-    if (name) {
+    if (name && !name[0].match(/\|@[a-z._]+/g)) {
       if (name[0].match(/\s@[a-z._]+/g)) {
         embed = embed.splice(name.index + 1, 0, '<')
       } else {
@@ -528,6 +528,6 @@ export const parseSlackMessage = (text) => {
       }
       embed = embed.splice(name.index + name[0].length + 1, 0, '>')
     }
-  } while (name)
+  } while (name && !name[0].match(/\|@[a-z._]+/g))
   return embed
 }
