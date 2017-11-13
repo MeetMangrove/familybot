@@ -7,16 +7,11 @@ import cron from 'cron'
 import moment from 'moment'
 
 import { bots } from './config'
+import mailgun from '../mailgun'
 import askForUpdate from './askForUpdate'
 import { getAllMembers, getUpdates, cleanUpdates, createNewsletter, getEmails, getNewsletter } from '../methods'
 
 const { CronJob } = cron
-const { MAILGUN_API_KEY } = process.env
-
-if (!MAILGUN_API_KEY) {
-  console.log('Error: Specify MAILGUN_API_KEY in a .env file')
-  process.exit(1)
-}
 
 const sendMessage = new CronJob({
   cronTime: '00 00 09 * * 1',
@@ -72,7 +67,7 @@ const postDigest = new CronJob({
         })
         const { text, id } = await createNewsletter(members)
         bot.say({
-          text: `Hi <!subteam^S7W60V3L6|connectors>!\nHere is the content of the Veteran Newsletter to be sent tomorrow :love_letter:`,
+          text: `Hi <!subteam^S7W60V3L6|connectors>!\nHere is the content of the Veteran Newsletter to be sent :love_letter:`,
           attachments: [{
             title: 'Draft Veteran Newsletter',
             text: `\`\`\`${text}\`\`\``,
@@ -83,7 +78,7 @@ const postDigest = new CronJob({
           if (err) return console.log(err)
           bot.say({
             text: `If you want to change it, <https://airtable.com/tblBsCEc45GtppbBP/viwIUnStSvSIhxqhv/${id}|click here to update the content field>.\n` +
-            'You have 24 hours before, it\'s automatically sent !\n' +
+            'It will be automatically sent tomorrow at 2PM!\n' +
             ':information_source: Good update includes :\n' +
             '- Correcting typos\n' +
             '- Removing private stuff\n' +
@@ -103,9 +98,8 @@ const sendNewsletter = new CronJob({
   onTick: async function () {
     const emails = await getEmails('Veteran')
     const newsletter = await getNewsletter()
-    const mailgun = require('mailgun-js')({ apiKey: MAILGUN_API_KEY, domain: 'family.mangrove.io' })
     const data = {
-      from: 'Fresh Manatee <hello@meetmangrove.com>',
+      from: 'Fresh Manatee <hellomangrove@gmail.com>',
       to: emails,
       subject: newsletter.get('Title'),
       text: newsletter.get('Content')
