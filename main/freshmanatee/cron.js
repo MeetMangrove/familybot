@@ -65,6 +65,23 @@ const postDigest = new CronJob({
           text: `Go Mangrove :facepunch:`,
           channel: '#general'
         })
+
+        // Catalyst Challenges
+        bot.say({
+          text: `Hi <!subteam^S7WBYB6TZ|catalysts>!\nHere is the currents Mangrovers' challenges :tornado:`,
+          channel: '#track-catalysts'
+        }, (err) => {
+          if (err) return console.log(err)
+          members.forEach((member) => {
+            const { name, challenges } = member
+            bot.say({
+              text: `${name} is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``,
+              channel: '#track-catalysts'
+            })
+          })
+        })
+
+        // Connector Newsletter
         const { text, id } = await createNewsletter(members)
         bot.say({
           text: `Hi <!subteam^S7W60V3L6|connectors>!\nHere is the content of the Veteran Newsletter to be sent :love_letter:`,
