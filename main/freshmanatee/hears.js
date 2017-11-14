@@ -21,6 +21,20 @@ controller.hears(['^fresh'], ['direct_message', 'direct_mention'], async (bot, m
   }
 })
 
+// Responsible Commands
+controller.hears(['^profiles'], ['direct_message', 'direct_mention'], async (bot, message) => {
+  try {
+    const { name } = await getSlackUser(bot, message.user)
+    bot.startConversation(message, function (err, convo) {
+      if (err) return console.log(err)
+      convo.addMessage(`Hi ${name}!`, 'default')
+      convo.addMessage('You can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:', 'default')
+    })
+  } catch (e) {
+    errorMessage(e, bot, message)
+  }
+})
+
 // User Commands
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
@@ -29,6 +43,7 @@ controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_messag
       if (err) return console.log(err)
       convo.say(`Hi ${name}! I'm Fresh Manatee!`)
       convo.say(`Say \`fresh\` if you want me to update your profile`)
+      convo.say(`and \`profiles\` if you want to see others Mangrovers' profiles.`)
       convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
@@ -43,6 +58,7 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
       if (err) return console.log(err)
       convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
       convo.say(`Say \`fresh\` if you want me to update your profile`)
+      convo.say(`and \`profiles\` if you want to see others Mangrovers' profiles.`)
       convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
@@ -60,7 +76,7 @@ controller.on('dialog_submission', async function (bot, message) {
         text: 'Your profile has been freshed!',
         channel: message.channel
       }, () => bot.say({
-        text: 'You can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:',
+        text: 'If you want, you can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:',
         channel: message.channel
       }, () => bot.say({
         text: 'See you! :wave:',
