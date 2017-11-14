@@ -43,7 +43,7 @@ controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_messag
       if (err) return console.log(err)
       convo.say(`Hi ${name}! I'm Fresh Manatee!`)
       convo.say(`Say \`fresh\` if you want me to update your profile`)
-      convo.say(`and \`profiles\` if you want to see others Mangrovers' profiles.`)
+      convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
       convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
@@ -58,7 +58,7 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
       if (err) return console.log(err)
       convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
       convo.say(`Say \`fresh\` if you want me to update your profile`)
-      convo.say(`and \`profiles\` if you want to see others Mangrovers' profiles.`)
+      convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
       convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
