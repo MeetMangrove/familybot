@@ -11,7 +11,6 @@ controller.on('slash_command', async function (bot, message) {
     const { text } = message
     const date = Date.now()
     const apiUser = Promise.promisifyAll(bot.api.users)
-
     switch (message.command) {
       case '/done':
         bot.whisper(message, 'Your */done* is saving...')
@@ -69,38 +68,27 @@ controller.on('slash_command', async function (bot, message) {
         bot.whisper(message, 'Sorry, I\'m not sure what that command is')
     }
   } catch (e) {
-    console.log(e)
-    bot.whisper(message, `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``)
+    errorMessage(e, bot, message)
   }
 })
 
 // User Commands
-controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+const dialog = async (bot, message, isError) => {
   try {
     const { name } = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      convo.say(`Hi ${name}! I'm Fire Crab!`)
+      convo.say(isError === true ? `Sorry ${name}, but I'm too young to understand what you mean :flushed:` : `Hi ${name}! I'm <@activity_bot>!`)
       convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
-      convo.say(`I'll share your activity every sunday at 7PM :fire:`)
+      convo.say(`I'll share your activity in <#C0KD37VUP> every sunday at 7PM :fire:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
   }
-})
+}
 
-controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, message) => {
-  try {
-    const { name } = await getSlackUser(bot, message.user)
-    bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
-      convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
-      convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
-      convo.say(`I'll share your activity every sunday at 7PM :fire:`)
-    })
-  } catch (e) {
-    errorMessage(e, bot, message)
-  }
-})
+controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, false))
+controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, true))
+controller.on('team_join', (bot, message) => dialog(bot, message, false))
 
 export default controller

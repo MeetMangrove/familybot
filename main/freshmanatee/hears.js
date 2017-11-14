@@ -36,35 +36,24 @@ controller.hears(['^profiles'], ['direct_message', 'direct_mention'], async (bot
 })
 
 // User Commands
-controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+const dialog = async (bot, message, isError) => {
   try {
     const { name } = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      convo.say(`Hi ${name}! I'm Fresh Manatee!`)
+      convo.say(isError === true ? `Sorry ${name}, but I'm too young to understand what you mean :flushed:` : `Hi ${name}! I'm <@freshmanatee>!`)
       convo.say(`Say \`fresh\` if you want me to update your profile`)
       convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
-      convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
+      convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 7PM :rocket:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
   }
-})
+}
 
-controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, message) => {
-  try {
-    const { name } = await getSlackUser(bot, message.user)
-    bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
-      convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
-      convo.say(`Say \`fresh\` if you want me to update your profile`)
-      convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
-      convo.say(`I'll share your updates every wednesday at 7PM :rocket:`)
-    })
-  } catch (e) {
-    errorMessage(e, bot, message)
-  }
-})
+controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, false))
+controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, message) => dialog(bot, message, true))
+controller.on('team_join', (bot, message) => dialog(bot, message, false))
 
 controller.on('dialog_submission', async function (bot, message) {
   bot.dialogOk()

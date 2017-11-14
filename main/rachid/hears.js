@@ -29,34 +29,23 @@ controller.hears(['^daily'], ['direct_message', 'direct_mention'], async (bot, m
   }
 })
 
-controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+const dialog = async (bot, message, isError) => {
   try {
-    const {name} = await getSlackUser(bot, message.user)
+    const { name } = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      convo.say(`Hi ${name}! I'm Rachid!`)
+      convo.say(isError === true ? `Sorry ${name}, but I'm too young to understand what you mean :flushed:` : `Hi ${name}! I'm <@moodbot>!`)
       convo.say(`You can say \`mood\` to save your mood`)
-      convo.say(`And also \`daily\` to see last Mangrovers' mood`)
-      convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :sunglasses:`)
+      convo.say(`or \`daily\` if you want to see last Mangrovers' moods`)
+      convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :tada:`)
     })
   } catch (e) {
     errorMessage(e, bot, message)
   }
-})
+}
 
-controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, message) => {
-  try {
-    const {name} = await getSlackUser(bot, message.user)
-    bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
-      convo.say(`Sorry ${name}, but I'm too young to understand what you mean :flushed:`)
-      convo.say(`You can say \`mood\` to save your mood`)
-      convo.say(`And also \`daily\` to see last Mangrovers' mood`)
-      convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :sunglasses:`)
-    })
-  } catch (e) {
-    errorMessage(e, bot, message)
-  }
-})
+controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, false))
+controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, true))
+controller.on('team_join', (bot, message) => dialog(bot, message, false))
 
 export default controller
