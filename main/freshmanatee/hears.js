@@ -57,13 +57,15 @@ controller.on('dialog_submission', async function (bot, message) {
     const isUpdated = await saveProfile(name, message.submission)
     if (isUpdated === true) {
       bot.say({
-        text: 'Your profile has been freshed! :raised_hands:',
+        text: 'Your profile has been freshed!',
         channel: message.channel
       }, () => bot.say({
-        text: 'See you in two weeks! :wave:',
+        text: 'You can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:',
         channel: message.channel
-      })
-      )
+      }, () => bot.say({
+        text: 'See you! :wave:',
+        channel: message.channel
+      })))
     }
   } catch (e) {
     errorMessage(e, bot, message)

@@ -113,7 +113,7 @@ export default ({ bot, convo, name, id }) => {
             attachments: [
               {
                 title: 'Do you want to update these information?',
-                text: 'Okay, see you in two weeks! :wave:',
+                text: 'Okay, see you! :wave:',
                 callback_id: 'update_info',
                 attachment_type: 'default'
               }
