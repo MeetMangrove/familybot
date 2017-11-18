@@ -6,7 +6,7 @@ import { saveProfile } from './methods'
 import { controller } from './config'
 import askForUpdate from './askForUpdate'
 
-// Responsible Commands
+// User commands
 controller.hears(['fresh'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     bot.startConversation(message, function (err, convo) {
@@ -21,7 +21,6 @@ controller.hears(['fresh'], ['direct_message', 'direct_mention'], async (bot, me
   }
 })
 
-// Responsible Commands
 controller.hears(['profiles'], ['direct_message', 'direct_mention'], async (bot, message) => {
   bot.startConversation(message, function (err, convo) {
     if (err) return console.log(err)
@@ -30,20 +29,53 @@ controller.hears(['profiles'], ['direct_message', 'direct_mention'], async (bot,
   })
 })
 
-// User Commands
-const dialog = async (bot, message, isError) => {
-  bot.startConversation(message, function (err, convo) {
-    if (err) return console.log(err)
-    convo.say(isError === true ? `Sorry <@${message.user}>, but I'm too young to understand what you mean :flushed:` : `Hi <@${message.user}>! I'm <@${bot.id}>!`)
-    convo.say(`Say \`fresh\` if you want me to update your profile`)
-    convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
-    convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 7PM :rocket:`)
-  })
+const dialog = (convo, slackId, context) => {
+  switch (context) {
+    case 'hello': {
+      convo.say(`Hello <@${slackId}> :slightly_smiling_face:`)
+      break
+    }
+    case 'intro': {
+      convo.say(`Hi <@${slackId}> :sunglasses:`)
+      convo.say(`Welcome in Mangrove :flag-mangrove:`)
+      convo.say(`I'm <@${convo.context.bot.identity.id}>!`)
+      convo.say(`I like fresh news about Mangrovers.`)
+      break
+    }
+    case 'error': {
+      convo.say(`Sorry <@${slackId}>, but I'm too young to understand what you mean :flushed:`)
+      break
+    }
+    default: {
+      convo.say(`Hello <@${slackId}> :slightly_smiling_face:`)
+      break
+    }
+  }
+  convo.say(`Say \`fresh\` if you want me to update your profile`)
+  convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
+  convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 7PM :rocket:`)
 }
 
-controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, false))
-controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, true))
-controller.on('team_join', (bot, message) => dialog(bot, message, false))
+controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
+  bot.startConversation(message, (err, convo) => {
+    if (err) return console.log(err)
+    dialog(convo, message.user, 'hello')
+  })
+})
+
+controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => {
+  bot.startConversation(message, (err, convo) => {
+    if (err) return console.log(err)
+    dialog(convo, message.user, 'error')
+  })
+})
+
+controller.on('team_join', (bot, { user }) => {
+  bot.startPrivateConversation({ user: user.id }, (err, convo) => {
+    if (err) return console.log(err)
+    dialog(convo, user.id, 'intro')
+  })
+})
 
 controller.on('dialog_submission', async function (bot, message) {
   bot.dialogOk()

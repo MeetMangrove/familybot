@@ -1,4 +1,5 @@
 import Airtable from 'airtable'
+import Promise from 'bluebird'
 
 require('dotenv').config()
 
@@ -38,15 +39,15 @@ export const _getAllRecords = (select) => {
 export const getMember = async (id) => {
   const regExSlackId = /^U[A-Z0-9]{8}$/g
   const regExAirtableId = /^rec[a-zA-Z0-9]{14}$/g
-  if (regExSlackId.text(id) === true) {
+  if (regExSlackId.test(id) === true) {
     const records = await _getAllRecords(base('Members').select({
       view: 'Familybot View',
-      filterByFormula: `{Slack ID}=${id}`,
+      filterByFormula: `{Slack ID} = '${id}'`,
       maxRecords: 1
     }))
     if (records[0]) return records[0]
     throw new Error(`The member with the Slack ID ${id} doesn't exist.`)
-  } else if (regExAirtableId.text(id) === true) {
+  } else if (regExAirtableId.test(id) === true) {
     const findMember = Promise.promisify(base('Members').find)
     const member = await findMember(id)
     if (member) return member

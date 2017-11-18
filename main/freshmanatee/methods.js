@@ -22,7 +22,7 @@ export const getUpdates = async () => {
   const members = []
   const records = await _getAllRecords(base('Members').select({
     view: 'Familybot View',
-    fields: ['Name', 'Email', 'Slack Username', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
+    fields: ['Name', 'Email', 'Slack ID', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
     filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1)'
   }))
   records.forEach((member) => {
@@ -39,15 +39,11 @@ export const getUpdates = async () => {
   return members
 }
 
-export const cleanUpdates = (members) => {
-  members.forEach(({ id }) => {
-    base('Members').update(id, {
-      'Is new location?': false,
-      'Is new focus?': false,
-      'Is new challenges?': false
-    })
-  })
-}
+export const cleanUpdates = (members) => members.forEach(({ id }) => base('Members').update(id, {
+  'Is new location?': false,
+  'Is new focus?': false,
+  'Is new challenges?': false
+}))
 
 export const createNewsletter = async (members) => {
   let text = 'Hi there!\n' +
