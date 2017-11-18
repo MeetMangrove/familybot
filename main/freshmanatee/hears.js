@@ -78,21 +78,15 @@ controller.on('team_join', (bot, { user }) => {
 })
 
 controller.on('dialog_submission', async function (bot, message) {
-  bot.dialogOk()
   try {
+    bot.dialogOk()
     const isUpdated = await saveProfile(message.user, message.submission)
-    if (isUpdated === true) {
-      bot.say({
-        text: 'Your profile has been freshed!',
-        channel: message.channel
-      }, () => bot.say({
-        text: 'If you want, you can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:',
-        channel: message.channel
-      }, () => bot.say({
-        text: 'See you! :wave:',
-        channel: message.channel
-      })))
-    }
+    bot.startConversation(message, (err, convo) => {
+      if (err) return console.log(err)
+      if (isUpdated === true) convo.say('Your profile has been freshed!')
+      convo.say('If you want, you can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:')
+      convo.say('See you! :wave:')
+    })
   } catch (e) {
     console.log(e)
     bot.reply(message, `Oops..! :sweat_smile: A little error occur during your submission: \`${e.message || e.error || e}\``)

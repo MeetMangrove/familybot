@@ -78,19 +78,15 @@ export const getActivities = async (listDone, listThanks) => {
 }
 
 export const parseSlackMessage = (text) => {
-  const regEx = /\s?@[a-z._]+/g
   let name
-  let embed = text
+  let embed = text.splice(0, 0, ' ')
+  embed = embed.splice(embed.length, 0, ' ')
   do {
-    name = regEx.exec(embed)
-    if (name && !name[0].match(/\|@[a-z._]+/g)) {
-      if (name[0].match(/\s@[a-z._]+/g)) {
-        embed = embed.splice(name.index + 1, 0, '<')
-      } else {
-        embed = embed.splice(name.index, 0, '<')
-      }
-      embed = embed.splice(name.index + name[0].length + 1, 0, '>')
+    name = /\s@[a-z._0-9]+\s/g.exec(String(embed))
+    if (name) {
+      embed = embed.splice(name.index + 1, 0, '<')
+      embed = embed.splice(name.index + name[0].length, 0, '>')
     }
-  } while (name && !name[0].match(/\|@[a-z._]+/g))
-  return embed
+  } while (name)
+  return embed.trim()
 }
