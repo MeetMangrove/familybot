@@ -6,11 +6,11 @@ import _ from 'lodash'
 import cron from 'cron'
 import moment from 'moment'
 
+import Slack from '../slack'
+import Nodemailer from '../nodemailer'
 import { bots } from './config'
-import mailgun from '../mailgun'
 import askForUpdate from './askForUpdate'
 import { getUpdates, cleanUpdates, createNewsletter, getEmails, getNewsletter } from './methods'
-import Slack from '../slack'
 
 const { CronJob } = cron
 
@@ -52,7 +52,7 @@ const sendMessage = new CronJob({
 const postDigest = new CronJob({
   cronTime: '00 00 18 * * 3',
   onTick: async function () {
-    for (let bot of bots) {
+    for (let bot of BOTS) {
       try {
         const members = await getUpdates()
         const attachments = []
@@ -132,20 +132,31 @@ const postDigest = new CronJob({
 })
 
 const sendNewsletter = new CronJob({
-  cronTime: '00 00 14 * * 4',
+  cronTime: '00 00 14 * 4',
   onTick: async function () {
-    const emails = await getEmails('Veteran')
-    const newsletter = await getNewsletter()
-    const data = {
-      from: 'Fresh Manatee <hellomangrove@gmail.com>',
-      to: emails,
-      subject: newsletter.get('Title'),
-      text: newsletter.get('Content')
+    for (let bot of bots) {
+      try {
+        const date = moment().format('DD/MM/YYYY')
+        const emails = await getEmails('Veteran')
+        const newsletter = await getNewsletter(date)
+        const data = {
+          from: '"Fresh Manatee 🎉" <hellomangrove@gmail.com>',
+          to: emails,
+          subject: newsletter.get('Title'),
+          text: newsletter.get('Content')
+        }
+        Nodemailer.sendMail(data, function (err, info) {
+          if (err) return console.log(err)
+          console.log('Message sent: %s', info.messageId)
+        })
+      } catch (e) {
+        console.log(e)
+        bot.say({
+          text: `Oops..! :sweat_smile: A little error occur for the newsletter: \`${e.message || e.error || e}\``,
+          channel: '#mangrove-tech'
+        })
+      }
     }
-    mailgun.messages().send(data, function (err, body) {
-      if (err) console.log(err)
-      console.log(body)
-    })
   },
   start: false,
   timeZone: 'Europe/Paris'

@@ -29,11 +29,11 @@
     "i18n": "0.8.3",
     "lodash": "4.17.4",
     "long-timeout": "0.1.1",
-    "mailgun-js": "0.13.1",
     "mangrove-botkit": "0.6.4",
     "moment": "2.18.1",
     "moment-timezone": "0.5.13",
     "mongodb": "2.2.28",
+    "nodemailer": "4.4.0",
     "request": "2.81.0",
     "vhost": "^3.0.2"
   },

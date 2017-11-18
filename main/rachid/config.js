@@ -7,7 +7,7 @@ import FirebaseStorage from 'botkit-storage-firebase'
 
 require('dotenv').config()
 
-const bots = {}
+const bots = []
 const {
   RACHID_SLACK_CLIENT_ID,
   RACHID_SLACK_CLIENT_SECRET,
@@ -17,10 +17,6 @@ const {
 if (!RACHID_SLACK_CLIENT_ID || !RACHID_SLACK_CLIENT_SECRET || !RACHID_FIREBASE_URI) {
   console.log('Error: Specify RACHID_SLACK_CLIENT_ID, RACHID_SLACK_CLIENT_SECRET and RACHID_FIREBASE_URI in a .env file')
   process.exit(1)
-}
-
-const trackBot = (bot) => {
-  bots[bot.config.token] = bot
 }
 
 const mongoStorage = new FirebaseStorage({
@@ -70,7 +66,7 @@ controller.storage.teams.all((err, teams) => {
     if (teams[t].bot) {
       controller.spawn(teams[t]).startRTM((err, bot) => {
         if (err) return console.log('Error connecting rachid to Slack:', err)
-        trackBot(bot)
+        bots.push(bot)
       })
     }
   }

@@ -7,7 +7,7 @@ import FirebaseStorage from 'botkit-storage-firebase'
 
 require('dotenv').config()
 
-const bots = {}
+const bots = []
 const {
   FIRECRAB_SLACK_CLIENT_ID,
   FIRECRAB_SLACK_CLIENT_SECRET,
@@ -17,10 +17,6 @@ const {
 if (!FIRECRAB_SLACK_CLIENT_ID || !FIRECRAB_SLACK_CLIENT_SECRET || !FIRECRAB_FIREBASE_URI) {
   console.log('Error: Specify ACTIVITYBOT_SLACK_CLIENT_ID, ACTIVITYBOT_SLACK_CLIENT_SECRET, ACTIVITYBOT_INCOMING_WEBHOOK and ACTIVITYBOT_FIREBASE_URI in a .env file')
   process.exit(1)
-}
-
-const trackBot = (bot) => {
-  bots[bot.config.token] = bot
 }
 
 const mongoStorage = new FirebaseStorage({
@@ -70,7 +66,7 @@ controller.storage.teams.all((err, teams) => {
         .spawn(teams[t])
         .startRTM((err, bot) => {
           if (err) return console.log('Error connecting firecrab to Slack:', err)
-          trackBot(bot)
+          bots.push(bot)
         })
     }
   }

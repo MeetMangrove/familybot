@@ -5,7 +5,7 @@
 import Botkit from 'mangrove-botkit'
 import FirebaseStorage from 'botkit-storage-firebase'
 
-const bots = {}
+const bots = []
 const {
   FRESHMANATEE_SLACK_CLIENT_ID,
   FRESHMANATEE_SLACK_CLIENT_SECRET,
@@ -15,10 +15,6 @@ const {
 if (!FRESHMANATEE_SLACK_CLIENT_ID || !FRESHMANATEE_SLACK_CLIENT_SECRET || !FRESHMANATEE_FIREBASE_URI) {
   console.log('Error: Specify NEWSBOT_SLACK_CLIENT_ID, NEWSBOT_SLACK_CLIENT_SECRET and NEWSBOT_MONGODB_URI in a .env file')
   process.exit(1)
-}
-
-const trackBot = (bot) => {
-  bots[bot.config.token] = bot
 }
 
 const mongoStorage = new FirebaseStorage({
@@ -70,7 +66,7 @@ controller.storage.teams.all((err, teams) => {
         .spawn(teams[t])
         .startRTM((err, bot) => {
           if (err) return console.log('Error connecting freshmanatee to Slack:', err)
-          trackBot(bot)
+          bots.push(bot)
         })
     }
   }

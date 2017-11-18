@@ -72,10 +72,10 @@ export const getEmails = async (status) => {
   return _.map(records, record => record.get('Email'))
 }
 
-export const getNewsletter = async () => {
+export const getNewsletter = async (date) => {
   const newsletter = await _getAllRecords(base('Newsletters').select({
     view: 'Grid view',
-    filterByFormula: `{Sending Date}='${moment().format('DD/MM/YYYY')}'`
+    filterByFormula: `{Sending Date}='${date}'`
   }))
   return newsletter[0]
 }
