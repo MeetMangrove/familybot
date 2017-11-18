@@ -85,7 +85,9 @@ export default ({ bot, convo, slackId }) => {
             max_length: 500,
             placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
           })
-          .addText('Location', 'Location', convo.vars.profile.location)
+          .addText('Location', 'Location', convo.vars.profile.location, {
+            placeholder: 'What is your current location (City, Country)?'
+          })
           .addTextarea('Focus', 'Focus', convo.vars.profile.focus, {
             max_length: 300,
             placeholder: 'Your main focus for the next two weeks? (private)'
