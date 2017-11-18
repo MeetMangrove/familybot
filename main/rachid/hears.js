@@ -2,46 +2,40 @@
  * Created by thomasjeanneau on 09/04/2017.
  */
 
-import { getSlackUser, errorMessage } from '../methods'
 import { controller } from './config'
 import giveMood from './giveMood'
 import getMood from './getMood'
 
 // User Commands
-controller.hears(['^mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+controller.hears(['mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
-    const {name} = await getSlackUser(bot, message.user)
     bot.startConversation(message, function (err, convo) {
       if (err) return console.log(err)
-      giveMood({ bot, convo, name, id: message.user })
+      giveMood({ bot, convo, slackId: message.user })
     })
   } catch (e) {
-    errorMessage(e, bot, message)
+    console.log(e)
+    bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`mood\` command: \`${e.message || e.error || e}\``)
   }
 })
 
-controller.hears(['^daily'], ['direct_message', 'direct_mention'], async (bot, message) => {
+controller.hears(['daily'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
-    const {name} = await getSlackUser(bot, message.user)
-    await getMood(bot, message.user, name)
+    await getMood({ bot, channel: message.user, slackId: message.user })
   } catch (e) {
-    errorMessage(e, bot, message)
+    console.log(e)
+    bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`daily\` command: \`${e.message || e.error || e}\``)
   }
 })
 
 const dialog = async (bot, message, isError) => {
-  try {
-    const { name } = await getSlackUser(bot, message.user)
-    bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
-      convo.say(isError === true ? `Sorry ${name}, but I'm too young to understand what you mean :flushed:` : `Hi ${name}! I'm <@moodbot>!`)
-      convo.say(`You can say \`mood\` to save your mood`)
-      convo.say(`or \`daily\` if you want to see last Mangrovers' moods`)
-      convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :tada:`)
-    })
-  } catch (e) {
-    errorMessage(e, bot, message)
-  }
+  bot.startConversation(message, function (err, convo) {
+    if (err) return console.log(err)
+    convo.say(isError === true ? `Sorry <@${message.user}>, but I'm too young to understand what you mean :flushed:` : `Hi <@${message.user}>! I'm <@${bot.id}>!`)
+    convo.say(`You can say \`mood\` to save your mood`)
+    convo.say(`or \`daily\` if you want to see last Mangrovers' moods.`)
+    convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM :tada:`)
+  })
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, false))

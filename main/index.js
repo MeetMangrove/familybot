@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import vhost from 'vhost'
 
 // Import controllers for each bot
-import learnbot from './learnbot'
+// import learnbot from './learnbot'
 import rachid from './rachid'
 import freshmanatee from './freshmanatee'
 import firecrab from './firecrab'
@@ -32,7 +32,7 @@ app.set('port', process.env.PORT || 5000)
 // For development you can use ngrok and set up a dedicated *.ngrok.io domain for each bot
 // For production, you should set up your DNS to point different domain names to your server
 const botSetups = [
-  { controller: learnbot },
+  // { controller: learnbot },
   { controller: rachid },
   { controller: freshmanatee },
   { controller: firecrab }

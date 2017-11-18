@@ -3,8 +3,9 @@ import _ from 'lodash'
 import Promise from 'bluebird'
 
 import { controller } from './config'
-import { saveDone, saveThanks, errorMessage, getSlackUser, parseSlackMessage } from '../methods'
+import { saveDone, saveThanks, parseSlackMessage } from './methods'
 
+// Slash commands
 controller.on('slash_command', async function (bot, message) {
   bot.replyAcknowledge()
   try {
@@ -14,7 +15,7 @@ controller.on('slash_command', async function (bot, message) {
     switch (message.command) {
       case '/done':
         bot.whisper(message, 'Your */done* is saving...')
-        await saveDone(message.user_name, text, date)
+        await saveDone(message.user, text, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
           if (err) console.log(err)
@@ -32,7 +33,7 @@ controller.on('slash_command', async function (bot, message) {
         break
       case '/thanks':
         bot.whisper(message, 'Your */thanks* is saving...')
-        const thanksTo = []
+        let thanksTo = []
         const regEx = /\s?@[a-z._]+/g
         let name
         do {
@@ -46,8 +47,9 @@ controller.on('slash_command', async function (bot, message) {
           const notValid = _.difference(thanksTo, _.map(members, 'name'))
           bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)
         } else {
+          thanksTo = _.map(thanksTo, name => _.find(members, 'name').id)
           const thanksText = text.slice(text.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length).trim()
-          await saveThanks(message.user_name, thanksTo, thanksText, date)
+          await saveThanks(message.user, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
             if (err) console.log(err)
@@ -68,23 +70,19 @@ controller.on('slash_command', async function (bot, message) {
         bot.whisper(message, 'Sorry, I\'m not sure what that command is')
     }
   } catch (e) {
-    errorMessage(e, bot, message)
+    console.log(e)
+    bot.whisper(message, `Oops..! :sweat_smile: A little error occur in your \`${message.command}\` command: \`${e.message || e.error || e}\``)
   }
 })
 
 // User Commands
 const dialog = async (bot, message, isError) => {
-  try {
-    const { name } = await getSlackUser(bot, message.user)
-    bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
-      convo.say(isError === true ? `Sorry ${name}, but I'm too young to understand what you mean :flushed:` : `Hi ${name}! I'm <@activity_bot>!`)
-      convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
-      convo.say(`I'll share your activity in <#C0KD37VUP> every sunday at 7PM :fire:`)
-    })
-  } catch (e) {
-    errorMessage(e, bot, message)
-  }
+  bot.startConversation(message, function (err, convo) {
+    if (err) return console.log(err)
+    convo.say(isError === true ? `Sorry <@${message.user}>, but I'm too young to understand what you mean :flushed:` : `Hi <@${message.user}>! I'm <@${bot.id}>!`)
+    convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
+    convo.say(`I'll share your activity in <#C0KD37VUP> every sunday at 7PM :fire:`)
+  })
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => dialog(bot, message, false))

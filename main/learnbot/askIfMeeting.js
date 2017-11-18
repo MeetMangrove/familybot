@@ -1,4 +1,4 @@
-export default (convo) => {
+/* export default (convo) => {
   convo.addQuestion({
     text: 'Did you meet ?',
     attachments: [
@@ -59,4 +59,4 @@ export default (convo) => {
       text: `Thank you ❤`
     }, 'feedback')
   }, { key: 'feedback' }, 'feedback')
-}
+} */

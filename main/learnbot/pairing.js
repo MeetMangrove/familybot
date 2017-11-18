@@ -1,4 +1,4 @@
-import _ from 'lodash'
+/* import _ from 'lodash'
 import findMatching from 'bipartite-matching'
 import { getAllApplicants, savePairing } from '../methods'
 
@@ -99,4 +99,4 @@ export const generatePairing = async (people) => {
     // list of pairs
     pairs
   }
-}
+} */

@@ -2,7 +2,7 @@
  * Created by thomasjeanneau on 09/04/2017.
  */
 
-import _ from 'lodash'
+/* import _ from 'lodash'
 import Promise from 'bluebird'
 import asyncForEach from 'async-foreach'
 
@@ -272,4 +272,4 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], async (bot, mes
   }
 })
 
-export default controller
+export default controller */

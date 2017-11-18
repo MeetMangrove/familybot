@@ -2,7 +2,7 @@
  * Created by thomasjeanneau on 20/03/2017.
  */
 
-import _ from 'lodash'
+/* import _ from 'lodash'
 import Promise from 'bluebird'
 import asyncForEach from 'async-foreach'
 
@@ -44,4 +44,4 @@ export default async (bot) => {
     done()
   })
   return membersPaired
-}
+} */

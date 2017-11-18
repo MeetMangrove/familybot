@@ -4,7 +4,7 @@
 // 2- An admin sends a first-time command
 //    Every person in the slack should get a private message with the conversation
 
-export default (bot, message, userInfo) => {
+/* export default (bot, message, userInfo) => {
   bot.startPrivateConversation(message, (err, convo) => {
     if (err) return console.log(err)
     convo.say(`Hey ${userInfo.name}! :wave:`)
@@ -60,4 +60,4 @@ export default (bot, message, userInfo) => {
       }
     ])
   })
-}
+} */

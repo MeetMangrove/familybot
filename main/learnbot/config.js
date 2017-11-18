@@ -2,10 +2,10 @@
  * Created by thomasjeanneau on 08/02/2017.
  */
 
-import Botkit from 'mangrove-botkit'
+/* import Botkit from 'mangrove-botkit'
 import BotkitStorageMongo from 'botkit-storage-mongo'
 
-import { getSlackUser } from '../methods'
+import { getSlackUser } from './methods'
 import firstTimeConversation from './firstTimeConversation'
 
 const _bots = {}
@@ -82,4 +82,4 @@ controller.storage.teams.all((err, teams) => {
   }
 })
 
-export { controller }
+export { controller } */

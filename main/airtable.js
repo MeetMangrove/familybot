@@ -33,3 +33,24 @@ export const _getAllRecords = (select) => {
     })
   })
 }
+
+// get a member by Slack ID or Airtable ID
+export const getMember = async (id) => {
+  const regExSlackId = /^U[A-Z0-9]{8}$/g
+  const regExAirtableId = /^rec[a-zA-Z0-9]{14}$/g
+  if (regExSlackId.text(id) === true) {
+    const records = await _getAllRecords(base('Members').select({
+      view: 'Familybot View',
+      filterByFormula: `{Slack ID}=${id}`,
+      maxRecords: 1
+    }))
+    if (records[0]) return records[0]
+    throw new Error(`The member with the Slack ID ${id} doesn't exist.`)
+  } else if (regExAirtableId.text(id) === true) {
+    const findMember = Promise.promisify(base('Members').find)
+    const member = await findMember(id)
+    if (member) return member
+    throw new Error(`The member with the Airtable ID ${id} doesn't exist.`)
+  }
+  throw new Error(`${id} is not a Slack ID or a Airtable ID.`)
+}
