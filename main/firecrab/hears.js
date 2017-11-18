@@ -34,7 +34,7 @@ controller.on('slash_command', async function (bot, message) {
       case '/thanks':
         bot.whisper(message, 'Your */thanks* is saving...')
         let thanksTo = []
-        const regEx = /\s?@[a-z._]+/g
+        const regEx = /\s?@[a-z._0-9]+/g
         let name
         do {
           name = regEx.exec(text)
@@ -47,8 +47,8 @@ controller.on('slash_command', async function (bot, message) {
           const notValid = _.difference(thanksTo, _.map(members, 'name'))
           bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)
         } else {
-          thanksTo = _.map(thanksTo, name => _.find(members, 'name').id)
           const thanksText = text.slice(text.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length).trim()
+          thanksTo = _.map(thanksTo, name => _.find(members, { name }).id)
           await saveThanks(message.user, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
