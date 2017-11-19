@@ -40,7 +40,7 @@ controller.configureSlackApp({
 controller.on('create_bot', (bot, config) => {
   if (!bots[bot.config.token]) {
     bot.startRTM((err) => {
-      if (!err) trackBot(bot)
+      if (!err) bots.push(bot)
       bot.startPrivateConversation({ user: config.createdBy }, (err, convo) => {
         if (err) return console.log(err)
         convo.say('Hello, I\'m a new Mangrove Bot!')

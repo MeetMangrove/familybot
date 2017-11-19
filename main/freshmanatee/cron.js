@@ -52,7 +52,7 @@ const sendMessage = new CronJob({
 const postDigest = new CronJob({
   cronTime: '00 00 18 * * 3',
   onTick: async function () {
-    for (let bot of BOTS) {
+    for (let bot of bots) {
       try {
         const members = await getUpdates()
         const attachments = []
