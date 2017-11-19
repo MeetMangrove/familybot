@@ -38,11 +38,11 @@ const askMood = new CronJob({
 })
 
 const sendMood = new CronJob({
-  cronTime: '00 00 19 * * *',
+  cronTime: '00 8 22 * * *',
   onTick: async function () {
     for (let bot of bots) {
       try {
-        await getMood(bot, '#moods')
+        await getMood({ bot, channel: '#moods' })
       } catch (e) {
         console.log(e)
         bot.say({
