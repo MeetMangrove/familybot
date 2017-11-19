@@ -65,7 +65,7 @@ export const getActivities = async (listDone, listThanks) => {
     for (let help of listThanks) {
       if (help['To'][0] === airtableId) {
         const { fields } = await getMember(help['By'][0])
-        helps.push(fields['Slack Username'].substring(fields['Slack Username'].indexOf('@') + 1))
+        helps.push(fields['Slack ID'])
       }
     }
     if (dones.length >= 1 || helps.length >= 1) {
