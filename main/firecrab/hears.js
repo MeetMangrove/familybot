@@ -71,7 +71,7 @@ controller.on('slash_command', async function (bot, message) {
     }
   } catch (e) {
     console.log(e)
-    bot.whisper(message, `Oops..! :sweat_smile: A little error occur in your \`${message.command}\` command: \`${e.message || e.error || e}\``)
+    bot.whisper(message, `Ho nooo... :persevere: A little error occur in my \`${message.command}\` command: \`${e.message || e.error || e}\``)
   }
 })
 

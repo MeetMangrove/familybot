@@ -18,7 +18,7 @@ controller.hears(['mood$'], ['direct_message', 'direct_mention'], async (bot, me
     })
   } catch (e) {
     console.log(e)
-    bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`mood\` command: \`${e.message || e.error || e}\``)
+    bot.reply(message, `What? :scream: My \`mood\` command is broken: \`${e.message || e.error || e}\``)
   }
 })
 
@@ -27,7 +27,7 @@ controller.hears(['daily'], ['direct_message', 'direct_mention'], async (bot, me
     await getMood({ bot, channel: message.user, slackId: message.user })
   } catch (e) {
     console.log(e)
-    bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`daily\` command: \`${e.message || e.error || e}\``)
+    bot.reply(message, `What? :scream: My  \`daily\` command is broken: \`${e.message || e.error || e}\``)
   }
 })
 
@@ -73,40 +73,44 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) 
 })
 
 controller.on('team_join', (bot, { user }) => {
-  bot.startPrivateConversation({ user: user.id }, (err, convo) => {
-    if (err) return console.log(err)
-    dialog(convo, user.id, 'intro')
-  })
-  base('Members').create({
-    'Name': user.real_name,
-    'Member Since': moment().format('YYYY-MM-DD'),
-    'Status': 'Guest',
-    'Email': user.profile.email,
-    'Profile Picture': [{ 'url': user.profile.image_512 }],
-    'Old Points': 0,
-    'OldDones': 0,
-    'Slack ID': user.id
-  }, (err, record) => {
-    if (err) return console.log(err)
-    console.log(`New Mangrover:`, record.fields)
-  })
+  if (user.is_bot === false) {
+    bot.startPrivateConversation({ user: user.id }, (err, convo) => {
+      if (err) return console.log(err)
+      dialog(convo, user.id, 'intro')
+    })
+    base('Members').create({
+      'Name': user.real_name,
+      'Member Since': moment().format('YYYY-MM-DD'),
+      'Status': 'Guest',
+      'Email': user.profile.email,
+      'Profile Picture': [{ 'url': user.profile.image_512 }],
+      'Old Points': 0,
+      'OldDones': 0,
+      'Slack ID': user.id
+    }, (err, record) => {
+      if (err) return console.log(err)
+      console.log(`New Mangrover:`, record.fields)
+    })
+  }
 })
 
 controller.on('user_change', async (bot, { user }) => {
   try {
-    const { id: airtableId } = await getMember(user.id)
-    base('Members').update(airtableId, {
-      'Name': user.real_name,
-      'Email': user.profile.email,
-      'Profile Picture': [{ 'url': user.profile.image_512 }]
-    }, (err, record) => {
-      if (err) return console.log(err)
-      console.log(`Mangrover's profile updated:`, record.fields)
-    })
+    if (user.is_bot === false && user.deleted === false) {
+      const { id: airtableId } = await getMember(user.id)
+      base('Members').update(airtableId, {
+        'Name': user.real_name,
+        'Email': user.profile.email,
+        'Profile Picture': [{ 'url': user.profile.image_512 }]
+      }, (err, record) => {
+        if (err) return console.log(err)
+        console.log(`Mangrover's profile updated:`, record.fields)
+      })
+    }
   } catch (e) {
     console.log(e)
     bot.say({
-      text: `Oops..! :sweat_smile: A little error occur during the profile change of <@${user.id}>: \`${e.message || e.error || e}\``,
+      text: `What? :scream: A little error occur during the profile change of <@${user.id}>: \`${e.message || e.error || e}\``,
       channel: '#mangrove-tech'
     })
   }
