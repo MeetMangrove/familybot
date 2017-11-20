@@ -99,7 +99,7 @@ const dialog = (convo, slackId, context) => {
     }
   }
   convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
-  convo.say(`I'll share your activity in <#C0KD37VUP> every sunday at 7PM :fire:`)
+  convo.say(`I'll share your activity in <#C0KD37VUP> every sunday at 6PM :fire:`)
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
