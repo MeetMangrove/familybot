@@ -26,8 +26,8 @@ const askMood = new CronJob({
         } catch (e) {
           console.log(e)
           bot.say({
-            text: `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``,
-            channel: id
+            text: `What? :scream: my cron \`askMood\` is broken: \`${e.message || e.error || e}\``,
+            channel: '#mangrove-tech'
           })
         }
       })
@@ -46,8 +46,8 @@ const sendMood = new CronJob({
       } catch (e) {
         console.log(e)
         bot.say({
-          text: `Oops..! :sweat_smile: A little error occur: \`${e.message || e.error || e}\``,
-          channel: '#moods'
+          text: `What? :scream: my cron \`sendMood\` is broken: \`${e.message || e.error || e}\``,
+          channel: '#mangrove-tech'
         })
       }
     }

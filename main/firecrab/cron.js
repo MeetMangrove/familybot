@@ -76,7 +76,7 @@ const sendActivityDigest = new CronJob({
       } catch (e) {
         console.log(e)
         bot.say({
-          text: `Oops..! :sweat_smile: A little error occur in your cron: \`${e.message || e.error || e}\``,
+          text: `Ho nooo... :persevere: a little error occur in my cron \`sendActivityDigest\`: \`${e.message || e.error || e}\``,
           channel: '#mangrove-tech'
         })
       }
