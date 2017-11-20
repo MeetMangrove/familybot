@@ -17,11 +17,11 @@ const askMood = new CronJob({
   onTick: async function () {
     for (let bot of bots) {
       const members = await Slack.all(bot)
-      _.forEach(members, ({ id }) => {
+      _.forEach(members, ({ id: slackId }) => {
         try {
-          bot.startPrivateConversation({ user: id }, (err, convo) => {
+          bot.startPrivateConversation({ user: slackId }, (err, convo) => {
             if (err) return console.log(err)
-            giveMood({ bot, convo, id })
+            giveMood({ bot, convo, slackId })
           })
         } catch (e) {
           console.log(e)
