@@ -15,7 +15,7 @@ import { getUpdates, cleanUpdates, createNewsletter, getEmails, getNewsletter } 
 const { CronJob } = cron
 
 const sendMessage = new CronJob({
-  cronTime: '00 53 09 * * 1',
+  cronTime: '00 59 09 * * 1',
   onTick: async function () {
     for (let bot of bots) {
       try {
