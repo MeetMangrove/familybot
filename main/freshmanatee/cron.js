@@ -15,7 +15,7 @@ import { getUpdates, cleanUpdates, createNewsletter, getEmails, getNewsletter } 
 const { CronJob } = cron
 
 const sendMessage = new CronJob({
-  cronTime: '00 47 09 * * 1',
+  cronTime: '00 53 09 * * 1',
   onTick: async function () {
     for (let bot of bots) {
       try {
@@ -39,7 +39,7 @@ const sendMessage = new CronJob({
       } catch (e) {
         console.log(e)
         bot.say({
-          text: `Oops..! :sweat_smile: there is something wrong with my cron \`sendMessage\`: \`${e.message || e.error || e}\``,
+          text: `Oops..! :sweat_smile: There is something wrong with my cron \`sendMessage\`: \`${e.message || e.error || e}\``,
           channel: '#mangrove-tech'
         })
       }
@@ -121,7 +121,7 @@ const postDigest = new CronJob({
       } catch (e) {
         console.log(e)
         bot.say({
-          text: `Oops..! :sweat_smile: there is something wrong with my cron \`postDigest\`: \`${e.message || e.error || e}\``,
+          text: `Oops..! :sweat_smile: There is something wrong with my cron \`postDigest\`: \`${e.message || e.error || e}\``,
           channel: '#mangrove-tech'
         })
       }
@@ -152,7 +152,7 @@ const sendNewsletter = new CronJob({
       } catch (e) {
         console.log(e)
         bot.say({
-          text: `Oops..! :sweat_smile: there is something wrong with my cron \`sendNewsletter\`: \`${e.message || e.error || e}\``,
+          text: `Oops..! :sweat_smile: There is something wrong with my cron \`sendNewsletter\`: \`${e.message || e.error || e}\``,
           channel: '#mangrove-tech'
         })
       }

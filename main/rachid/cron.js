@@ -26,7 +26,7 @@ const askMood = new CronJob({
         } catch (e) {
           console.log(e)
           bot.say({
-            text: `What? :scream: my cron \`askMood\` is broken: \`${e.message || e.error || e}\``,
+            text: `What? :scream: My cron \`askMood\` is broken: \`${e.message || e.error || e}\``,
             channel: '#mangrove-tech'
           })
         }
@@ -46,7 +46,7 @@ const sendMood = new CronJob({
       } catch (e) {
         console.log(e)
         bot.say({
-          text: `What? :scream: my cron \`sendMood\` is broken: \`${e.message || e.error || e}\``,
+          text: `What? :scream: My cron \`sendMood\` is broken: \`${e.message || e.error || e}\``,
           channel: '#mangrove-tech'
         })
       }
