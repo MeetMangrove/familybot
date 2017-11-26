@@ -71,6 +71,10 @@ const sendActivityDigest = new CronJob({
               text: `No activity recorded this week: ${textInactives}.`,
               channel: '#track-catalysts'
             })
+            bot.say({
+              text: `No activity recorded this week: ${textInactives}.`,
+              channel: '#residents'
+            })
           }
         })
       } catch (e) {
