@@ -145,9 +145,12 @@ const sendNewsletter = new CronJob({
           subject: newsletter.get('Title'),
           text: newsletter.get('Content')
         }
-        Nodemailer.sendMail(data, function (err, info) {
-          if (err) return console.log(err)
-          console.log('Message sent: %s', info.messageId)
+        Nodemailer.sendMail(data, function (err) {
+          if (err) throw new Error(err)
+          bot.say({
+            text: `The newsletter has been sent to *${emails.length} Veterans* from hellomangrove@gmail.com :airplane_departure:`,
+            channel: '#track-connectors'
+          })
         })
       } catch (e) {
         console.log(e)
