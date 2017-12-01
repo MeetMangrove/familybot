@@ -10,7 +10,7 @@ import askForUpdate from './askForUpdate'
 controller.hears(['fresh'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
+      if (err) throw new Error(err)
       convo.addMessage(`Hi <@${message.user}>!`, 'default')
       convo.addMessage(`Let's check your information.`, 'default')
       askForUpdate({ bot, convo, slackId: message.user })
@@ -23,7 +23,7 @@ controller.hears(['fresh'], ['direct_message', 'direct_mention'], async (bot, me
 
 controller.hears(['profiles'], ['direct_message', 'direct_mention'], async (bot, message) => {
   bot.startConversation(message, function (err, convo) {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     convo.addMessage(`Hi <@${message.user}>!`, 'default')
     convo.addMessage('You can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:', 'default')
   })
@@ -58,21 +58,21 @@ const dialog = (convo, slackId, context) => {
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     dialog(convo, message.user, 'hello')
   })
 })
 
 controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     dialog(convo, message.user, 'error')
   })
 })
 
 controller.on('team_join', (bot, { user }) => {
   bot.startPrivateConversation({ user: user.id }, (err, convo) => {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     dialog(convo, user.id, 'intro')
   })
 })
@@ -82,7 +82,7 @@ controller.on('dialog_submission', async function (bot, message) {
     bot.dialogOk()
     const isUpdated = await saveProfile(message.user, message.submission)
     bot.startConversation(message, (err, convo) => {
-      if (err) return console.log(err)
+      if (err) throw new Error(err)
       if (isUpdated === true) convo.say('Your profile has been freshed!')
       convo.say('If you want, you can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:')
       convo.say('See you! :wave:')

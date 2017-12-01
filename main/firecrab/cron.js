@@ -55,7 +55,7 @@ const sendActivityDigest = new CronJob({
           text: `Hi <!subteam^S7WBYB6TZ>!\nThere is a total of *${listThanks.length} thanks* this week :heavy_heart_exclamation_mark_ornament:`,
           channel: '#track-catalysts'
         }, (err) => {
-          if (err) return console.log(err)
+          if (err) throw new Error(err)
           if (inactives.length > 0) {
             let textInactives = ''
             inactives.forEach((inactive, index) => {

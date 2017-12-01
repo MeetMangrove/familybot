@@ -20,7 +20,7 @@ const askMood = new CronJob({
       _.forEach(members, ({ id: slackId }) => {
         try {
           bot.startPrivateConversation({ user: slackId }, (err, convo) => {
-            if (err) return console.log(err)
+            if (err) throw new Error(err)
             giveMood({ bot, convo, slackId })
           })
         } catch (e) {

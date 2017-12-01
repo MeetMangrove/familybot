@@ -13,7 +13,7 @@ import { base, getMember } from '../airtable'
 controller.hears(['mood$'], ['direct_message', 'direct_mention'], async (bot, message) => {
   try {
     bot.startConversation(message, function (err, convo) {
-      if (err) return console.log(err)
+      if (err) throw new Error(err)
       giveMood({ bot, convo, slackId: message.user })
     })
   } catch (e) {
@@ -59,37 +59,61 @@ const dialog = (convo, slackId, context) => {
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
-  bot.startConversation(message, (err, convo) => {
-    if (err) return console.log(err)
-    dialog(convo, message.user, 'hello')
-  })
+  try {
+    bot.startConversation(message, (err, convo) => {
+      if (err) throw new Error(err)
+      dialog(convo, message.user, 'hello')
+    })
+  } catch (e) {
+    console.log(e)
+    bot.say({
+      text: `What? :scream: A little error occur during the message of <@${message.user.id}>: \`${e.message || e.error || e}\``,
+      channel: '#mangrove-tech'
+    })
+  }
 })
 
 controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => {
-  bot.startConversation(message, (err, convo) => {
-    if (err) return console.log(err)
-    dialog(convo, message.user, 'error')
-  })
+  try {
+    bot.startConversation(message, (err, convo) => {
+      if (err) throw new Error(err)
+      dialog(convo, message.user, 'error')
+    })
+  } catch (e) {
+    console.log(e)
+    bot.say({
+      text: `What? :scream: A little error occur during the message of <@${message.user.id}>: \`${e.message || e.error || e}\``,
+      channel: '#mangrove-tech'
+    })
+  }
 })
 
 controller.on('team_join', (bot, { user }) => {
-  if (user.is_bot === false) {
-    bot.startPrivateConversation({ user: user.id }, (err, convo) => {
-      if (err) return console.log(err)
-      dialog(convo, user.id, 'intro')
-    })
-    base('Members').create({
-      'Name': user.real_name,
-      'Member Since': moment().format('YYYY-MM-DD'),
-      'Status': 'Guest',
-      'Email': user.profile.email,
-      'Profile Picture': [{ 'url': user.profile.image_512 }],
-      'Old Points': 0,
-      'OldDones': 0,
-      'Slack ID': user.id
-    }, (err, record) => {
-      if (err) return console.log(err)
-      console.log(`New Mangrover:`, record.fields)
+  try {
+    if (user.is_bot === false) {
+      bot.startPrivateConversation({ user: user.id }, (err, convo) => {
+        if (err) throw new Error(err)
+        dialog(convo, user.id, 'intro')
+      })
+      base('Members').create({
+        'Name': user.real_name,
+        'Member Since': moment().format('YYYY-MM-DD'),
+        'Status': 'Guest',
+        'Email': user.profile.email,
+        'Profile Picture': [{ 'url': user.profile.image_512 }],
+        'Old Points': 0,
+        'OldDones': 0,
+        'Slack ID': user.id
+      }, (err, record) => {
+        if (err) throw new Error(err)
+        console.log(`New Mangrover:`, record.fields)
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    bot.say({
+      text: `What? :scream: A little error occur during the team join of <@${user.id}>: \`${e.message || e.error || e}\``,
+      channel: '#mangrove-tech'
     })
   }
 })
@@ -103,7 +127,7 @@ controller.on('user_change', async (bot, { user }) => {
         'Email': user.profile.email,
         'Profile Picture': [{ 'url': user.profile.image_512 }]
       }, (err, record) => {
-        if (err) return console.log(err)
+        if (err) throw new Error(err)
         console.log(`Mangrover's profile updated:`, record.fields)
       })
     }

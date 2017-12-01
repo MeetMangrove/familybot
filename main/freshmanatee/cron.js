@@ -30,7 +30,7 @@ const sendMessage = new CronJob({
         }
         _.forEach(list, ({ id: slackId }) => {
           bot.startPrivateConversation({ user: slackId }, function (err, convo) {
-            if (err) return console.log(err)
+            if (err) throw new Error(err)
             convo.addMessage(`Hi <@${slackId}>!`, 'default')
             convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
             askForUpdate({ bot, convo, slackId })
@@ -71,7 +71,7 @@ const postDigest = new CronJob({
           attachments,
           channel: '#general'
         }, async (err) => {
-          if (err) return console.log(err)
+          if (err) throw new Error(err)
           cleanUpdates(members)
           bot.say({
             text: `Go Mangrove :facepunch:`,
@@ -84,7 +84,7 @@ const postDigest = new CronJob({
           text: `Hi <!subteam^S7WBYB6TZ>!\nHere is the currents Mangrovers' challenges :tornado:`,
           channel: '#track-catalysts'
         }, (err) => {
-          if (err) return console.log(err)
+          if (err) throw new Error(err)
           members.forEach((member) => {
             const { slackId, challenges } = member
             if (challenges !== null) {
@@ -107,7 +107,7 @@ const postDigest = new CronJob({
           }],
           channel: '#track-connectors'
         }, (err) => {
-          if (err) return console.log(err)
+          if (err) throw new Error(err)
           bot.say({
             text: `If you want to change it, <https://airtable.com/tblBsCEc45GtppbBP/viwIUnStSvSIhxqhv/${id}|click here to update the content field>.\n` +
             'It will be automatically sent tomorrow at 2PM!\n' +

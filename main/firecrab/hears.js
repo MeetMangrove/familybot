@@ -18,7 +18,7 @@ controller.on('slash_command', async function (bot, message) {
         await saveDone(message.user, text, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
-          if (err) console.log(err)
+          if (err) throw new Error(err)
           bot.say({
             attachments: [{
               'author_name': `${real_name}`,
@@ -52,7 +52,7 @@ controller.on('slash_command', async function (bot, message) {
           await saveThanks(message.user, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
-            if (err) console.log(err)
+            if (err) throw new Error(err)
             bot.say({
               attachments: [{
                 'author_name': `${real_name}`,
@@ -104,21 +104,21 @@ const dialog = (convo, slackId, context) => {
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     dialog(convo, message.user, 'hello')
   })
 })
 
 controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     dialog(convo, message.user, 'error')
   })
 })
 
 controller.on('team_join', (bot, { user }) => {
   bot.startPrivateConversation({ user: user.id }, (err, convo) => {
-    if (err) return console.log(err)
+    if (err) throw new Error(err)
     dialog(convo, user.id, 'intro')
   })
 })
