@@ -1,3 +1,4 @@
+/* eslint-disable standard/array-bracket-even-spacing,standard/object-curly-even-spacing */
 import {
   getEmoji,
   getTitle,
@@ -14,7 +15,7 @@ export default ({ bot, convo, slackId }) => {
   let timeout = delayMessage(bot, slackId, convo)
 
   convo.addQuestion({
-    text: [`Hello  <@${slackId}>!`, `Hey  <@${slackId}>!`, `Aloha  <@${slackId}>!`][Math.floor(Math.random()*3)],
+    text: [`Hello  <@${slackId}>!`, `Hey  <@${slackId}>!`, `Aloha  <@${slackId}>!`][Math.floor(Math.random() * 3)],
     attachments: [{
       title: 'What is your mood today?',
       callback_id: 'get_mood',
@@ -82,15 +83,15 @@ export default ({ bot, convo, slackId }) => {
     }
   }, {}, 'default')
 
-  convo.addMessage({ text: ['Bravo! :surfer:', 'Congrats! :100:', 'Whoopee! :dizzy:', 'You\'re on fire :fire:', 'Keep it up :point_up:'][Math.floor(Math.random()*5)], action: 'description' }, 'five')
+  convo.addMessage({ text: ['Bravo! :surfer:', 'Congrats! :100:', 'Whoopee! :dizzy:', 'You\'re on fire :fire:', 'Keep it up :point_up:'][Math.floor(Math.random() * 5)], action: 'description' }, 'five')
 
-  convo.addMessage({ text: ['Oh, looking good! :hugging_face:', 'Life\'s good, right? :cherry_blossom:','Sweet! :strawberry:' ][Math.floor(Math.random()*3)], action: 'description' }, 'four')
+  convo.addMessage({ text: ['Oh, looking good! :hugging_face:', 'Life\'s good, right? :cherry_blossom:', 'Sweet! :strawberry:' ][Math.floor(Math.random() * 3)], action: 'description' }, 'four')
 
-  convo.addMessage({ text: ['Thanks for recording your mood :slightly_smiling_face:', 'Okay! :+1:', 'Thank you :sparkling_heart:'][Math.floor(Math.random()*3)], action: 'description' }, 'three')
+  convo.addMessage({ text: ['Thanks for recording your mood :slightly_smiling_face:', 'Okay! :+1:', 'Thank you :sparkling_heart:'][Math.floor(Math.random() * 3)], action: 'description' }, 'three')
 
-  convo.addMessage({ text: [':bow: Something\'s wrong?', 'Ouch :disappointed:', 'Feel better soon :pensive:'][Math.floor(Math.random()*3)], action: 'description' }, 'two')
+  convo.addMessage({ text: [':bow: Something\'s wrong?', 'Ouch :disappointed:', 'Feel better soon :pensive:'][Math.floor(Math.random() * 3)], action: 'description' }, 'two')
 
-  convo.addMessage({ text: ['Oh no, sad to hear that :worried:','Oh :pensive:', 'I hope it\'ll get better soon.'][Math.floor(Math.random()*3)], 'one')
+  convo.addMessage({ text: ['Oh no, sad to hear that :worried:', 'Oh :pensive:', 'I hope it\'ll get better soon.'][Math.floor(Math.random() * 3)]}, 'one')
   convo.addMessage({
     text: 'We\'re here to help you, if you feel like sharing :couple_with_heart:',
     action: 'description'
@@ -169,7 +170,7 @@ export default ({ bot, convo, slackId }) => {
   })
 
   convo.addMessage({
-    text: ['Awesome, it has been successfully saved!', 'Perfect!', 'Sounds good!','Thank you!'][Math.floor(Math.random()*4)],
+    text: ['Awesome, it has been successfully saved!', 'Perfect!', 'Sounds good!', 'Thank you!'][Math.floor(Math.random() * 4)],
     action: 'bye'
   }, 'saved')
 
