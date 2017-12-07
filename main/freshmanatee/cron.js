@@ -134,7 +134,7 @@ const postDigest = new CronJob({
 })
 
 const sendNewsletter = new CronJob({
-  cronTime: '00 52 15 * * 4',
+  cronTime: '00 00 14 * * 4',
   onTick: async function () {
     for (let bot of bots) {
       try {
