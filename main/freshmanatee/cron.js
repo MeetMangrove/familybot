@@ -116,6 +116,8 @@ const postDigest = new CronJob({
             '- Removing private stuff\n' +
             '- Adding infos about next event',
             channel: '#track-connectors'
+          }, (err) => {
+            if (err) throw new Error(err)
           })
         })
       } catch (e) {
@@ -132,7 +134,7 @@ const postDigest = new CronJob({
 })
 
 const sendNewsletter = new CronJob({
-  cronTime: '00 00 14 * 4',
+  cronTime: '00 34 15 * 4',
   onTick: async function () {
     for (let bot of bots) {
       try {
@@ -150,6 +152,8 @@ const sendNewsletter = new CronJob({
           bot.say({
             text: `The newsletter has been sent to *${emails.length} Veterans* from hellomangrove@gmail.com :airplane_departure:`,
             channel: '#track-connectors'
+          }, (err) => {
+            if (err) throw new Error(err)
           })
         })
       } catch (e) {

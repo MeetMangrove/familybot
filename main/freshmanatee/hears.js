@@ -77,6 +77,20 @@ controller.on('team_join', (bot, { user }) => {
   })
 })
 
+// TODO: End the addition of skills and interests
+controller.middleware.receive.use(function validateDialog (bot, message, next) {
+  if (message.type === 'dialog_submission') {
+    if (message.submission['Skills'] > 100) {
+      bot.dialogError({
+        'name': 'number',
+        'error': 'Please specify a value below 100'
+      })
+      return
+    }
+  }
+  next()
+})
+
 controller.on('dialog_submission', async function (bot, message) {
   try {
     bot.dialogOk()

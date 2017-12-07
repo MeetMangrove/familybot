@@ -21,7 +21,9 @@ export default ({ bot, convo, slackId }) => {
       bio: profile.get('Bio'),
       location: profile.get('Location'),
       focus: profile.get('Focus'),
-      challenges: profile.get('Challenges')
+      challenges: profile.get('Challenges'),
+      skills: profile.get('Skills'),
+      interests: profile.get('Interests')
     })
     next()
   })
@@ -32,7 +34,7 @@ export default ({ bot, convo, slackId }) => {
       {
         'title': ':closed_book: Bio',
         'text': '{{{vars.profile.bio}}}',
-        'color': '#E57373'
+        'color': '#FFD180'
       },
       {
         'title': ':house_with_garden: Location',
@@ -42,13 +44,24 @@ export default ({ bot, convo, slackId }) => {
       {
         'title': ':rocket: Focus',
         'text': '{{{vars.profile.focus}}}',
-        'color': '#64B5F6'
+        'color': '#B388FF'
       },
       {
         'title': ':tornado: Challenges',
         'text': '{{{vars.profile.challenges}}}',
         'color': '#E0E0E0'
-      }]
+      }/* ,
+      {
+        'title': ':muscle: Skills',
+        'text': '{{{vars.profile.skills}}}',
+        'color': '#64B5F6'
+      },
+      {
+        'title': ':sleuth_or_spy: Interests',
+        'text': '{{{vars.profile.interests}}}',
+        'color': '#E57373'
+      } */
+    ]
   }, 'search')
 
   convo.addQuestion({
@@ -94,10 +107,21 @@ export default ({ bot, convo, slackId }) => {
           })
           .addTextarea('Challenges', 'Challenges', convo.vars.profile.challenges, {
             max_length: 300,
-            placeholder: 'What challenges do you currently face in your projects and life? (private)'
+            placeholder: 'What challenges do you currently face in your projects and life? (private)',
+            hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
+          /* .addTextarea('Skills', 'Skills', convo.vars.profile.skills, {
+            max_length: 300,
+            placeholder: 'What are your skills? In which domains are you good at? (private)',
+            hint: 'List each skills with a `,` as separator.'
+          })
+          .addTextarea('Interests', 'Interests', convo.vars.profile.interests, {
+            max_length: 300,
+            placeholder: 'What new skills are you looking for? What do you want to learn? (private)',
+            hint: 'List each interests with a `,` as separator.'
+          }) */
         bot.replyWithDialog(reply, dialog.asObject(), (err) => {
-          if (err) console.log(err)
+          if (err) throw new Error(err)
           bot.replyInteractive(reply, {
             attachments: [{
               title: 'Do you want to update these information?',
