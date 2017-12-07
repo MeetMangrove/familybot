@@ -134,7 +134,7 @@ const postDigest = new CronJob({
 })
 
 const sendNewsletter = new CronJob({
-  cronTime: '00 42 15 * 4',
+  cronTime: '00 52 15 * * 4',
   onTick: async function () {
     for (let bot of bots) {
       try {
@@ -147,7 +147,6 @@ const sendNewsletter = new CronJob({
           subject: newsletter.get('Title'),
           text: newsletter.get('Content')
         }
-        console.log(data)
         Nodemailer.sendMail(data, function (err) {
           if (err) throw new Error(err)
           bot.say({
