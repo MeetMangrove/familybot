@@ -2,7 +2,10 @@
  * Created by thomasjeanneau on 30/05/2017.
  */
 
+import _ from 'lodash'
+
 import { getMember } from '../airtable'
+import SKILLS from '../SKILLS'
 
 export default ({ bot, convo, slackId }) => {
   const timeout = setTimeout((bot, channel, convo) => {
@@ -22,8 +25,9 @@ export default ({ bot, convo, slackId }) => {
       location: profile.get('Location'),
       focus: profile.get('Focus'),
       challenges: profile.get('Challenges'),
-      skills: profile.get('Skills'),
-      interests: profile.get('Interests')
+      textSkills: profile.get('Skills').join(', '),
+      textInterests: profile.get('Interests').join(', '),
+      interests: _.map(profile.get('Interests'), i => ({ label: i, value: i }))
     })
     next()
   })
@@ -50,17 +54,17 @@ export default ({ bot, convo, slackId }) => {
         'title': ':tornado: Challenges',
         'text': '{{{vars.profile.challenges}}}',
         'color': '#E0E0E0'
-      }/* ,
+      },
       {
         'title': ':muscle: Skills',
-        'text': '{{{vars.profile.skills}}}',
+        'text': '{{{vars.profile.textSkills}}}',
         'color': '#64B5F6'
       },
       {
         'title': ':sleuth_or_spy: Interests',
-        'text': '{{{vars.profile.interests}}}',
+        'text': '{{{vars.profile.textInterests}}}',
         'color': '#E57373'
-      } */
+      }
     ]
   }, 'search')
 
@@ -89,38 +93,42 @@ export default ({ bot, convo, slackId }) => {
     if (reply.callback_id === 'update_info') {
       clearTimeout(timeout)
       if (reply.actions[0].value === 'yes') {
+        console.log(SKILLS)
         const dialog = bot
           .createDialog(
             'Fresh your profile',
             'fresh_profile',
             'Fresh')
-          .addTextarea('Bio', 'Bio', convo.vars.profile.bio, {
+          .addTextarea('Edit your bio', 'Bio', convo.vars.profile.bio, {
             max_length: 500,
             placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
           })
-          .addText('Location', 'Location', convo.vars.profile.location, {
+          .addText('Update your location', 'Location', convo.vars.profile.location, {
             placeholder: 'What is your current location (City, Country)?'
           })
-          .addTextarea('Focus', 'Focus', convo.vars.profile.focus, {
+          .addTextarea('Share your focus', 'Focus', convo.vars.profile.focus, {
             max_length: 300,
-            placeholder: 'Your main focus for the next two weeks? (private)'
+            placeholder: 'Your main focus for the next two weeks?'
           })
-          .addTextarea('Challenges', 'Challenges', convo.vars.profile.challenges, {
+          .addTextarea('Share your challenges', 'Challenges', convo.vars.profile.challenges, {
             max_length: 300,
-            placeholder: 'What challenges do you currently face in your projects and life? (private)',
+            placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
-          /* .addTextarea('Skills', 'Skills', convo.vars.profile.skills, {
-            max_length: 300,
-            placeholder: 'What are your skills? In which domains are you good at? (private)',
-            hint: 'List each skills with a `,` as separator.'
+          /* .addSelect('Add a new skill', 'addSkill', null, SKILLS, {
+            placeholder: 'What are your skills? In which domains are you good at?',
+            optional: true
           })
-          .addTextarea('Interests', 'Interests', convo.vars.profile.interests, {
-            max_length: 300,
-            placeholder: 'What new skills are you looking for? What do you want to learn? (private)',
-            hint: 'List each interests with a `,` as separator.'
+          .addSelect('Add a new interest', 'addInterest', null, SKILLS, {
+            placeholder: 'What new skill are you looking for? What do you want to learn?',
+            optional: true
+          })
+          .addSelect('Remove an interest', 'removeInterest', null, convo.vars.profile.interests, {
+            placeholder: 'In what are you not interest anymore?',
+            optional: true
           }) */
-        bot.replyWithDialog(reply, dialog.asObject(), (err) => {
+        bot.replyWithDialog(reply, dialog.asObject(), function (err, res) {
+          console.log(err, res)
           if (err) throw new Error(err)
           bot.replyInteractive(reply, {
             attachments: [{

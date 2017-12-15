@@ -7,21 +7,21 @@ import { controller } from './config'
 import askForUpdate from './askForUpdate'
 
 // User commands
-controller.hears(['fresh'], ['direct_message', 'direct_mention'], async (bot, message) => {
-  try {
-    bot.startConversation(message, function (err, convo) {
+controller.hears(['^fresh$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+  bot.startConversation(message, function (err, convo) {
+    try {
       if (err) throw new Error(err)
       convo.addMessage(`Hi <@${message.user}>!`, 'default')
       convo.addMessage(`Let's check your information.`, 'default')
       askForUpdate({ bot, convo, slackId: message.user })
-    })
-  } catch (e) {
-    console.log(e)
-    bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`fresh\` command: \`${e.message || e.error || e}\``)
-  }
+    } catch (e) {
+      console.log(e)
+      bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`fresh\` command: \`${e.message || e.error || e}\``)
+    }
+  })
 })
 
-controller.hears(['profiles'], ['direct_message', 'direct_mention'], async (bot, message) => {
+controller.hears(['^profiles$'], ['direct_message', 'direct_mention'], async (bot, message) => {
   bot.startConversation(message, function (err, convo) {
     if (err) throw new Error(err)
     convo.addMessage(`Hi <@${message.user}>!`, 'default')
@@ -75,20 +75,6 @@ controller.on('team_join', (bot, { user }) => {
     if (err) throw new Error(err)
     dialog(convo, user.id, 'intro')
   })
-})
-
-// TODO: End the addition of skills and interests
-controller.middleware.receive.use(function validateDialog (bot, message, next) {
-  if (message.type === 'dialog_submission') {
-    if (message.submission['Skills'] > 100) {
-      bot.dialogError({
-        'name': 'number',
-        'error': 'Please specify a value below 100'
-      })
-      return
-    }
-  }
-  next()
 })
 
 controller.on('dialog_submission', async function (bot, message) {
