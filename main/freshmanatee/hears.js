@@ -51,7 +51,7 @@ const dialog = (convo, slackId, context) => {
       break
     }
   }
-  convo.say(`Say \`fresh\` if you want me to update your profile`)
+  convo.say(`Say \`fresh\` if you want me to share your latest news, goals and challenges`)
   convo.say(`or \`profiles\` if you want to see others Mangrovers' profiles.`)
   convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 6PM :rocket:`)
 }
