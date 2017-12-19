@@ -17,6 +17,12 @@
   },
   "dependencies": {
     "airtable": "0.4.5",
+    "babel-cli": "6.26.0",
+    "babel-eslint": "7.2.3",
+    "babel-plugin-dynamic-import-node": "1.2.0",
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-env": "1.6.1",
     "bipartite-matching": "1.0.0",
     "bluebird": "3.5.0",
     "body-parser": "1.18.2",
@@ -37,12 +43,6 @@
     "vhost": "^3.0.2"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-eslint": "7.2.3",
-    "babel-plugin-dynamic-import-node": "1.2.0",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-polyfill": "6.26.0",
-    "babel-preset-env": "1.6.1",
     "chai": "^3.5.0",
     "eslint": "3.19.0",
     "eslint-config-standard": "10.2.1",
