@@ -5,7 +5,7 @@
 import _ from 'lodash'
 import cron from 'cron'
 
-import { bots } from './config'
+import { bots, isProd } from './config'
 import Slack from '../slack'
 import giveMood from './giveMood'
 import getMood from './getMood'
@@ -27,7 +27,7 @@ const askMood = new CronJob({
           console.log(e)
           bot.say({
             text: `What? :scream: My cron \`askMood\` is broken: \`${e.message || e.error || e}\``,
-            channel: '#mangrove-tech'
+            channel: isProd ? '#mangrove-tech' : '#ghost-playground'
           })
         }
       })
@@ -47,7 +47,7 @@ const sendMood = new CronJob({
         console.log(e)
         bot.say({
           text: `What? :scream: My cron \`sendMood\` is broken: \`${e.message || e.error || e}\``,
-          channel: '#mangrove-tech'
+          channel: isProd ? '#mangrove-tech' : '#ghost-playground'
         })
       }
     }

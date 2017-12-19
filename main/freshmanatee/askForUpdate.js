@@ -115,11 +115,11 @@ export default ({ bot, convo, slackId }) => {
             placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
-          /* .addSelect('Add a new skill', 'addSkill', null, SKILLS, {
+          .addSelect('Add a new skill', 'addSkill', null, SKILLS, {
             placeholder: 'What are your skills? In which domains are you good at?',
             optional: true
           })
-          .addSelect('Add a new interest', 'addInterest', null, SKILLS, {
+          /* .addSelect('Add a new interest', 'addInterest', null, SKILLS, {
             placeholder: 'What new skill are you looking for? What do you want to learn?',
             optional: true
           })

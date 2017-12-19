@@ -8,7 +8,7 @@ import moment from 'moment'
 
 import Slack from '../slack'
 import Nodemailer from '../nodemailer'
-import { bots } from './config'
+import { bots, isProd } from './config'
 import askForUpdate from './askForUpdate'
 import { getUpdates, cleanUpdates, createNewsletter, getEmails, getNewsletter } from './methods'
 
@@ -29,18 +29,22 @@ const sendMessage = new CronJob({
           list = chunk[1]
         }
         _.forEach(list, ({ id: slackId }) => {
-          bot.startPrivateConversation({ user: slackId }, function (err, convo) {
-            if (err) throw new Error(err)
-            convo.addMessage(`Hi <@${slackId}>!`, 'default')
-            convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
-            askForUpdate({ bot, convo, slackId })
-          })
+          if (isProd === true) {
+            bot.startPrivateConversation({ user: slackId }, function (err, convo) {
+              if (err) throw new Error(err)
+              convo.addMessage(`Hi <@${slackId}>!`, 'default')
+              convo.addMessage(`I'd like to know if you have some fresh news for me :blush:`, 'default')
+              askForUpdate({ bot, convo, slackId })
+            })
+          } else {
+            console.log('send message to', slackId)
+          }
         })
       } catch (e) {
         console.log(e)
         bot.say({
           text: `Oops..! :sweat_smile: There is something wrong with my cron \`sendMessage\`: \`${e.message || e.error || e}\``,
-          channel: '#mangrove-tech'
+          channel: isProd ? '#mangrove-tech' : '#ghost-playground'
         })
       }
     }
@@ -69,20 +73,20 @@ const postDigest = new CronJob({
         bot.say({
           text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
           attachments,
-          channel: '#general'
+          channel: isProd ? '#general' : '#ghost-playground'
         }, async (err) => {
           if (err) throw new Error(err)
           cleanUpdates(members)
           bot.say({
             text: `Go Mangrove :facepunch:`,
-            channel: '#general'
+            channel: isProd ? '#general' : '#ghost-playground'
           })
         })
 
         // Catalyst Challenges
         bot.say({
           text: `Hi <!subteam^S7WBYB6TZ>!\nHere is the currents Mangrovers' challenges :tornado:`,
-          channel: '#track-catalysts'
+          channel: isProd ? '#track-catalysts' : '#ghost-playground'
         }, (err) => {
           if (err) throw new Error(err)
           members.forEach((member) => {
@@ -90,7 +94,7 @@ const postDigest = new CronJob({
             if (challenges !== null) {
               bot.say({
                 text: `<@${slackId}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``,
-                channel: '#track-catalysts'
+                channel: isProd ? '#track-catalysts' : '#ghost-playground'
               })
             }
           })
@@ -105,7 +109,7 @@ const postDigest = new CronJob({
             text: `\`\`\`${text}\`\`\``,
             mrkdwn_in: ['text']
           }],
-          channel: '#track-connectors'
+          channel: isProd ? '#track-connectors' : '#ghost-playground'
         }, (err) => {
           if (err) throw new Error(err)
           bot.say({
@@ -115,7 +119,7 @@ const postDigest = new CronJob({
             '- Correcting typos\n' +
             '- Removing private stuff\n' +
             '- Adding infos about next event',
-            channel: '#track-connectors'
+            channel: isProd ? '#track-connectors' : '#ghost-playground'
           }, (err) => {
             if (err) throw new Error(err)
           })
@@ -124,7 +128,7 @@ const postDigest = new CronJob({
         console.log(e)
         bot.say({
           text: `Oops..! :sweat_smile: There is something wrong with my cron \`postDigest\`: \`${e.message || e.error || e}\``,
-          channel: '#mangrove-tech'
+          channel: isProd ? '#mangrove-tech' : '#ghost-playground'
         })
       }
     }
@@ -151,7 +155,7 @@ const sendNewsletter = new CronJob({
           if (err) throw new Error(err)
           bot.say({
             text: `The newsletter has been sent to *${emails.length} Veterans* from hellomangrove@gmail.com :airplane_departure:`,
-            channel: '#track-connectors'
+            channel: isProd ? '#track-connectors' : '#ghost-playground'
           }, (err) => {
             if (err) throw new Error(err)
           })
@@ -160,7 +164,7 @@ const sendNewsletter = new CronJob({
         console.log(e)
         bot.say({
           text: `Oops..! :sweat_smile: There is something wrong with my cron \`sendNewsletter\`: \`${e.message || e.error || e}\``,
-          channel: '#mangrove-tech'
+          channel: isProd ? '#mangrove-tech' : '#ghost-playground'
         })
       }
     }

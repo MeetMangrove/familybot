@@ -1,4 +1,7 @@
 {
-  "presets": ["es2015", "stage-3"],
-  "plugins": []
+  "presets": ["env"],
+  "plugins": [
+    "transform-object-rest-spread",
+    "dynamic-import-node"
+  ]
 }

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import cron from 'cron'
 
-import { bots } from './config'
+import { bots, isProd } from './config'
 import { getLastWeekDone, getLastWeekThanks, getActivities } from './methods'
 
 const { CronJob } = cron
@@ -47,13 +47,13 @@ const sendActivityDigest = new CronJob({
         bot.say({
           text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
           attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ['text'] })),
-          channel: '#general'
+          channel: isProd ? '#general' : '#ghost-playground'
         })
 
         // Catalyst Thanks KPI
         bot.say({
           text: `Hi <!subteam^S7WBYB6TZ>!\nThere is a total of *${listThanks.length} thanks* this week :heavy_heart_exclamation_mark_ornament:`,
-          channel: '#track-catalysts'
+          channel: isProd ? '#track-catalysts' : '#ghost-playground'
         }, (err) => {
           if (err) throw new Error(err)
           if (inactives.length > 0) {
@@ -69,11 +69,11 @@ const sendActivityDigest = new CronJob({
             })
             bot.say({
               text: `No activity recorded this week: ${textInactives}.`,
-              channel: '#track-catalysts'
+              channel: isProd ? '#track-catalysts' : '#ghost-playground'
             })
             bot.say({
               text: `No activity recorded this week: ${textInactives}.`,
-              channel: '#residents'
+              channel: isProd ? '#residents' : '#ghost-playground'
             })
           }
         })
@@ -81,7 +81,7 @@ const sendActivityDigest = new CronJob({
         console.log(e)
         bot.say({
           text: `Ho nooo... :persevere: A little error occur in my cron \`sendActivityDigest\`: \`${e.message || e.error || e}\``,
-          channel: '#mangrove-tech'
+          channel: isProd ? '#mangrove-tech' : '#ghost-playground'
         })
       }
     }

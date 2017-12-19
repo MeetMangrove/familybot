@@ -1,11 +1,13 @@
 {
   "extends": "standard",
+  "parser": "babel-eslint",
   "plugins": [
     "standard",
     "promise",
     "mocha"
   ],
   "rules": {
+    "strict": 0,
     "mocha/no-exclusive-tests": "error"
   },
   "env": {

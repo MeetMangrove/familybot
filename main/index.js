@@ -4,22 +4,16 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import vhost from 'vhost'
 
-// Import controllers for each bot
-// import learnbot from './learnbot'
-import rachid from './rachid'
-import freshmanatee from './freshmanatee'
-import firecrab from './firecrab'
-
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
 const {
+  BOT,
   NODE_ENV,
-  HOSTNAME,
-  FORCE_HOSTNAME
+  GHOST_HOSTNAME
 } = process.env
 
-if (!NODE_ENV || !HOSTNAME) {
-  console.log('Error: Specify NODE_ENV and HOSTNAME in a .env file')
+if (!NODE_ENV || !GHOST_HOSTNAME) {
+  console.log('Error: Specify NODE_ENV and GHOST_HOSTNAME in a .env file')
   process.exit(1)
 }
 
@@ -28,36 +22,14 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.set('port', process.env.PORT || 5000)
 
-// Map each bot to its own hostname
-// For development you can use ngrok and set up a dedicated *.ngrok.io domain for each bot
-// For production, you should set up your DNS to point different domain names to your server
-const botSetups = [
-  // { controller: learnbot },
-  { controller: rachid },
-  { controller: freshmanatee },
-  { controller: firecrab }
-]
-
-// Optional setting to override the hostname, makes the app behave as if
-// all requests were sent to a given Host (useful in development)
-if (FORCE_HOSTNAME) {
-  const hostname = FORCE_HOSTNAME
-  console.log(`WARNING hostname forced to env.FORCE_HOSTNAME=${hostname}`)
-  app.use((req, res, next) => {
-    req.headers.host = hostname
-    next()
-  })
-}
-
-// Mount the bots on the main app
-botSetups.forEach(({ controller }) => {
-  console.log(`Mounting ${controller.config.app_name} bot on ${HOSTNAME}`)
+const mountBot = (controller) => {
+  console.log(`Mounting ${controller.config.app_name} bot on ${GHOST_HOSTNAME}`)
   // create a dedicated express app for the bot
   const botApp = express()
   // force port and hostname, used by botkit
 
   controller.config.port = app.get('port')
-  controller.config.hostname = HOSTNAME
+  controller.config.hostname = GHOST_HOSTNAME
   // use botkit to set up endpoints on the dedicated app
   controller
     .createWebhookEndpoints(botApp)
@@ -67,8 +39,31 @@ botSetups.forEach(({ controller }) => {
       res.send('Success!')
     })
   // mount the botApp on the main app, on its own hostname
-  app.use(vhost(HOSTNAME, botApp))
-})
+  app.use(vhost(GHOST_HOSTNAME, botApp))
+}
 
-// Start the main app
-app.listen(app.get('port'), () => console.log(`Family of ${botSetups.length} bots listening on port ${app.get('port')}!`))
+if (NODE_ENV === 'production') {
+  // Import controllers for each bot
+  // You should set up your DNS to point different domain names to your server
+  Promise.all([
+    import('./rachid'),
+    import('./freshmanatee'),
+    import('./firecrab')
+  ])
+    .then((bots) => {
+      // Mount the bots on the main app
+      bots.forEach(({ default: controller }) => mountBot(controller))
+      // Start the main app
+      app.listen(app.get('port'), () => console.log(`Family of ${bots.length} bots listening on port ${app.get('port')}!`))
+    })
+    .catch((err) => console.log(err))
+} else if (NODE_ENV === 'development') {
+  // Ask for the bot to test
+  // You can use ngrok
+  import(`./${BOT}`)
+    .then(({ default: controller }) => {
+      mountBot(controller)
+      app.listen(app.get('port'), () => console.log(`Ghost of ${BOT} listening on port ${app.get('port')}!`))
+    })
+    .catch((err) => console.log(err))
+}

@@ -9,10 +9,16 @@ require('dotenv').config()
 
 const bots = []
 const {
+  NODE_ENV,
+  GHOST_SLACK_CLIENT_ID,
+  GHOST_SLACK_CLIENT_SECRET,
+  GHOST_FIREBASE_URI,
   RACHID_SLACK_CLIENT_ID,
   RACHID_SLACK_CLIENT_SECRET,
   RACHID_FIREBASE_URI
 } = process.env
+
+export const isProd = NODE_ENV === 'production'
 
 if (!RACHID_SLACK_CLIENT_ID || !RACHID_SLACK_CLIENT_SECRET || !RACHID_FIREBASE_URI) {
   console.log('Error: Specify RACHID_SLACK_CLIENT_ID, RACHID_SLACK_CLIENT_SECRET and RACHID_FIREBASE_URI in a .env file')
@@ -20,7 +26,7 @@ if (!RACHID_SLACK_CLIENT_ID || !RACHID_SLACK_CLIENT_SECRET || !RACHID_FIREBASE_U
 }
 
 const mongoStorage = new FirebaseStorage({
-  firebase_uri: RACHID_FIREBASE_URI
+  firebase_uri: isProd ? RACHID_FIREBASE_URI : GHOST_FIREBASE_URI
 })
 
 const controller = Botkit.slackbot({
@@ -28,12 +34,12 @@ const controller = Botkit.slackbot({
   interactive_replies: true,
   require_delivery: true,
   storage: mongoStorage,
-  app_name: 'rachid'
+  app_name: isProd ? 'rachid' : 'ghost'
 })
 
 controller.configureSlackApp({
-  clientId: RACHID_SLACK_CLIENT_ID,
-  clientSecret: RACHID_SLACK_CLIENT_SECRET,
+  clientId: isProd ? RACHID_SLACK_CLIENT_ID : GHOST_SLACK_CLIENT_ID,
+  clientSecret: isProd ? RACHID_SLACK_CLIENT_SECRET : GHOST_SLACK_CLIENT_SECRET,
   scopes: ['bot', 'chat:write:bot', 'users:read']
 })
 
@@ -45,7 +51,7 @@ controller.on('create_bot', (bot, config) => {
       if (!err) bots.push(bot)
       bot.startPrivateConversation({user: config.createdBy}, (err, convo) => {
         if (err) return console.log(err)
-        convo.say('Hello, I\'m a new Mangrove Bot!')
+        convo.say(`Hello, I'm <@${bot.identity.id}>!`)
         convo.say('You must now /invite me to a channel so that I can be of use!')
       })
     })

@@ -4,7 +4,7 @@
 
 import moment from 'moment'
 
-import { controller } from './config'
+import { controller, isProd } from './config'
 import giveMood from './giveMood'
 import getMood from './getMood'
 import { base, getMember } from '../airtable'
@@ -68,7 +68,7 @@ controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_messag
     console.log(e)
     bot.say({
       text: `What? :scream: A little error occur during the message of <@${message.user.id}>: \`${e.message || e.error || e}\``,
-      channel: '#mangrove-tech'
+      channel: isProd ? '#mangrove-tech' : '#ghost-playground'
     })
   }
 })
@@ -83,7 +83,7 @@ controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) 
     console.log(e)
     bot.say({
       text: `What? :scream: A little error occur during the message of <@${message.user.id}>: \`${e.message || e.error || e}\``,
-      channel: '#mangrove-tech'
+      channel: isProd ? '#mangrove-tech' : '#ghost-playground'
     })
   }
 })
@@ -113,7 +113,7 @@ controller.on('team_join', (bot, { user }) => {
     console.log(e)
     bot.say({
       text: `What? :scream: A little error occur during the team join of <@${user.id}>: \`${e.message || e.error || e}\``,
-      channel: '#mangrove-tech'
+      channel: isProd ? '#mangrove-tech' : '#ghost-playground'
     })
   }
 })
@@ -135,7 +135,7 @@ controller.on('user_change', async (bot, { user }) => {
     console.log(e)
     bot.say({
       text: `What? :scream: A little error occur during the profile change of <@${user.id}>: \`${e.message || e.error || e}\``,
-      channel: '#mangrove-tech'
+      channel: isProd ? '#mangrove-tech' : '#ghost-playground'
     })
   }
 })

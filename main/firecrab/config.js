@@ -9,10 +9,16 @@ require('dotenv').config()
 
 const bots = []
 const {
+  NODE_ENV,
+  GHOST_SLACK_CLIENT_ID,
+  GHOST_SLACK_CLIENT_SECRET,
+  GHOST_FIREBASE_URI,
   FIRECRAB_SLACK_CLIENT_ID,
   FIRECRAB_SLACK_CLIENT_SECRET,
   FIRECRAB_FIREBASE_URI
 } = process.env
+
+export const isProd = NODE_ENV === 'production'
 
 if (!FIRECRAB_SLACK_CLIENT_ID || !FIRECRAB_SLACK_CLIENT_SECRET || !FIRECRAB_FIREBASE_URI) {
   console.log('Error: Specify ACTIVITYBOT_SLACK_CLIENT_ID, ACTIVITYBOT_SLACK_CLIENT_SECRET, ACTIVITYBOT_INCOMING_WEBHOOK and ACTIVITYBOT_FIREBASE_URI in a .env file')
@@ -20,7 +26,7 @@ if (!FIRECRAB_SLACK_CLIENT_ID || !FIRECRAB_SLACK_CLIENT_SECRET || !FIRECRAB_FIRE
 }
 
 const mongoStorage = new FirebaseStorage({
-  firebase_uri: FIRECRAB_FIREBASE_URI
+  firebase_uri: isProd ? FIRECRAB_FIREBASE_URI : GHOST_FIREBASE_URI
 })
 
 const controller = Botkit.slackbot({
@@ -28,12 +34,12 @@ const controller = Botkit.slackbot({
   interactive_replies: true,
   require_delivery: true,
   storage: mongoStorage,
-  app_name: 'firecrab'
+  app_name: isProd ? 'firecrab' : 'ghost'
 })
 
 controller.configureSlackApp({
-  clientId: FIRECRAB_SLACK_CLIENT_ID,
-  clientSecret: FIRECRAB_SLACK_CLIENT_SECRET,
+  clientId: isProd ? FIRECRAB_SLACK_CLIENT_ID : GHOST_SLACK_CLIENT_ID,
+  clientSecret: isProd ? FIRECRAB_SLACK_CLIENT_SECRET : GHOST_SLACK_CLIENT_SECRET,
   scopes: ['bot', 'chat:write:bot', 'users:read', 'commands']
 })
 
@@ -43,7 +49,7 @@ controller.on('create_bot', (bot, config) => {
       if (!err) bots.push(bot)
       bot.startPrivateConversation({ user: config.createdBy }, (err, convo) => {
         if (err) return console.log(err)
-        convo.say('Hello, I\'m a new Mangrove Bot!')
+        convo.say(`Hello, I'm <@${bot.identity.id}>!`)
         convo.say('You must now /invite me to a channel so that I can be of use!')
       })
     })

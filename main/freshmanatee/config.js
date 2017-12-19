@@ -7,10 +7,16 @@ import FirebaseStorage from 'botkit-storage-firebase'
 
 const bots = []
 const {
+  NODE_ENV,
+  GHOST_SLACK_CLIENT_ID,
+  GHOST_SLACK_CLIENT_SECRET,
+  GHOST_FIREBASE_URI,
   FRESHMANATEE_SLACK_CLIENT_ID,
   FRESHMANATEE_SLACK_CLIENT_SECRET,
   FRESHMANATEE_FIREBASE_URI
 } = process.env
+
+export const isProd = NODE_ENV === 'production'
 
 if (!FRESHMANATEE_SLACK_CLIENT_ID || !FRESHMANATEE_SLACK_CLIENT_SECRET || !FRESHMANATEE_FIREBASE_URI) {
   console.log('Error: Specify NEWSBOT_SLACK_CLIENT_ID, NEWSBOT_SLACK_CLIENT_SECRET and NEWSBOT_MONGODB_URI in a .env file')
@@ -18,7 +24,7 @@ if (!FRESHMANATEE_SLACK_CLIENT_ID || !FRESHMANATEE_SLACK_CLIENT_SECRET || !FRESH
 }
 
 const mongoStorage = new FirebaseStorage({
-  firebase_uri: FRESHMANATEE_FIREBASE_URI
+  firebase_uri: isProd ? FRESHMANATEE_FIREBASE_URI : GHOST_FIREBASE_URI
 })
 
 const controller = Botkit.slackbot({
@@ -26,12 +32,12 @@ const controller = Botkit.slackbot({
   interactive_replies: true,
   require_delivery: true,
   storage: mongoStorage,
-  app_name: 'freshmanatee'
+  app_name: isProd ? 'freshmanatee' : 'ghost'
 })
 
 controller.configureSlackApp({
-  clientId: FRESHMANATEE_SLACK_CLIENT_ID,
-  clientSecret: FRESHMANATEE_SLACK_CLIENT_SECRET,
+  clientId: isProd ? FRESHMANATEE_SLACK_CLIENT_ID : GHOST_SLACK_CLIENT_ID,
+  clientSecret: isProd ? FRESHMANATEE_SLACK_CLIENT_SECRET : GHOST_SLACK_CLIENT_SECRET,
   scopes: ['bot', 'chat:write:bot', 'users:read']
 })
 
@@ -43,7 +49,7 @@ controller.on('create_bot', (bot, config) => {
       if (!err) bots.push(bot)
       bot.startPrivateConversation({user: config.createdBy}, (err, convo) => {
         if (err) return console.log(err)
-        convo.say('Hello, I\'m a new Mangrove Bot!')
+        convo.say(`Hello, I'm <@${bot.identity.id}>!`)
         convo.say('You must now /invite me to a channel so that I can be of use!')
       })
     })

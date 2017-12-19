@@ -3,9 +3,9 @@ import nodemailer from 'nodemailer'
 
 require('dotenv').config()
 
-const { EMAIl_USER, EMAIL_PASS } = process.env
+const { EMAIL_USER, EMAIL_PASS } = process.env
 
-if (!EMAIl_USER && !EMAIL_PASS) {
+if (!EMAIL_USER && !EMAIL_PASS) {
   console.log('Error: Specify EMAIl_USER and EMAIL_PASS in a .env file')
   process.exit(1)
 }
@@ -16,7 +16,7 @@ export default nodemailer.createTransport({
   port: 587,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: EMAIl_USER, // generated ethereal user
+    user: EMAIL_USER, // generated ethereal user
     pass: EMAIL_PASS  // generated ethereal password
   }
 })

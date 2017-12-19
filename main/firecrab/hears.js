@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import Promise from 'bluebird'
 
-import { controller } from './config'
+import { controller, isProd } from './config'
 import { saveDone, saveThanks, parseSlackMessage } from './methods'
 
 // Slash commands
@@ -14,6 +14,7 @@ controller.on('slash_command', async function (bot, message) {
     const apiUser = Promise.promisifyAll(bot.api.users)
     switch (message.command) {
       case '/done':
+      case '/g-done':
         bot.whisper(message, 'Your */done* is saving...')
         await saveDone(message.user, text, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
@@ -27,11 +28,12 @@ controller.on('slash_command', async function (bot, message) {
               'thumb_url': image_192,
               'mrkdwn_in': ['text']
             }],
-            channel: '#done'
+            channel: isProd ? '#done' : '#ghost-playground'
           })
         })
         break
       case '/thanks':
+      case '/g-thanks':
         bot.whisper(message, 'Your */thanks* is saving...')
         let thanksTo = []
         const regEx = /\s?@[a-z._0-9]+/g
@@ -61,7 +63,7 @@ controller.on('slash_command', async function (bot, message) {
                 'thumb_url': image_192,
                 'mrkdwn_in': ['text']
               }],
-              channel: '#thanks'
+              channel: isProd ? '#thanks' : '#ghost-playground'
             })
           })
         }
