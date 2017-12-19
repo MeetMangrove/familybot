@@ -5,6 +5,7 @@
 import { saveProfile } from './methods'
 import { controller } from './config'
 import askForUpdate from './askForUpdate'
+import addNewSkill from './addNewSkill'
 
 // User commands
 controller.hears(['^fresh$'], ['direct_message', 'direct_mention'], async (bot, message) => {
@@ -21,11 +22,16 @@ controller.hears(['^fresh$'], ['direct_message', 'direct_mention'], async (bot, 
   })
 })
 
-controller.hears(['^new skill'], ['direct_message', 'direct_mention'], async (bot, message) => {
-  bot.startConversation(message, function (err, convo) {
-    if (err) throw new Error(err)
-    convo.addMessage(`Hi <@${message.user}>!`, 'default')
-    convo.addMessage('You can check other Mangrovers\' profiles <https://airtable.com/shrdV73su7MGjffEN|by clicking here!> :man-woman-girl-boy:', 'default')
+controller.hears(['^new skill$'], ['direct_message', 'direct_mention'], async (bot, message) => {
+  bot.startConversation(message, async function (err, convo) {
+    try {
+      if (err) throw new Error(err)
+      convo.addMessage(`Hi <@${message.user}>!`, 'default')
+      addNewSkill({ bot, convo, slackId: message.user })
+    } catch (e) {
+      console.log(e)
+      bot.reply(message, `Oops..! :sweat_smile: A little error occur during your \`fresh\` command: \`${e.message || e.error || e}\``)
+    }
   })
 })
 

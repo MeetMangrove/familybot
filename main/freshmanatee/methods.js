@@ -83,3 +83,11 @@ export const getNewsletter = async (date) => {
   }))
   return newsletter[0]
 }
+
+export const getSkillsList = async () => {
+  const records = await _getAllRecords(base('Skills').select({
+    view: 'Grid view',
+    fields: ['Name', 'Value']
+  }))
+  return _.map(records, record => ({ text: record.get('Name'), value: record.get('Value') }))
+}

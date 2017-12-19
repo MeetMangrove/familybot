@@ -5,7 +5,6 @@
 import _ from 'lodash'
 
 import { getMember } from '../airtable'
-import SKILLS from '../SKILLS'
 
 export default ({ bot, convo, slackId }) => {
   const timeout = setTimeout((bot, channel, convo) => {
@@ -20,14 +19,16 @@ export default ({ bot, convo, slackId }) => {
 
   convo.beforeThread('search', async (convo, next) => {
     const profile = await getMember(slackId)
+    const skills = profile.get('Skills')
+    const learning = profile.get('Learning')
     convo.setVar('profile', {
       bio: profile.get('Bio'),
       location: profile.get('Location'),
       focus: profile.get('Focus'),
       challenges: profile.get('Challenges'),
-      textSkills: profile.get('Skills').join(', '),
-      textInterests: profile.get('Interests').join(', '),
-      interests: _.map(profile.get('Interests'), i => ({ label: i, value: i }))
+      textSkills: skills.length > 0 ? skills.join(', ') : '',
+      textInterests: learning.length > 0 ? learning.join(', ') : '',
+      interests: _.map(profile.get('Learning'), i => ({ label: i, value: i }))
     })
     next()
   })
@@ -36,14 +37,14 @@ export default ({ bot, convo, slackId }) => {
     text: `Okay, so this is your current information:`,
     attachments: [
       {
-        'title': ':closed_book: Bio',
-        'text': '{{{vars.profile.bio}}}',
-        'color': '#FFD180'
-      },
-      {
         'title': ':house_with_garden: Location',
         'text': '{{{vars.profile.location}}}',
         'color': '#81C784'
+      },
+      {
+        'title': ':closed_book: Bio',
+        'text': '{{{vars.profile.bio}}}',
+        'color': '#FFD180'
       },
       {
         'title': ':rocket: Focus',
@@ -54,8 +55,8 @@ export default ({ bot, convo, slackId }) => {
         'title': ':tornado: Challenges',
         'text': '{{{vars.profile.challenges}}}',
         'color': '#E0E0E0'
-      },
-      {
+      }
+      /* {
         'title': ':muscle: Skills',
         'text': '{{{vars.profile.textSkills}}}',
         'color': '#64B5F6'
@@ -64,7 +65,7 @@ export default ({ bot, convo, slackId }) => {
         'title': ':sleuth_or_spy: Interests',
         'text': '{{{vars.profile.textInterests}}}',
         'color': '#E57373'
-      }
+      } */
     ]
   }, 'search')
 
@@ -93,18 +94,17 @@ export default ({ bot, convo, slackId }) => {
     if (reply.callback_id === 'update_info') {
       clearTimeout(timeout)
       if (reply.actions[0].value === 'yes') {
-        console.log(SKILLS)
         const dialog = bot
           .createDialog(
             'Fresh your profile',
             'fresh_profile',
             'Fresh')
+          .addText('Update your location', 'Location', convo.vars.profile.location, {
+            placeholder: 'What is your current location (City, Country)?'
+          })
           .addTextarea('Edit your bio', 'Bio', convo.vars.profile.bio, {
             max_length: 500,
             placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
-          })
-          .addText('Update your location', 'Location', convo.vars.profile.location, {
-            placeholder: 'What is your current location (City, Country)?'
           })
           .addTextarea('Share your focus', 'Focus', convo.vars.profile.focus, {
             max_length: 300,
@@ -115,18 +115,6 @@ export default ({ bot, convo, slackId }) => {
             placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
-          .addSelect('Add a new skill', 'addSkill', null, SKILLS, {
-            placeholder: 'What are your skills? In which domains are you good at?',
-            optional: true
-          })
-          /* .addSelect('Add a new interest', 'addInterest', null, SKILLS, {
-            placeholder: 'What new skill are you looking for? What do you want to learn?',
-            optional: true
-          })
-          .addSelect('Remove an interest', 'removeInterest', null, convo.vars.profile.interests, {
-            placeholder: 'In what are you not interest anymore?',
-            optional: true
-          }) */
         bot.replyWithDialog(reply, dialog.asObject(), function (err, res) {
           console.log(err, res)
           if (err) throw new Error(err)
