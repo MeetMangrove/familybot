@@ -26,8 +26,8 @@ export default ({ bot, convo, slackId }) => {
       location: profile.get('Location'),
       focus: profile.get('Focus'),
       challenges: profile.get('Challenges'),
-      textSkills: skills.length > 0 ? skills.join(', ') : '',
-      textInterests: learning.length > 0 ? learning.join(', ') : '',
+      textSkills: skills && skills.length > 0 ? skills.join(', ') : '',
+      textInterests: learning && learning.length > 0 ? learning.join(', ') : '',
       interests: _.map(profile.get('Learning'), i => ({ label: i, value: i }))
     })
     next()

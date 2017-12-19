@@ -25,7 +25,7 @@ export default ({ bot, convo, slackId }) => {
           name: 'new_skill',
           text: 'Choose a new skill...',
           type: 'select',
-          options: skills
+          options: convo.vars.list.skills
         },
         {
           name: 'add_skill',
@@ -45,6 +45,9 @@ export default ({ bot, convo, slackId }) => {
   }, function (reply, convo) {
     if (reply.callback_id === 'update_info') {
       clearTimeout(timeout)
+      if (reply.actions[0].value === 'yes') {
+
+      }
     }
   })
 }
