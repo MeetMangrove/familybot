@@ -11,11 +11,31 @@ controller.on('slash_command', async function (bot, message) {
     const { text } = message
     const date = Date.now()
     const apiUser = Promise.promisifyAll(bot.api.users)
+    const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
+    const regExName = /\s?@[a-z._0-9]+/g
+    let name
     switch (message.command) {
       case '/done':
       case '/g-done':
         bot.whisper(message, 'Your */done* is saving...')
-        await saveDone(message.user, text, date)
+        let doneWith = [message.user]
+        const regExNameWith = /(with)\s(@[a-z._0-9]+\s*(,|and|&)?\s*)+/g
+        const newText = regExNameWith.exec(text)
+        if (newText !== null) {
+          do {
+            name = regExName.exec(newText[0])
+            if (name) {
+              doneWith.push(name[0].trim().replace(/^@/, ''))
+            }
+          } while (name)
+        }
+        doneWith = _.map(doneWith, name => {
+          const member = _.find(members, { name })
+          return member ? member.id : name
+        })
+        const startText = text.slice(0, text.indexOf(newText[0])).trim()
+        const endText = text.slice(text.indexOf(newText[0]) + newText[0].length).trim()
+        await saveDone(doneWith, startText.concat(' ', endText), date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
           if (err) log('the `/done` saved message', err)
@@ -35,15 +55,12 @@ controller.on('slash_command', async function (bot, message) {
       case '/g-thanks':
         bot.whisper(message, 'Your */thanks* is saving...')
         let thanksTo = []
-        const regEx = /\s?@[a-z._0-9]+/g
-        let name
         do {
-          name = regEx.exec(text)
+          name = regExName.exec(text)
           if (name) {
             thanksTo.push(name[0].trim().replace(/^@/, ''))
           }
         } while (name)
-        const { members } = await apiUser.listAsync({ token: bot.config.bot.app_token })
         if (thanksTo.length === 0 || _.difference(thanksTo, _.map(members, 'name')).length !== 0) {
           const notValid = _.difference(thanksTo, _.map(members, 'name'))
           bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)

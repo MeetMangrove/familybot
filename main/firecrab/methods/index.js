@@ -8,14 +8,14 @@ String.prototype.splice = function (idx, rem, str) {
   return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem))
 }
 
-export const saveDone = async (bySlackID, text, date) => {
-  const { id: by } = await getMember(bySlackID)
+export const saveDone = async (bySlackIDs, text, date) => {
+  const bys = await Promise.all(_.map(bySlackIDs, slackID => getMember(slackID)))
   const create = Promise.promisify(base('Done').create)
-  await create({
+  await Promise.all(_.map(_.map(bys, 'id'), by => create({
     'By': [by],
     'Text': text,
     'Date': date
-  })
+  })))
 }
 
 export const saveThanks = async (bySlackID, toSlackIDs, text, date) => {
