@@ -158,9 +158,13 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
 controller.on('dialog_submission', function (bot, message) {
   bot.dialogOk()
   saveProfile(message.user, message.submission)
-    .then((isUpdated) => bot.startPrivateConversation(message, (err, convo) => {
+    .then(({ isUpdated, learningRemoved, newSkill }) => bot.startPrivateConversation(message, (err, convo) => {
       if (err) return log('the `dialog_submission` conversation', err)
-      if (isUpdated) convo.say(`Your profile has been freshed!`)
+      if (isUpdated === true) convo.say(`Your profile has been freshed!`)
+      if (learningRemoved === true) {
+        convo.say(`Congratulation!! :tada: Your learning *${newSkill}* is finally become a new skill! :clap::clap::clap:`)
+        convo.say(`Don't forget to celebrate that! :cocktail:`)
+      }
       convo.say(`I'm looking for your learning right now!`)
       convo.on('end', () => freshLearning(bot, message))
     }))

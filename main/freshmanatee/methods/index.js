@@ -11,26 +11,43 @@ export const sort = (a, b) => {
 }
 
 export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) => {
-  const records = await _getAllRecords(base('Skills').select({
-    view: 'Grid view',
-    fields: ['Value'],
-    filterByFormula: `{Value}='${skill}'`
-  }))
   const oldProfile = await getMember(slackId)
   const update = Promise.promisify(base('Moods').update)
-  if (skill) oldProfile.fields['Skills'].push(records[0].id)
+  let record = null
+  let learning = null
+  let lastLearning = null
+  if (skill) {
+    const records = await _getAllRecords(base('Skills').select({
+      view: 'Grid view',
+      fields: ['Name'],
+      filterByFormula: `{Value}='${skill}'`
+    }))
+    record = records[0]
+    oldProfile.fields['Skills'].push(record.id)
+    learning = _.clone(oldProfile.get('Learning'))
+    _.pull(learning, record.id)
+    lastLearning = oldProfile.get('Last learning')
+    _.pull(lastLearning, record.id)
+  }
   await update(oldProfile.id, {
     ...newProfile,
     'Is new location?': !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
     'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
     'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) && newProfile['Challenges'],
     'Skills': oldProfile.fields['Skills'],
-    'Is new skill?': !!skill
+    'Last skill': record && record.id ? [record.id] : oldProfile.get('Last skill'),
+    'Is new skill?': !!skill === true ? true : oldProfile.get('Is new skill?'),
+    'Learning': learning || oldProfile.get('Last skill'),
+    'Last learning': lastLearning || oldProfile.get('Last skill')
   })
-  return !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
-    !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
-    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) ||
-    !!skill
+  return {
+    isUpdated: !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
+      !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
+      !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) ||
+      !!skill,
+    learningRemoved: learning && !_.isEqual(oldProfile.get('Learning'), learning),
+    newSkill: record ? record.get('Name') : null
+  }
 }
 
 export const getUpdates = async () => {
@@ -165,12 +182,18 @@ export const setNewSkill = async (slackId, skill) => {
   } else {
     skills = [record.id]
   }
+  const learning = _.clone(profile.get('Learning'))
+  _.pull(learning, record.id)
+  const lastLearning = profile.get('Last learning')
+  _.pull(lastLearning, record.id)
   await update(profile.id, {
     'Skills': skills,
     'Last skill': [record.id],
-    'Is new skill?': true
+    'Is new skill?': true,
+    'Learning': learning,
+    'Last learning': lastLearning
   })
-  return displaySkill
+  return { skill: displaySkill, learningRemoved: !_.isEqual(profile.get('Learning'), learning) }
 }
 
 export const removeSkill = async (slackId, skill) => {

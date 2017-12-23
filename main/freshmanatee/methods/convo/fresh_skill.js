@@ -122,13 +122,18 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
     convo.beforeThread('saved', (convo, next) => {
       const skill = convo.extractResponse('skill')
       setNewSkill(message.user, skill)
-        .then((skill) => {
+        .then(({ skill, learningRemoved }) => {
           ownSkillList.push(skill)
           _.remove(skillList, l => _.isEqual(l, skill))
           ownSkillList.sort(sort)
           skillList.sort(sort)
           convo.setVar('skill', skill.text)
-          next()
+          if (learningRemoved === true) {
+            convo.gotoThread('learn_new_skill')
+            next('stop')
+          } else {
+            next()
+          }
         })
         .catch((err) => {
           const text = log('the `setNewSkill` method', err)
@@ -201,6 +206,15 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
       text: `Your skill *{{{vars.skill}}}* has been successfully removed!`,
       action: 'ask_skill'
     }, 'removed')
+
+    convo.addMessage({
+      text: `Congratulation!! :tada: Your learning *{{{vars.skill}}}* is finally become a new skill! :clap::clap::clap:`
+    }, 'learn_new_skill')
+
+    convo.addMessage({
+      text: `Don't forget to celebrate that! :cocktail:`,
+      action: 'ask_skill'
+    }, 'learn_new_skill')
 
     convo.addMessage({
       text: `Okay, next time!`
