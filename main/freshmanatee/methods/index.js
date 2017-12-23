@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import Promise from 'bluebird'
 
-import { base, _getAllRecords, getMember } from '../../airtable'
+import { base, _getAllRecords, getMember } from '../../api/airtable'
 
 export const sort = (a, b) => {
   if (a.text < b.text) return -1

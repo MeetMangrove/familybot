@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Promise from 'bluebird'
 
-import { base, _getAllRecords, getMember } from '../airtable'
+import { base, _getAllRecords, getMember } from '../../api/airtable'
 
 // eslint-disable-next-line no-extend-native
 String.prototype.splice = function (idx, rem, str) {

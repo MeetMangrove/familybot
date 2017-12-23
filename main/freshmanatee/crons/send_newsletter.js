@@ -4,7 +4,7 @@ import Promise from 'bluebird'
 
 import { bots, log, isProd } from '../config'
 import { getEmails, getNewsletter } from '../methods'
-import Nodemailer from '../../nodemailer'
+import Nodemailer from '../../api/nodemailer'
 
 const sendNewsletter = new cron.CronJob({
   cronTime: '00 00 14 * * 4',

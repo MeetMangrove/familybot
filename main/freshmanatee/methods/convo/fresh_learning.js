@@ -130,9 +130,9 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
           next()
         })
         .catch((err) => {
-          const text = log('the `setNewLearning` method', err)
-          convo.say(text)
+          log('the `setNewLearning` method', err)
           convo.stop()
+          next('stop')
         })
     })
 
@@ -185,9 +185,9 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
           next()
         })
         .catch((err) => {
-          const text = log('the `removeLearning` method', err)
-          convo.say(text)
+          log('the `removeLearning` method', err)
           convo.stop()
+          next('stop')
         })
     })
 

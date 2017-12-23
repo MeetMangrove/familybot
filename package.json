@@ -2,8 +2,8 @@
   "name": "familybot",
   "private": true,
   "scripts": {
-    "start": "npm run build && NODE_ENV=production node dist/startup.js",
-    "rachid": "NODE_ENV=development --exec npm run babel-node -- main/rachid",
+    "start": "npm run build && NODE_ENV=production node dist/index.js",
+    "rachid": "NODE_ENV=development nodemon --exec npm run babel-node -- main/rachid",
     "freshmanatee": "NODE_ENV=development nodemon --exec npm run babel-node -- main/freshmanatee",
     "firecrab": "NODE_ENV=development nodemon --exec npm run babel-node -- main/firecrab",
     "babel-node": "babel-node --presets=env",

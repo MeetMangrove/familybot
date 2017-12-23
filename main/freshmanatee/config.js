@@ -2,7 +2,7 @@
  * Created by thomasjeanneau on 08/02/2017.
  */
 
-import botkit from '../botkit'
+import botkit from '../api/botkit'
 require('dotenv').config()
 
 const {

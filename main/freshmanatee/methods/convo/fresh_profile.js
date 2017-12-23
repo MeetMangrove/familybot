@@ -34,9 +34,9 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
         next()
       })
       .catch((err) => {
-        const text = log('the `getMember` method', err)
-        convo.say(text)
+        log('the `getMember` method', err)
         convo.stop()
+        next('stop')
       })
   })
 

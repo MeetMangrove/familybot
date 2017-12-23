@@ -136,9 +136,9 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
           }
         })
         .catch((err) => {
-          const text = log('the `setNewSkill` method', err)
-          convo.say(text)
+          log('the `setNewSkill` method', err)
           convo.stop()
+          next('stop')
         })
     })
 
@@ -191,9 +191,9 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
           next()
         })
         .catch((err) => {
-          const text = log('the `removeSkill` method', err)
-          convo.say(text)
+          log('the `removeSkill` method', err)
           convo.stop()
+          next('stop')
         })
     })
 

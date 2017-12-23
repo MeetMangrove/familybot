@@ -4,7 +4,7 @@ import moment from 'moment'
 
 import freshProfile from '../methods/convo/fresh_profile'
 import { bots, log, isProd } from '../config'
-import Slack from '../../slack'
+import Slack from '../../api/slack'
 
 const askForFreshing = new cron.CronJob({
   cronTime: '00 00 09 * * 1',

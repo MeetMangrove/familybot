@@ -4,15 +4,18 @@ import {
   getTitle,
   saveMood,
   saveMoodDescription
-} from './methods'
+} from '../index'
+import { log } from '../../config'
 
-export default ({ bot, convo, slackId }) => {
+export default (bot, message) => bot.createPrivateConversation(message, (err, convo) => {
+  if (err) log('the `give_mood` conversation', err)
+
   convo.setTimeout(1800000)
 
   convo.addQuestion({
-    text: [`Hello  <@${slackId}>!`, `Hey  <@${slackId}>!`, `Aloha  <@${slackId}>!`][Math.floor(Math.random() * 3)],
+    text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`][Math.floor(Math.random() * 3)],
     attachments: [{
-      title: 'What is your mood today?',
+      title: 'What is your mood.js today?',
       callback_id: 'get_mood',
       attachment_type: 'default',
       actions: [
@@ -55,10 +58,9 @@ export default ({ bot, convo, slackId }) => {
       const value = parseInt(reply.actions[0].value, 10)
       bot.replyInteractive(reply, {
         attachments: [{
-          title: 'What is your mood today?',
-          text: `Your mood today is ${getEmoji(value)}`,
-          callback_id: 'update_info',
-          attachment_type: 'default'
+          title: 'What is your mood.js today?',
+          text: `_Your mood today is ${getEmoji(value)}_`,
+          mrkdwn_in: ['text']
         }]
       })
       convo.setVar('level', value)
@@ -81,7 +83,7 @@ export default ({ bot, convo, slackId }) => {
 
   convo.addMessage({ text: ['Oh, looking good! :hugging_face:', 'Life\'s good, right? :cherry_blossom:', 'Sweet! :strawberry:' ][Math.floor(Math.random() * 3)], action: 'description' }, 'four')
 
-  convo.addMessage({ text: ['Thanks for recording your mood :slightly_smiling_face:', 'Okay! :+1:', 'Thank you :sparkling_heart:'][Math.floor(Math.random() * 3)], action: 'description' }, 'three')
+  convo.addMessage({ text: ['Thanks for recording your mood.js :slightly_smiling_face:', 'Okay! :+1:', 'Thank you :sparkling_heart:'][Math.floor(Math.random() * 3)], action: 'description' }, 'three')
 
   convo.addMessage({ text: [':bow: Something\'s wrong?', 'Ouch :disappointed:', 'Feel better soon :pensive:'][Math.floor(Math.random() * 3)], action: 'description' }, 'two')
 
@@ -91,10 +93,17 @@ export default ({ bot, convo, slackId }) => {
     action: 'description'
   }, 'one')
 
-  convo.beforeThread('description', async function (convo, next) {
-    const moodId = await saveMood(slackId, convo.vars.level)
-    convo.setVar('moodId', moodId)
-    next()
+  convo.beforeThread('description', (convo, next) => {
+    saveMood(message.user, convo.vars.level)
+      .then(moodId => {
+        convo.setVar('moodId', moodId)
+        next()
+      })
+      .catch((err) => {
+        log('the `saveMood` method', err)
+        convo.stop()
+        next('stop')
+      })
   })
 
   convo.addQuestion({
@@ -104,47 +113,31 @@ export default ({ bot, convo, slackId }) => {
       attachment_type: 'default',
       actions: [
         {
-          name: 'yes',
+          name: 'comments',
           text: 'Yes',
           type: 'button',
           style: 'primary',
-          value: 'yes'
+          value: 'Yes'
         },
         {
-          name: 'no',
+          name: 'exit',
           text: 'No',
           type: 'button',
-          value: 'no'
+          value: 'No'
         }
       ]
     }]
   }, (reply, convo) => {
     if (reply.callback_id === 'describe_feelings') {
-      if (reply.actions[0].value === 'yes') {
-        bot.replyInteractive(reply, {
-          attachments: [{
-            title: getTitle(convo.vars.moodId),
-            callback_id: 'describe_feelings',
-            attachment_type: 'default',
-            text: '_Yes_',
-            mrkdwn_in: ['text']
-          }]
-        })
-        convo.gotoThread('comments')
-        convo.next()
-      } else {
-        bot.replyInteractive(reply, {
-          attachments: [{
-            title: getTitle(convo.vars.moodId),
-            callback_id: 'describe_feelings',
-            attachment_type: 'default',
-            text: '_No_',
-            mrkdwn_in: ['text']
-          }]
-        })
-        convo.gotoThread('bye')
-        convo.next()
-      }
+      bot.replyInteractive(reply, {
+        attachments: [{
+          title: getTitle(convo.vars.moodId),
+          text: `_${reply.actions[0].value}_`,
+          mrkdwn_in: ['text']
+        }]
+      })
+      convo.gotoThread(reply.actions[0].name)
+      convo.next()
     }
   }, {}, 'description')
 
@@ -154,25 +147,30 @@ export default ({ bot, convo, slackId }) => {
     convo.gotoThread('saved')
   }, { key: 'comment' }, 'comments')
 
-  convo.beforeThread('saved', async function (convo, next) {
+  convo.beforeThread('saved', (convo, next) => {
     const comment = convo.extractResponse('comment')
-    await saveMoodDescription(convo.vars.moodId, comment)
-    next()
+    saveMoodDescription(convo.vars.moodId, comment)
+      .then(() => next())
+      .catch((err) => {
+        log('the `saveMood` method', err)
+        convo.stop()
+        next('stop')
+      })
   })
 
   convo.addMessage({
     text: ['Awesome, it has been successfully saved!', 'Perfect!', 'Sounds good!', 'Thank you!'][Math.floor(Math.random() * 4)],
-    action: 'bye'
+    action: 'exit'
   }, 'saved')
 
   convo.addMessage({
     text: `See you tomorrow, take care :heart:`
-  }, 'bye')
+  }, 'exit')
 
   convo.onTimeout(function (convo) {
-    convo.say('Hum... you seem busy. Come back say `mood` when you want!')
+    convo.say('Hum... you seem busy. Come back say `mood.js` when you want!')
     convo.stop()
   })
 
   convo.activate()
-}
+})

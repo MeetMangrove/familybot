@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Promise from 'bluebird'
 
-import { base, _getAllRecords, getMember } from '../airtable'
+import { base, _getAllRecords, getMember } from '../../api/airtable'
 
 export const saveMood = async (slackId, level) => {
   const { id } = await getMember(slackId)
@@ -96,3 +96,5 @@ export const getTitle = (level) => {
       return 'Do you want to describe your feelings?'
   }
 }
+
+
