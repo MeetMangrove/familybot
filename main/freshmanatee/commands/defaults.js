@@ -25,7 +25,7 @@ const dialog = (convo, slackId, context) => {
   convo.say(`Say \`fresh\` if you want me to share your latest news, goals and challenges,`)
   convo.say(`\`skills\` or \`learning\` to manage your skills & learning`)
   convo.say(`and \`mangrovers\` if you want to see others Mangrovers' profiles.`)
-  convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 6PM Paris Time :rocket:`)
+  convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 6PM Paris time :rocket:`)
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {

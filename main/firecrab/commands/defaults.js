@@ -3,7 +3,7 @@ import controller, { log } from '../config'
 const dialog = (convo, slackId, context) => {
   switch (context) {
     case 'hello': {
-      convo.say(`Hello <@${slackId}> :slightly_smiling_face:`)
+      convo.say(`Hi <@${slackId}> :slightly_smiling_face:`)
       break
     }
     case 'intro': {
@@ -22,8 +22,9 @@ const dialog = (convo, slackId, context) => {
       break
     }
   }
-  convo.say(`If you are active in Mangrove, you can say */done* in <#C1JCYV3S8> or */thanks* in <#C7PP2P7KQ>`)
-  convo.say(`I'll share your activity in <#C0KD37VUP> every sunday at 6PM Paris Time :fire:`)
+  convo.say(`Thanks to me, you can say */done* in <#C1JCYV3S8> to share your mangrove contribution`)
+  convo.say(`and */thanks* in <#C7PP2P7KQ> to show your gratitude to someone.`)
+  convo.say(`I'll share all activities in <#C0KD37VUP> every sunday at 6PM Paris time :fire:`)
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {

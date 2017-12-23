@@ -96,5 +96,3 @@ export const getTitle = (level) => {
       return 'Do you want to describe your feelings?'
   }
 }
-
-
