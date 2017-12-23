@@ -153,4 +153,6 @@ typings/
 # Webstorm idea directory
 .idea/
 
+# Client secret
+client_secret.json
 
