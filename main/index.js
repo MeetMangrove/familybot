@@ -47,7 +47,7 @@ if (NODE_ENV === 'production') {
   // You should set up your DNS to point different domain names to your server
   Promise.all([
     import('./rachid'),
-    import('./freshmanatee'),
+    import('./freshmanatee/controller'),
     import('./firecrab')
   ])
     .then((bots) => {

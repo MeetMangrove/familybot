@@ -1,7 +1,13 @@
 {
-  "presets": ["env"],
-  "plugins": [
-    "transform-object-rest-spread",
-    "dynamic-import-node"
-  ]
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ]
+  ],
+  "plugins": ["transform-object-rest-spread"]
 }

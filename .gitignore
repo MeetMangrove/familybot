@@ -1,7 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
-.idea
-node_modules
-db_learningbot
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -152,5 +149,8 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Webstorm idea directory
+.idea/
 
 

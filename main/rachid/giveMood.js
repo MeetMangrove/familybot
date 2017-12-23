@@ -6,13 +6,8 @@ import {
   saveMoodDescription
 } from './methods'
 
-const delayMessage = (bot, slackId, convo) => setTimeout((bot, channel, convo) => {
-  bot.say({ text: 'Hum... you seem busy. Come back say `mood` when you want!', channel })
-  convo.stop()
-}, 1800000, bot, slackId, convo)
-
 export default ({ bot, convo, slackId }) => {
-  let timeout = delayMessage(bot, slackId, convo)
+  convo.setTimeout(1800000)
 
   convo.addQuestion({
     text: [`Hello  <@${slackId}>!`, `Hey  <@${slackId}>!`, `Aloha  <@${slackId}>!`][Math.floor(Math.random() * 3)],
@@ -57,7 +52,6 @@ export default ({ bot, convo, slackId }) => {
     }]
   }, (reply, convo) => {
     if (reply.callback_id === 'get_mood') {
-      clearTimeout(timeout)
       const value = parseInt(reply.actions[0].value, 10)
       bot.replyInteractive(reply, {
         attachments: [{
@@ -100,7 +94,6 @@ export default ({ bot, convo, slackId }) => {
   convo.beforeThread('description', async function (convo, next) {
     const moodId = await saveMood(slackId, convo.vars.level)
     convo.setVar('moodId', moodId)
-    timeout = delayMessage(bot, slackId, convo)
     next()
   })
 
@@ -140,7 +133,6 @@ export default ({ bot, convo, slackId }) => {
         convo.gotoThread('comments')
         convo.next()
       } else {
-        clearTimeout(timeout)
         bot.replyInteractive(reply, {
           attachments: [{
             title: getTitle(convo.vars.moodId),
@@ -159,7 +151,6 @@ export default ({ bot, convo, slackId }) => {
   convo.addQuestion({
     text: `Tell me more about how you feel:`
   }, (response, convo) => {
-    clearTimeout(timeout)
     convo.gotoThread('saved')
   }, { key: 'comment' }, 'comments')
 
@@ -177,4 +168,11 @@ export default ({ bot, convo, slackId }) => {
   convo.addMessage({
     text: `See you tomorrow, take care :heart:`
   }, 'bye')
+
+  convo.onTimeout(function (convo) {
+    convo.say('Hum... you seem busy. Come back say `mood` when you want!')
+    convo.stop()
+  })
+
+  convo.activate()
 }
