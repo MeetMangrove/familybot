@@ -22,7 +22,11 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
         'title': ':baby: Learning',
         'text': '{{{vars.currentLearning}}}',
         'color': '#FF5722'
-      }],
+      }]
+    }, 'default')
+
+    convo.addMessage({
+      text: `Your learning can help you to achieve your challenges!`,
       action: 'ask_learning'
     }, 'default')
 

@@ -116,7 +116,8 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
           .addText('Update your location', 'Location', convo.vars.profile.location, {
             placeholder: 'What is your current location (City, Country)?'
           })
-          .addText('Share your focus', 'Focus', convo.vars.profile.focus, {
+          .addTextarea('Share your focus', 'Focus', convo.vars.profile.focus, {
+            max_length: 300,
             placeholder: 'What is your main focus for the next two weeks?'
           })
           .addTextarea('Share your challenges', 'Challenges', convo.vars.profile.challenges, {
@@ -125,9 +126,10 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
             placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
-          .addSelect('Add a skill', 'Skills', null, convo.vars.skills, {
+          .addSelect('Add a new skill', 'Skills', null, convo.vars.skills, {
             placeholder: 'Do you have a new skill? Which one?',
-            optional: true
+            optional: true,
+            hint: 'Add a new skill only if you feel able teach it to someone else.'
           })
           .addTextarea('Edit your bio', 'Bio', convo.vars.profile.bio, {
             max_length: 500,

@@ -25,7 +25,11 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
         'title': ':muscle: Skills',
         'text': '{{{vars.currentSkills}}}',
         'color': '#FF9800'
-      }],
+      }]
+    }, 'default')
+
+    convo.addMessage({
+      text: `You can teach your skills to someone how want to learn!`,
       action: 'ask_skill'
     }, 'default')
 
