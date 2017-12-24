@@ -75,7 +75,7 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
     }, {}, 'ask_learning')
 
     convo.beforeThread('teaching_people', (convo, next) => {
-      Promise.all(_.map(profile.get('Learning'), ({ text }) => getTeachingPeople(text)
+      Promise.all(_.map(ownLearningList, ({ text }) => getTeachingPeople(text)
         .then(teachingPeople => ({ learning: text, teachingPeople }))))
         .then((res) => {
           convo.addMessage({

@@ -78,7 +78,7 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
     }, {}, 'ask_skill')
 
     convo.beforeThread('learning_people', (convo, next) => {
-      Promise.all(_.map(profile.get('Skills'), ({ text }) => getLearningPeople(text)
+      Promise.all(_.map(ownSkillList, ({ text }) => getLearningPeople(text)
         .then(learningPeople => ({ skill: text, learningPeople }))))
         .then((res) => {
           convo.addMessage({
