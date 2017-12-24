@@ -11,7 +11,7 @@ Clone the repo, then run:
 $ npm install
 ```
 
-### Set environmental variables
+### Setup environment
 
 Create a .env file with the following variables and their values:
 ```bash
@@ -27,33 +27,60 @@ FIRECRAB_FIREBASE_URI=***
 FIRECRAB_SLACK_CLIENT_ID=***
 FIRECRAB_SLACK_CLIENT_SECRET=***
 
+GHOST_FIREBASE_URI=***
+GHOST_SLACK_CLIENT_ID=***
+GHOST_SLACK_CLIENT_SECRET=***
+
 AIRTABLE_API_KEY=***
 AIRTABLE_BASE_KEY=***
 
-EMAIl_USER=***
-EMAIL_PASS=***
+GMAIL_API_CLIENT_ID=***
+GMAIL_API_CLIENT_SECRET=***
+GMAIL_API_ACCESS_TOKEN=***
 
+SLACK_TEAM_ID=***
 HOSTNAME=***
-NODE_ENV=DEVELOPMENT
-PORT=5000
 ```
-
-### How to use in development
 
 Use a tunnelling software like ngrok to expose each bot under its own domain.
 
-Start ngrok
+Start ngrok:
 ```
 $ ngrok http 5000
 ```
 
-Then set the HOSTNAME env to the new ngrok url.
+Then set the HOSTNAME env to the new ngrok url. 
 
-### Run bots
+### Build bots
 
-In local for development:
+All bots can be tested individually through the _Ghost_ bot on the Mangrove Slack.
+All messages will be posted in _#ghost-playground_ channel
+
+Run Rachid:
+```bash
+$ npm run rachid
+```
+
+Run Firecrab:
+```bash
+$ npm run firecrab
+```
+
+Run Freshmanatee:
+```bash
+$ npm run freshmanatee
+```
+
+Run all the bots in production:
 ```bash
 $ npm start
+```
+
+### Dev tools
+
+Generate Gmail Credentials:
+```bash
+$ npm run credentials_gmail
 ```
 
 Lint code:
@@ -66,7 +93,7 @@ Fix lint errors:
 $ npm run fix
 ```
 
-Building:
+Building app:
 ```bash
 $ npm run build
 ```

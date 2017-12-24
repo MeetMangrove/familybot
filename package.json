@@ -6,7 +6,7 @@
     "rachid": "NODE_ENV=development nodemon --exec npm run babel-node -- main/rachid",
     "freshmanatee": "NODE_ENV=development nodemon --exec npm run babel-node -- main/freshmanatee",
     "firecrab": "NODE_ENV=development nodemon --exec npm run babel-node -- main/firecrab",
-    "credential_gmail": "node tasks/gmail_credentials_generator.js",
+    "credentials_gmail": "node tasks/gmail_credentials_generator.js",
     "babel-node": "babel-node --presets=env",
     "lint": "./node_modules/.bin/eslint main test; exit 0",
     "fix": "./node_modules/.bin/eslint --fix main test; exit 0",

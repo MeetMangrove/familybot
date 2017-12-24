@@ -6,17 +6,17 @@ import vhost from 'vhost'
 import controller from './controller'
 require('dotenv').config()
 
-const { HOSTNAME, PORT } = process.env
+const { HOSTNAME } = process.env
 
-if (!HOSTNAME || !PORT) {
-  console.log('Error: Specify HOSTNAME and PORT in a .env file')
+if (!HOSTNAME) {
+  console.log('Error: Specify HOSTNAME in a .env file')
   process.exit(1)
 }
 
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.set('port', PORT || 5000)
+app.set('port', process.env.PORT || 5000)
 
 console.log(`Mounting ${controller.config.app_name} bot on ${HOSTNAME}`)
 
