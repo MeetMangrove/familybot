@@ -21,6 +21,7 @@ controller.on('slash_command', async function (bot, message) {
         let doneWith = [message.user]
         const regExNameWith = /(with)\s(@[a-z._0-9]+\s*(,|and|&)?\s*)+/g
         const newText = regExNameWith.exec(text)
+        let savedText = text
         if (newText !== null) {
           do {
             name = regExName.exec(newText[0])
@@ -28,14 +29,15 @@ controller.on('slash_command', async function (bot, message) {
               doneWith.push(name[0].trim().replace(/^@/, ''))
             }
           } while (name)
+          doneWith = _.map(doneWith, name => {
+            const member = _.find(members, { name })
+            return member ? member.id : name
+          })
+          const startText = text.slice(0, text.indexOf(newText[0])).trim()
+          const endText = text.slice(text.indexOf(newText[0]) + newText[0].length).trim()
+          savedText = startText.concat(' ', endText)
         }
-        doneWith = _.map(doneWith, name => {
-          const member = _.find(members, { name })
-          return member ? member.id : name
-        })
-        const startText = text.slice(0, text.indexOf(newText[0])).trim()
-        const endText = text.slice(text.indexOf(newText[0]) + newText[0].length).trim()
-        await saveDone(doneWith, startText.concat(' ', endText), date)
+        await saveDone(doneWith, savedText, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
           if (err) log('the `/done` saved message', err)
