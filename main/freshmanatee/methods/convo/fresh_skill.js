@@ -81,29 +81,36 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
       Promise.all(_.map(ownSkillList, ({ text }) => getLearningPeople(text)
         .then(learningPeople => ({ skill: text, learningPeople }))))
         .then((res) => {
-          convo.addMessage({
-            text: `Here is the list of people that you can help to achieve their learning:`
-          }, 'learning_people')
-          res.forEach(({ skill, learningPeople }) => {
-            if (learningPeople.length > 0) {
-              let text = `*${skill}* can be teaching to `
-              learningPeople.forEach((id, index) => {
-                if (index === 0) {
-                  text = text.concat(`<@${id}>`)
-                } else if (index + 1 === learningPeople.length) {
-                  text = text.concat(` and <@${id}>`)
-                } else {
-                  text = text.concat(`, <@${id}>`)
-                }
-              })
-              text = text.concat('\n')
-              convo.addMessage({ text }, 'learning_people')
-            }
-          })
-          convo.addMessage({
-            text: `You just have to send a Slack message and propose a call or a lunch :facepunch:`,
-            action: 'ask_skill'
-          }, 'learning_people')
+          if (res.length === 0) {
+            convo.addMessage({
+              text: `You don't have any skill to teach.`,
+              action: 'ask_skill'
+            }, 'learning_people')
+          } else {
+            convo.addMessage({
+              text: `Here is the list of people that you can help to achieve their learning:`
+            }, 'learning_people')
+            res.forEach(({ skill, learningPeople }) => {
+              if (learningPeople.length > 0) {
+                let text = `*${skill}* can be teaching to `
+                learningPeople.forEach((id, index) => {
+                  if (index === 0) {
+                    text = text.concat(`<@${id}>`)
+                  } else if (index + 1 === learningPeople.length) {
+                    text = text.concat(` and <@${id}>`)
+                  } else {
+                    text = text.concat(`, <@${id}>`)
+                  }
+                })
+                text = text.concat('\n')
+                convo.addMessage({ text }, 'learning_people')
+              }
+            })
+            convo.addMessage({
+              text: `You just have to send a Slack message and propose a call or a lunch :facepunch:`,
+              action: 'ask_skill'
+            }, 'learning_people')
+          }
           next()
         })
         .catch((err) => {
