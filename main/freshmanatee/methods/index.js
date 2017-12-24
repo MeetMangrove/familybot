@@ -84,7 +84,7 @@ export const getUpdates = async () => {
   return updates
 }
 
-export const getMembersLookingFor = async (skill) => {
+export const getLearningPeople = async (skill) => {
   const list = []
   const records = await _getAllRecords(base('Skills').select({
     view: 'Grid view',
@@ -101,7 +101,7 @@ export const getMembersLookingFor = async (skill) => {
   return list
 }
 
-export const getMembersCanHelp = async (learning) => {
+export const getTeachingPeople = async (learning) => {
   const list = []
   const records = await _getAllRecords(base('Skills').select({
     view: 'Grid view',

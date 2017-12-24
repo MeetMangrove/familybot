@@ -2,7 +2,9 @@ import _ from 'lodash'
 import Promise from 'bluebird'
 
 import { log } from '../../config'
-import { getSkillsList, setNewSkill, getMemberWithSkills, removeSkill, sort } from '../index'
+import {
+  getSkillsList, setNewSkill, getMemberWithSkills, removeSkill, sort, getLearningPeople
+} from '../index'
 
 export default (bot, message, introConvo) => Promise.all([getSkillsList(message.user), getMemberWithSkills(message.user)])
   .then(([skills, profile]) => bot.createPrivateConversation(message, (err, convo) => {
@@ -48,6 +50,12 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
             style: 'danger'
           },
           {
+            name: 'learning_people',
+            text: 'Display learning people',
+            value: 'Display learning people',
+            type: 'button'
+          },
+          {
             name: 'exit',
             text: 'Do nothing',
             value: 'Do nothing',
@@ -68,6 +76,42 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
         convo.next()
       }
     }, {}, 'ask_skill')
+
+    convo.beforeThread('learning_people', (convo, next) => {
+      Promise.all(_.map(profile.get('Skills'), ({ text }) => getLearningPeople(text)
+        .then(learningPeople => ({ skill: text, learningPeople }))))
+        .then((res) => {
+          convo.addMessage({
+            text: `Here is the list of people that you can help to achieve their learning:`
+          }, 'learning_people')
+          res.forEach(({ skill, learningPeople }) => {
+            if (learningPeople.length > 0) {
+              let text = `*${skill}* can be teaching to `
+              learningPeople.forEach((id, index) => {
+                if (index === 0) {
+                  text = text.concat(`<@${id}>`)
+                } else if (index + 1 === learningPeople.length) {
+                  text = text.concat(` and <@${id}>`)
+                } else {
+                  text = text.concat(`, <@${id}>`)
+                }
+              })
+              text = text.concat('\n')
+              convo.addMessage({ text }, 'learning_people')
+            }
+          })
+          convo.addMessage({
+            text: `You just have to send a Slack message and propose a call or a lunch :facepunch:`,
+            action: 'ask_skill'
+          }, 'learning_people')
+          next()
+        })
+        .catch((err) => {
+          log('the `getLearningPeople` method', err)
+          convo.stop()
+          next('stop')
+        })
+    })
 
     convo.addQuestion({
       attachments: [{

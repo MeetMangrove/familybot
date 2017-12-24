@@ -1,7 +1,7 @@
 import cron from 'cron'
 import Promise from 'bluebird'
 
-import { cleanUpdates, createNewsletter, getUpdates, getMembersLookingFor, getMembersCanHelp } from '../methods'
+import { cleanUpdates, createNewsletter, getUpdates, getLearningPeople, getTeachingPeople } from '../methods'
 import { bots, log, isProd } from '../config'
 
 const postDigest = new cron.CronJob({
@@ -19,36 +19,36 @@ const postDigest = new cron.CronJob({
         if (challenges) text = text.concat(`\n:tornado: is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``)
         if (skill) {
           text = text.concat(`\n:muscle: has developed a new skill: *${skill}*, congratulation :tada:`)
-          const lookingFor = await getMembersLookingFor(skill)
-          if (lookingFor.length > 0) {
-            let textLookingFor = '\n_You can teach this skill to '
-            lookingFor.forEach((id, index) => {
+          const learningPeople = await getLearningPeople(skill)
+          if (learningPeople.length > 0) {
+            let textLearningPeople = '\n_You can teach this skill to '
+            learningPeople.forEach((id, index) => {
               if (index === 0) {
-                textLookingFor = textLookingFor.concat(`<@${id}>`)
-              } else if (index + 1 === lookingFor.length) {
-                textLookingFor = textLookingFor.concat(` and <@${id}>`)
+                textLearningPeople = textLearningPeople.concat(`<@${id}>`)
+              } else if (index + 1 === learningPeople.length) {
+                textLearningPeople = textLearningPeople.concat(` and <@${id}>`)
               } else {
-                textLookingFor = textLookingFor.concat(`, <@${id}>`)
+                textLearningPeople = textLearningPeople.concat(`, <@${id}>`)
               }
             })
-            text = text.concat(textLookingFor, ' that are currently learning it!_')
+            text = text.concat(textLearningPeople, ' that are currently learning it!_')
           }
         }
         if (learning) {
           text = text.concat(`\n:baby: starting to learn *${learning}*`)
-          const canHelp = await getMembersCanHelp(learning)
-          if (canHelp.length > 0) {
-            let textCanHelp = '\n_'
-            canHelp.forEach((id, index) => {
+          const teachingPeople = await getTeachingPeople(learning)
+          if (teachingPeople.length > 0) {
+            let textTeachingPeople = '\n_'
+            teachingPeople.forEach((id, index) => {
               if (index === 0) {
-                textCanHelp = textCanHelp.concat(`<@${id}>`)
-              } else if (index + 1 === canHelp.length) {
-                textCanHelp = textCanHelp.concat(` and <@${id}>`)
+                textTeachingPeople = textTeachingPeople.concat(`<@${id}>`)
+              } else if (index + 1 === teachingPeople.length) {
+                textTeachingPeople = textTeachingPeople.concat(` and <@${id}>`)
               } else {
-                textCanHelp = textCanHelp.concat(`, <@${id}>`)
+                textTeachingPeople = textTeachingPeople.concat(`, <@${id}>`)
               }
             })
-            text = text.concat(textCanHelp, ` maybe can you help <@${slackId}> to learn this skill?_ :pray:`)
+            text = text.concat(textTeachingPeople, ` maybe can you help <@${slackId}> to learn this skill?_ :pray:`)
           }
         }
         attachments.push({ title: `<@${slackId}>`, text, mrkdwn_in: ['text'] })
