@@ -81,7 +81,7 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
           if (res.length === 0) {
             convo.addMessage({
               text: `You don't have any learning to achieve.`,
-              action: 'ask_skill'
+              action: 'ask_learning'
             }, 'teaching_people')
           } else {
             convo.addMessage({
