@@ -9,7 +9,7 @@ import { bots, log, isProd } from '../config'
 import { getEmails, getNewsletter } from '../methods'
 
 const sendNewsletter = new cron.CronJob({
-  cronTime: '00,20,40 * 01 * * *', // '00 00 14 * * 4'
+  cronTime: '00 00 14 * * 4',
   onTick: async function () {
     try {
       const date = moment().format('DD/MM/YYYY')

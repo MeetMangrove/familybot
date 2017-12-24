@@ -42,9 +42,9 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
   })
   return {
     isUpdated: !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
-      !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
-      !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) ||
-      !!skill,
+    !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
+    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) ||
+    !!skill,
     learningRemoved: learning && !_.isEqual(oldProfile.get('Learning'), learning),
     newSkill: record ? record.get('Name') : null
   }
@@ -52,40 +52,94 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
 
 export const getUpdates = async () => {
   const members = []
+  const updates = []
   const records = await _getAllRecords(base('Members').select({
     view: 'Familybot View',
-    fields: ['Name', 'Email', 'Slack ID', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?'],
-    filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1)'
+    fields: ['Name', 'Email', 'Slack ID', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?', 'Is new skill?', 'Last skill', 'Is new learning?', 'Last learning'],
+    filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1, {Is new skill?}=1, {Is new learning?}=1)'
   }))
-  records.forEach((member) => {
-    members.push({
+  records.forEach(record => members.push(record.fields))
+  for (let member of members) {
+    const find = Promise.promisify(base('Skills').find)
+    if (member['Last skill']) {
+      const lastSkill = await find(member['Last skill'][0])
+      member['Last skill'] = lastSkill ? [lastSkill.get('Name')] : null
+    }
+    if (member['Last learning']) {
+      const lastLearning = await find(member['Last learning'][0])
+      member['Last learning'] = lastLearning ? [lastLearning.get('Name')] : null
+    }
+    updates.push({
       id: member.id,
-      slackId: member.get('Slack ID'),
-      fullName: member.get('Name'),
-      email: member.get('Email'),
-      location: member.get('Is new location?') === true ? member.get('Location') : null,
-      focus: member.get('Is new focus?') === true ? member.get('Focus') : null,
-      challenges: member.get('Is new challenges?') === true ? member.get('Challenges') : null
+      slackId: member['Slack ID'],
+      fullName: member['Name'],
+      email: member['Email'],
+      location: member['Is new location?'] === true ? member['Location'] : null,
+      focus: member['Is new focus?'] === true ? member['Focus'] : null,
+      challenges: member['Is new challenges?'] === true ? member['Challenges'] : null,
+      skill: member['Is new skill?'] === true ? member['Last skill'] : null,
+      learning: member['Is new learning?'] === true ? member['Last learning'] : null
     })
-  })
-  return members
+  }
+  return updates
+}
+
+export const getMembersLookingFor = async (skill) => {
+  const list = []
+  const records = await _getAllRecords(base('Skills').select({
+    view: 'Grid view',
+    fields: ['Name', 'Learning of'],
+    filterByFormula: `{Name}='${skill}'`
+  }))
+  if (records.length === 0) return list
+  const ids = records[0].get('Learning of')
+  if (!ids) return list
+  for (let id of ids) {
+    const profile = await getMember(id)
+    list.push(profile.get('Slack ID'))
+  }
+  return list
+}
+
+export const getMembersCanHelp = async (learning) => {
+  const list = []
+  const records = await _getAllRecords(base('Skills').select({
+    view: 'Grid view',
+    fields: ['Name', 'Skill of'],
+    filterByFormula: `{Name}='${learning}'`
+  }))
+  if (records.length === 0) return list
+  const ids = records[0].get('Skill of')
+  if (!ids) return list
+  for (let id of ids) {
+    const profile = await getMember(id)
+    list.push(profile.get('Slack ID'))
+  }
+  return list
 }
 
 export const cleanUpdates = (members) => members.forEach(({ id }) => base('Members').update(id, {
   'Is new location?': false,
   'Is new focus?': false,
-  'Is new challenges?': false
+  'Is new challenges?': false,
+  'Is new skill?': false,
+  'Is new learning?': false
 }))
 
 export const createNewsletter = async (members) => {
   let text = 'Hi there!\n' +
-    'Here is a small digest of some Mangrove members update! I\'m sure you can help out one of them! You may make a difference!\n\n' +
-    '⬇️------------------------------⬇️\n'
+    'Here is a small digest of some Mangrove members update!\n\n' +
+    '⬇️------------------------------⬇️'
   members.forEach((member) => {
-    const { fullName, email, location, focus, challenges } = member
-    text = text.concat(`\n${fullName} (${email})\n${location ? `🏡 just moved to *${location}*\n` : ''}${focus ? `🚀 has a new focus:\n${focus}\n` : ''}${challenges ? `🌪 is currently dealing with the following challenge(s): \n${challenges}\n` : ''}`)
+    const { fullName, email, location, focus, challenges, skill, learning } = member
+    text = text.concat(`\n\n${fullName} (${email})`)
+    if (location) text = text.concat(`\n🏡 just moved to ${location}`)
+    if (focus) text = text.concat(`\n🚀 has a new focus: \n${focus}`)
+    if (challenges) text = text.concat(`\n🌪 is currently dealing with the following challenge(s): \n${challenges}`)
+    if (skill) text = text.concat(`\n💪 has developed a new skill: ${skill}, congratulation 🎉`)
+    if (learning) text = text.concat(`\n👶 starting to learn ${learning}`)
   })
-  text = text.concat('\n\nGo Mangrove 👊\nTake care ❤️\n\nYour Fresh Manatee')
+  text = text.concat('\n\nGo Mangrove 👊\nTake care ❤️\n\nYour dear Fresh Manatee')
   const create = Promise.promisify(base('Newsletters').create)
   const { id } = await create({
     'Content': text,
