@@ -255,7 +255,7 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
           skillList.push(skill)
           ownSkillList.sort(sort)
           skillList.sort(sort)
-          convo.setVar('learning', skill.text)
+          convo.setVar('skill', skill.text)
           next()
         })
         .catch((err) => {
