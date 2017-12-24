@@ -14,12 +14,12 @@ const {
   SLACK_TEAM_ID
 } = process.env
 
-if (!NODE_ENV || !GHOST_SLACK_CLIENT_ID || !GHOST_SLACK_CLIENT_SECRET || !GHOST_FIREBASE_URI || !SLACK_TEAM_ID) {
+if (!NODE_ENV || (NODE_ENV !== 'production' && (!GHOST_SLACK_CLIENT_ID || !GHOST_SLACK_CLIENT_SECRET || !GHOST_FIREBASE_URI)) || !SLACK_TEAM_ID) {
   console.log('Error: Specify NODE_ENV, GHOST_SLACK_CLIENT_ID, GHOST_SLACK_CLIENT_SECRET, GHOST_FIREBASE_URI and SLACK_TEAM_ID in a .env file')
   process.exit(1)
 }
 
-export default ({ SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, FIREBASE_URI, WEBHOOK_URL, name, scopes }) => {
+export default ({ SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, FIREBASE_URI, name, scopes }) => {
   const bots = []
   const isProd = NODE_ENV === 'production'
 
