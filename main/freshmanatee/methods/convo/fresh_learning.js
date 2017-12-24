@@ -75,21 +75,20 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
     }, {}, 'ask_learning')
 
     convo.beforeThread('teaching_people', (convo, next) => {
+      console.log(ownLearningList)
       Promise.all(_.map(ownLearningList, ({ text }) => getTeachingPeople(text)
-        .then(teachingPeople => ({ learning: text, teachingPeople }))))
+        .then(teachingPeople => (teachingPeople.length > 0 ? { learning: text, teachingPeople } : null))))
         .then((res) => {
-          if (res.length === 0) {
-            convo.addMessage({
-              text: `You don't have any learning to achieve.`,
-              action: 'ask_learning'
-            }, 'teaching_people')
+          const list = _.compact(res)
+          if (ownLearningList.length === 0) {
+            convo.gotoThread('no_learning')
+          } else if (list.length === 0) {
+            convo.gotoThread('no_people')
           } else {
-            convo.addMessage({
-              text: `Here is the list of people that can help you to achieve your learning:`
-            }, 'teaching_people')
-            res.forEach(({ learning, teachingPeople }) => {
+            let text = ''
+            list.forEach(({ learning, teachingPeople }) => {
               if (teachingPeople.length > 0) {
-                let text = `*${learning}* can be teaching by `
+                text = text.concat(`*${learning}* can be teaching by `)
                 teachingPeople.forEach((id, index) => {
                   if (index === 0) {
                     text = text.concat(`<@${id}>`)
@@ -100,13 +99,9 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
                   }
                 })
                 text = text.concat('\n')
-                convo.addMessage({ text }, 'teaching_people')
               }
             })
-            convo.addMessage({
-              text: `You just have to send a Slack message and ask for a call or a lunch :v:`,
-              action: 'ask_learning'
-            }, 'teaching_people')
+            convo.setVar('teaching_people', text)
           }
           next()
         })
@@ -116,6 +111,29 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
           next('stop')
         })
     })
+
+    convo.addMessage({
+      text: `You don't have any learning to achieve.`,
+      action: 'ask_learning'
+    }, 'no_learning')
+
+    convo.addMessage({
+      text: `There is no people to learn something from.`,
+      action: 'ask_learning'
+    }, 'no_people')
+
+    convo.addMessage({
+      text: `Here is the list of people that can help you to achieve your learning:`
+    }, 'teaching_people')
+
+    convo.addMessage({
+      text: '{{{vars.teaching_people}}}'
+    }, 'teaching_people')
+
+    convo.addMessage({
+      text: `You just have to send a Slack message and ask for a call or a lunch :v:`,
+      action: 'ask_learning'
+    }, 'teaching_people')
 
     convo.addQuestion({
       attachments: [{

@@ -79,20 +79,18 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
 
     convo.beforeThread('learning_people', (convo, next) => {
       Promise.all(_.map(ownSkillList, ({ text }) => getLearningPeople(text)
-        .then(learningPeople => ({ skill: text, learningPeople }))))
+        .then(learningPeople => (learningPeople.length > 0 ? { skill: text, learningPeople } : null))))
         .then((res) => {
-          if (res.length === 0) {
-            convo.addMessage({
-              text: `You don't have any skill to teach.`,
-              action: 'ask_skill'
-            }, 'learning_people')
+          const list = _.compact(res)
+          if (ownSkillList.length === 0) {
+            convo.gotoThread('no_skill')
+          } else if (list.length === 0) {
+            convo.gotoThread('no_people')
           } else {
-            convo.addMessage({
-              text: `Here is the list of people that you can help to achieve their learning:`
-            }, 'learning_people')
-            res.forEach(({ skill, learningPeople }) => {
+            let text = ''
+            list.forEach(({ skill, learningPeople }) => {
               if (learningPeople.length > 0) {
-                let text = `*${skill}* can be teaching to `
+                text = text.concat(`*${skill}* can be teaching to `)
                 learningPeople.forEach((id, index) => {
                   if (index === 0) {
                     text = text.concat(`<@${id}>`)
@@ -103,13 +101,9 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
                   }
                 })
                 text = text.concat('\n')
-                convo.addMessage({ text }, 'learning_people')
               }
             })
-            convo.addMessage({
-              text: `You just have to send a Slack message and propose a call or a lunch :facepunch:`,
-              action: 'ask_skill'
-            }, 'learning_people')
+            convo.setVar('learning_people', text)
           }
           next()
         })
@@ -119,6 +113,29 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
           next('stop')
         })
     })
+
+    convo.addMessage({
+      text: `You don't have any skill to teach.`,
+      action: 'ask_skill'
+    }, 'no_skill')
+
+    convo.addMessage({
+      text: `There is no people to teach something to.`,
+      action: 'ask_skill'
+    }, 'no_people')
+
+    convo.addMessage({
+      text: `Here is the list of people that you can help to achieve their learning:`
+    }, 'learning_people')
+
+    convo.addMessage({
+      text: '{{{vars.learning_people}}}'
+    }, 'learning_people')
+
+    convo.addMessage({
+      text: `You just have to send a Slack message and propose a call or a lunch :facepunch:`,
+      action: 'ask_skill'
+    }, 'learning_people')
 
     convo.addQuestion({
       attachments: [{
