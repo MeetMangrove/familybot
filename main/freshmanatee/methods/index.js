@@ -23,7 +23,7 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
       filterByFormula: `{Value}='${skill}'`
     }))
     record = records[0]
-    oldProfile.fields['Skills'].push(record.id)
+    oldProfile.fields['Skills'].length > 0 ? oldProfile.fields['Skills'].push(record.id) : oldProfile.fields['Skills'] = [record.id]
     learning = _.clone(oldProfile.get('Learning'))
     _.pull(learning, record.id)
     lastLearning = oldProfile.get('Last learning')
