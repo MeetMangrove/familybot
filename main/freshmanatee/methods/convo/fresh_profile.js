@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 import freshLearning from './fresh_learning'
 import controller, { log } from '../../config'
-import { getMemberWithSkills, getSkillsList, saveProfile } from '../index'
+import { getMemberWithSkills, getSkillsList, saveProfile, sort } from '../index'
 import moment from 'moment'
 
 export default (bot, message) => bot.createPrivateConversation(message, (err, convo) => {
@@ -23,6 +23,8 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
     Promise.all([getSkillsList(message.user), getMemberWithSkills(message.user)])
       .then(([skills, profile]) => {
         const currentSkills = _.map(profile.get('Skills'), ({ text }) => text)
+        skills.sort(sort)
+        currentSkills.sort(sort)
         convo.setVar('profile', {
           bio: profile.get('Bio') || 'None',
           location: profile.get('Location') || 'None',
