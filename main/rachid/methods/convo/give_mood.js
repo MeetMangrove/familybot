@@ -13,7 +13,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   convo.setTimeout(1800000)
 
   convo.addQuestion({
-    text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`][Math.floor(Math.random() * 3)],
+    text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`, `Yo <@${message.user}>!`, `Hi <@${message.user}>!`][Math.floor(Math.random() * 5)],
     attachments: [{
       title: 'What is your mood today?',
       callback_id: 'get_mood',

@@ -18,7 +18,7 @@ const dialog = (convo, slackId, context) => {
       break
     }
     default: {
-      convo.say(`Hello <@${slackId}> :slightly_smiling_face:`)
+      convo.say([`Hello  <@${slackId}>!`, `Hey  <@${slackId}>!`, `Aloha  <@${slackId}>!`, `Yo <@${slackId}>!`, `Hi <@${slackId}>!`][Math.floor(Math.random() * 5)])
       break
     }
   }
