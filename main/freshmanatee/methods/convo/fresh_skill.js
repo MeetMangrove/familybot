@@ -292,9 +292,10 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
       text: `Okay, next time!`
     }, 'exit')
 
-    convo.onTimeout(function (convo) {
+    convo.onTimeout((convo) => {
       convo.say('Hum... you seem busy. Come back say `skills` when you want!')
       convo.stop()
+      convo.next()
     })
 
     convo.activate()

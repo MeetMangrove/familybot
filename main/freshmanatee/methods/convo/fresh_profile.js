@@ -149,9 +149,10 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
     convo.next()
   }, {}, 'search')
 
-  convo.onTimeout(function (convo) {
+  convo.onTimeout((convo) => {
     convo.say('Hum... you seem busy. Come back say `fresh` when you want!')
     convo.stop()
+    convo.next()
   })
 
   convo.activate()

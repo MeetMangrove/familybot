@@ -276,9 +276,10 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
       text: `Okay, see you! :wave:`
     }, 'exit')
 
-    convo.onTimeout(function (convo) {
+    convo.onTimeout((convo) => {
       convo.say('Hum... you seem busy. Come back say `learning` when you want!')
       convo.stop()
+      convo.next()
     })
 
     convo.activate()

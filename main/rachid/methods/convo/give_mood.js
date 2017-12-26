@@ -167,9 +167,10 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
     text: `See you tomorrow, take care :heart:`
   }, 'exit')
 
-  convo.onTimeout(function (convo) {
+  convo.onTimeout((convo) => {
     convo.say('Hum... you seem busy. Come back say `mood.js` when you want!')
     convo.stop()
+    convo.next()
   })
 
   convo.activate()
