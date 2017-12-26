@@ -15,7 +15,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   convo.addQuestion({
     text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`][Math.floor(Math.random() * 3)],
     attachments: [{
-      title: 'What is your mood.js today?',
+      title: 'What is your mood today?',
       callback_id: 'get_mood',
       attachment_type: 'default',
       actions: [
@@ -168,7 +168,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   }, 'exit')
 
   convo.onTimeout((convo) => {
-    convo.say('Hum... you seem busy. Come back say `mood.js` when you want!')
+    convo.say('Hum... you seem busy. Come back say `mood` when you want!')
     convo.stop()
     convo.next()
   })
