@@ -29,7 +29,7 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
     }, 'default')
 
     convo.addMessage({
-      text: `You can teach your skills to someone how want to learn!`,
+      text: `You can teach your skills to someone how want to learn! :sparkles:`,
       action: 'ask_skill'
     }, 'default')
 
