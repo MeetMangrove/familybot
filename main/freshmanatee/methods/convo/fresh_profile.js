@@ -156,6 +156,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
 
 controller.on('dialog_submission', function (bot, message) {
   bot.dialogOk()
+  console.log(message.submission)
   saveProfile(message.user, message.submission)
     .then(({ isUpdated, learningRemoved, newSkill }) => bot.startPrivateConversation(message, (err, convo) => {
       if (err) return log('the `dialog_submission` conversation', err)

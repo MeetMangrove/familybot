@@ -26,7 +26,7 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
     }, 'default')
 
     convo.addMessage({
-      text: `Your learning can help you to achieve your challenges!`,
+      text: `Your learning can help you to achieve your challenges! :fire:`,
       action: 'ask_learning'
     }, 'default')
 

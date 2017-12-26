@@ -37,8 +37,8 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
     'Skills': oldProfile.fields['Skills'],
     'Last skill': record && record.id ? [record.id] : oldProfile.get('Last skill'),
     'Is new skill?': !!skill === true ? true : oldProfile.get('Is new skill?'),
-    'Learning': learning || oldProfile.get('Last skill'),
-    'Last learning': lastLearning || oldProfile.get('Last skill')
+    'Learning': learning || oldProfile.get('Learning'),
+    'Last learning': lastLearning || oldProfile.get('Last learning')
   })
   return {
     isUpdated: !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
