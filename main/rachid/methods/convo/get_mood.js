@@ -32,7 +32,7 @@ export default async (bot, message) => {
       })
     } else if (message.user) {
       await sendMessage({
-        text: `Sorry <@${message.user}>, there is no mood today :stuck_out_tongue:`,
+        text: `Sorry, there is no mood today :stuck_out_tongue:`,
         channel: message.user
       })
     }

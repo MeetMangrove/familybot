@@ -10,7 +10,7 @@ import { log } from '../../config'
 export default (bot, message) => bot.createPrivateConversation(message, (err, convo) => {
   if (err) log('the `give_mood` conversation', err)
 
-  convo.setTimeout(1800000)
+  convo.setTimeout(1500000)
 
   convo.addQuestion({
     text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`, `Yo <@${message.user}>!`, `Hi <@${message.user}>!`][Math.floor(Math.random() * 5)],
@@ -167,11 +167,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
     text: `See you tomorrow, take care :heart:`
   }, 'exit')
 
-  convo.onTimeout((convo) => {
-    convo.say('Hum... you seem busy. Come back say `mood` when you want!')
-    convo.stop()
-    convo.next()
-  })
+  convo.addMessage('Hum... you seem busy. Come back say `mood` when you want!', 'on_timeout')
 
   convo.activate()
 })

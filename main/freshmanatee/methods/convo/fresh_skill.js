@@ -10,7 +10,7 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
   .then(([skills, profile]) => bot.createPrivateConversation(message, (err, convo) => {
     if (err) log('the `add_new_skill` conversation', err)
 
-    convo.setTimeout(1800000)
+    convo.setTimeout(1500000)
 
     let skillList = skills
     let ownSkillList = profile.get('Skills')
@@ -292,11 +292,7 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
       text: `Okay, next time!`
     }, 'exit')
 
-    convo.onTimeout((convo) => {
-      convo.say('Hum... you seem busy. Come back say `skills` when you want!')
-      convo.stop()
-      convo.next()
-    })
+    convo.addMessage('Hum... you seem busy. Come back say `skills` when you want!', 'on_timeout')
 
     convo.activate()
   }))

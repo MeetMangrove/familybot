@@ -12,7 +12,7 @@ import moment from 'moment'
 export default (bot, message) => bot.createPrivateConversation(message, (err, convo) => {
   if (err) log('the `fresh_profile` conversation', err)
 
-  convo.setTimeout(1800000)
+  convo.setTimeout(1500000)
 
   convo.addMessage({
     text: 'I\'m searching your profile :sleuth_or_spy:',
@@ -149,11 +149,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
     convo.next()
   }, {}, 'search')
 
-  convo.onTimeout((convo) => {
-    convo.say('Hum... you seem busy. Come back say `fresh` when you want!')
-    convo.stop()
-    convo.next()
-  })
+  convo.addMessage('Hum... you seem busy. Come back say `fresh` when you want!', 'on_timeout')
 
   convo.activate()
 })

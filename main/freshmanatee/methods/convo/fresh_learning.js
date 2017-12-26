@@ -8,7 +8,7 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
   .then(([skills, profile]) => bot.createPrivateConversation(message, (err, convo) => {
     if (err) log('the `fresh_learning` conversation', err)
 
-    convo.setTimeout(1800000)
+    convo.setTimeout(1500000)
     let learningList = skills
     let ownLearningList = profile.get('Learning')
     ownLearningList.sort(sort)
@@ -276,11 +276,7 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
       text: `Okay, see you! :wave:`
     }, 'exit')
 
-    convo.onTimeout((convo) => {
-      convo.say('Hum... you seem busy. Come back say `learning` when you want!')
-      convo.stop()
-      convo.next()
-    })
+    convo.addMessage('Hum... you seem busy. Come back say `learning` when you want!', 'on_timeout')
 
     convo.activate()
   }))
