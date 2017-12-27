@@ -16,6 +16,7 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
   let record = null
   let learning = null
   let lastLearning = null
+  let skills = oldProfile.fields['Skills']
   if (skill) {
     const records = await _getAllRecords(base('Skills').select({
       view: 'Grid view',
@@ -23,7 +24,11 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
       filterByFormula: `{Value}='${skill}'`
     }))
     record = records[0]
-    oldProfile.fields['Skills'].length > 0 ? oldProfile.fields['Skills'].push(record.id) : oldProfile.fields['Skills'] = [record.id]
+    if (skills && skills.length > 0) {
+      skills.push(record.id)
+    } else {
+      skills = [record.id]
+    }
     learning = _.clone(oldProfile.get('Learning'))
     _.pull(learning, record.id)
     lastLearning = oldProfile.get('Last learning')
@@ -34,7 +39,7 @@ export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) =
     'Is new location?': !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
     'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
     'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) && newProfile['Challenges'] !== '',
-    'Skills': oldProfile.fields['Skills'],
+    'Skills': skills,
     'Last skill': record && record.id ? [record.id] : oldProfile.get('Last skill'),
     'Is new skill?': !!skill === true ? true : oldProfile.get('Is new skill?'),
     'Learning': learning || oldProfile.get('Learning'),
