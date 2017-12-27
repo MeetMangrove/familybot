@@ -81,7 +81,7 @@ export const getUpdates = async () => {
       email: member['Email'],
       location: member['Is new location?'] === true ? member['Location'] : null,
       focus: member['Is new focus?'] === true ? member['Focus'] : null,
-      challenges: member['Is new challenges?'] === true ? member['Challenges'] : null,
+      challenges: member['Is new challenges?'] === true && member['Challenges'] ? member['Challenges'] : null,
       skill: member['Is new skill?'] === true ? member['Last skill'] : null,
       learning: member['Is new learning?'] === true ? member['Last learning'] : null
     })
