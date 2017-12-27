@@ -5,7 +5,7 @@ import { cleanUpdates, createNewsletter, getUpdates, getLearningPeople, getTeach
 import { bots, log, isProd } from '../config'
 
 const postDigest = new cron.CronJob({
-  cronTime: '00 05 20 * * 3',
+  cronTime: '00 10 20 * * 3',
   onTick: async function () {
     try {
       const members = await getUpdates()
@@ -91,7 +91,7 @@ const postDigest = new cron.CronJob({
           text: `\`\`\`${text}\`\`\``,
           mrkdwn_in: ['text']
         }],
-        channel: !isProd ? '#track-connectors' : '#ghost-playground'
+        channel: isProd ? '#track-connectors' : '#ghost-playground'
       })
       await sendMessage({
         text: `If you want to change it, <https://airtable.com/tblBsCEc45GtppbBP/viwIUnStSvSIhxqhv/${id}|click here to update the content field>.\n` +
