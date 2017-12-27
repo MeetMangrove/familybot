@@ -63,7 +63,7 @@ export const getUpdates = async () => {
     fields: ['Name', 'Email', 'Slack ID', 'Location', 'Is new location?', 'Focus', 'Is new focus?', 'Challenges', 'Is new challenges?', 'Is new skill?', 'Last skill', 'Is new learning?', 'Last learning'],
     filterByFormula: 'OR({Is new location?}=1, {Is new focus?}=1, {Is new challenges?}=1, {Is new skill?}=1, {Is new learning?}=1)'
   }))
-  records.forEach(record => members.push(record.fields))
+  records.forEach(record => members.push({ id: record.id, ...record.fields }))
   for (let member of members) {
     const find = Promise.promisify(base('Skills').find)
     if (member['Last skill']) {

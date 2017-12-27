@@ -5,12 +5,12 @@ import { cleanUpdates, createNewsletter, getUpdates, getLearningPeople, getTeach
 import { bots, log, isProd } from '../config'
 
 const postDigest = new cron.CronJob({
-  cronTime: '00 00 18 * * 3',
+  cronTime: '00 50 19 * * 3',
   onTick: async function () {
     try {
       const members = await getUpdates()
       const sendMessage = Promise.promisify(bots[0].say)
-      const attachments = []
+      /* const attachments = []
       for (let member of members) {
         const { slackId, location, focus, challenges, skill, learning } = member
         let text = ''
@@ -63,7 +63,8 @@ const postDigest = new cron.CronJob({
       await sendMessage({
         text: `Go Mangrove :facepunch:`,
         channel: isProd ? '#general' : '#ghost-playground'
-      })
+      }) */
+
       if (isProd === true) cleanUpdates(members)
 
       // Catalyst Challenges
