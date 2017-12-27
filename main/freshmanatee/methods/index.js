@@ -132,6 +132,7 @@ export const cleanUpdates = (members) => members.forEach(({ id }) => base('Membe
 }))
 
 export const createNewsletter = async (members) => {
+  const create = Promise.promisify(base('Newsletters').create)
   let text = 'Hi there!\n' +
     'Here is a small digest of some Mangrove members update!\n\n' +
     '⬇️------------------------------⬇️'
@@ -145,7 +146,6 @@ export const createNewsletter = async (members) => {
     if (learning) text = text.concat(`\n👶 starting to learn ${learning}`)
   })
   text = text.concat('\n\nGo Mangrove 👊\nTake care ❤️\n\nYour dear Fresh Manatee')
-  const create = Promise.promisify(base('Newsletters').create)
   const { id } = await create({
     'Content': text,
     'Title': 'Some news from Fresh Manatee!',
