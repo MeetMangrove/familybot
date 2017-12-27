@@ -5,7 +5,7 @@ import { cleanUpdates, createNewsletter, getUpdates, getLearningPeople, getTeach
 import { bots, log, isProd } from '../config'
 
 const postDigest = new cron.CronJob({
-  cronTime: '00 10 20 * * 3',
+  cronTime: '00 20 20 * * 3',
   onTick: async function () {
     try {
       const members = await getUpdates()
