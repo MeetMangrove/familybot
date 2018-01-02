@@ -7,6 +7,7 @@ import './crons/post_digest'
 import './crons/send_newsletter'
 
 import './commands/fresh'
+import './commands/help'
 import './commands/skills'
 import './commands/learning'
 import './commands/mangrovers'

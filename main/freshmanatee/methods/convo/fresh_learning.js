@@ -52,8 +52,8 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
           },
           {
             name: 'teaching_people',
-            text: 'Display teaching people',
-            value: 'Display teaching people',
+            text: 'Display my teachers',
+            value: 'Display my teachers',
             type: 'button'
           },
           {
@@ -153,8 +153,8 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
           },
           {
             name: 'add_new_learning',
-            text: 'Propose a new learning',
-            value: 'Propose a new learning',
+            text: 'Propose a new skill to learn',
+            value: 'Propose a new skill to learn',
             type: 'button',
             style: 'primary'
           },

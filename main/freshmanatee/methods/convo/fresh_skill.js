@@ -55,8 +55,8 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
           },
           {
             name: 'learning_people',
-            text: 'Display learning people',
-            value: 'Display learning people',
+            text: 'Display my learners',
+            value: 'Display my learners',
             type: 'button'
           },
           {

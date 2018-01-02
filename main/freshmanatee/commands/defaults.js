@@ -1,9 +1,10 @@
 import controller, { log } from '../config'
+import help from '../methods/convo/help'
 
-const dialog = (convo, slackId, context) => {
+const dialog = (bot, convo, slackId, context) => {
   switch (context) {
     case 'hello': {
-      convo.say(`Hello <@${slackId}> :slightly_smiling_face:`)
+      convo.say([`Hello  <@${slackId}>!`, `Hey  <@${slackId}>!`, `Aloha  <@${slackId}>!`, `Yo <@${slackId}>!`, `Hi <@${slackId}>!`][Math.floor(Math.random() * 5)])
       break
     }
     case 'intro': {
@@ -22,29 +23,26 @@ const dialog = (convo, slackId, context) => {
       break
     }
   }
-  convo.say(`Say \`fresh\` if you want me to share your latest news, goals and challenges,`)
-  convo.say(`\`skills\` or \`learning\` to manage your skills & learning`)
-  convo.say(`and \`mangrovers\` if you want to see others Mangrovers' profiles.`)
-  convo.say(`I'll share your updates in <#C0KD37VUP> every wednesday at 6PM Paris time :rocket:`)
+  convo.on('end', () => help(bot, { user: slackId }))
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
     if (err) log('the `hello` conversation', err)
-    dialog(convo, message.user, 'hello')
+    dialog(bot, convo, message.user, 'hello')
   })
 })
 
 controller.hears('[^\n]+', ['direct_message', 'direct_mention'], (bot, message) => {
   bot.startConversation(message, (err, convo) => {
     if (err) log('the `default` conversation', err)
-    dialog(convo, message.user, 'error')
+    dialog(bot, convo, message.user, 'error')
   })
 })
 
 controller.on('team_join', (bot, { user }) => {
   bot.startPrivateConversation({ user: user.id }, (err, convo) => {
     if (err) log('the `team_join` conversation', err)
-    dialog(convo, user.id, 'intro')
+    dialog(bot, convo, user.id, 'intro')
   })
 })
