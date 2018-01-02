@@ -131,7 +131,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
           .addSelect('Add a new skill', 'Skills', null, convo.vars.skills, {
             placeholder: 'Do you have a new skill? Which one?',
             optional: true,
-            hint: 'Add a new skill only if you feel able teach it to someone else.'
+            hint: 'Add a new skill only if you feel able to teach it to someone else.'
           })
           .addTextarea('Edit your bio', 'Bio', convo.vars.profile.bio, {
             max_length: 500,
