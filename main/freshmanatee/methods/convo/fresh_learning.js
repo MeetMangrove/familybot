@@ -38,8 +38,8 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
         actions: [
           {
             name: 'add_learning',
-            text: 'Add a learning',
-            value: 'Add a learning',
+            text: 'Add a skill to learn',
+            value: 'Add a skill to learn',
             type: 'button',
             style: 'primary'
           },
@@ -147,7 +147,7 @@ export default (bot, message) => Promise.all([getLearningList(message.user), get
         actions: [
           {
             name: 'saved',
-            text: 'Choose a learning',
+            text: 'Choose a skill to learn',
             type: 'select',
             options: learningList
           },
