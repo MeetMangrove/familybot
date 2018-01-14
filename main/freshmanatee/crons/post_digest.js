@@ -31,7 +31,7 @@ const postDigest = new cron.CronJob({
                 textLearningPeople = textLearningPeople.concat(`, <@${id}>`)
               }
             })
-            text = text.concat(textLearningPeople, ' which are currently learning it!_')
+            text = text.concat(textLearningPeople, ' who are currently learning it!_')
           }
         }
         if (learning) {
