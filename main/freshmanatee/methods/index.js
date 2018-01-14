@@ -10,48 +10,19 @@ export const sort = (a, b) => {
   return 0
 }
 
-export const saveProfile = async (slackId, { 'Skills': skill, ...newProfile }) => {
+export const saveProfile = async (slackId, newProfile) => {
   const oldProfile = await getMember(slackId)
   const update = Promise.promisify(base('Moods').update)
-  let record = null
-  let learning = null
-  let lastLearning = null
-  let skills = oldProfile.fields['Skills']
-  if (skill) {
-    const records = await _getAllRecords(base('Skills').select({
-      view: 'Grid view',
-      fields: ['Name'],
-      filterByFormula: `{Value}='${skill}'`
-    }))
-    record = records[0]
-    if (skills && skills.length > 0) {
-      skills.push(record.id)
-    } else {
-      skills = [record.id]
-    }
-    learning = _.clone(oldProfile.get('Learning'))
-    _.pull(learning, record.id)
-    lastLearning = oldProfile.get('Last learning')
-    _.pull(lastLearning, record.id)
-  }
   await update(oldProfile.id, {
     ...newProfile,
-    'Is new location?': !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
-    'Is new focus?': !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
-    'Is new challenges?': !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) && newProfile['Challenges'] !== '',
-    'Skills': skills,
-    'Last skill': record && record.id ? [record.id] : oldProfile.get('Last skill'),
-    'Is new skill?': !!skill === true ? true : oldProfile.get('Is new skill?'),
-    'Learning': learning || oldProfile.get('Learning'),
-    'Last learning': lastLearning || oldProfile.get('Last learning')
+    'Is new location?': oldProfile.get('Is new location?') === true ? true : !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
+    'Is new focus?': oldProfile.get('Is new focus?') === true ? true : !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
+    'Is new challenges?': oldProfile.get('Is new challenges?') === true ? true : !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) && newProfile['Challenges'] !== '',
   })
   return {
     isUpdated: !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
     !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
-    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) ||
-    !!skill,
-    learningRemoved: learning && !_.isEqual(oldProfile.get('Learning'), learning),
-    newSkill: record ? record.get('Name') : null
+    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
   }
 }
 

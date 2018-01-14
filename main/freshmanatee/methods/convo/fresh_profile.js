@@ -20,19 +20,15 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   }, 'default')
 
   convo.beforeThread('search', (convo, next) => {
-    Promise.all([getSkillsList(message.user), getMemberWithSkills(message.user)])
-      .then(([skills, profile]) => {
+    getMemberWithSkills(message.user)
+      .then((profile) => {
         const currentSkills = _.map(profile.get('Skills'), ({ text }) => text)
-        skills.sort(sort)
         currentSkills.sort(sort)
-        convo.setVar('profile', {
-          bio: profile.get('Bio') || 'None',
-          location: profile.get('Location') || 'None',
-          focus: profile.get('Focus') || 'None',
-          challenges: profile.get('Challenges') || 'None',
-          currentSkills: currentSkills && currentSkills.length > 0 ? currentSkills.join(', ') : 'No one'
-        })
-        convo.setVar('skills', _.map(skills, ({ text, value }) => ({ label: text, value })))
+        convo.setVar('bio', profile.get('Bio'))
+        convo.setVar('location', profile.get('Location'))
+        convo.setVar('focus', profile.get('Focus'))
+        convo.setVar('challenges', profile.get('Challenges'))
+        convo.setVar('currentSkills', currentSkills && currentSkills.length > 0 ? currentSkills.join(', ') : 'No one')
         next()
       })
       .catch((err) => {
@@ -47,17 +43,17 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   const attachments = [
     {
       'title': ':house_with_garden: Location',
-      'text': '{{{vars.profile.location}}}',
+      'text': '{{#vars.location}}{{{vars.location}}}{{/vars.location}}{{^vars.location}}None{{/vars.location}}',
       'color': '#8BC34A'
     },
     {
       'title': ':rocket: Focus',
-      'text': '{{{vars.profile.focus}}}',
+      'text': '{{#vars.focus}}{{{vars.focus}}}{{/vars.focus}}{{^vars.focus}}None{{/vars.focus}}',
       'color': '#CDDC39'
     },
     {
       'title': ':tornado: Challenges',
-      'text': '{{{vars.profile.challenges}}}',
+      'text': '{{#vars.challenges}}{{{vars.challenges}}}{{/vars.challenges}}{{^vars.challenges}}None{{/vars.challenges}}',
       'color': '#F44336'
     }
   ]
@@ -65,11 +61,11 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   if (monthNb % 2 === 1 && dayNb <= 14) {
     attachments.unshift({
       'title': ':writing_hand: Bio',
-      'text': '{{{vars.profile.bio}}}',
+      'text': '{{#vars.bio}}{{{vars.bio}}}{{/vars.bio}}{{^vars.bio}}None{{/vars.bio}}',
       'color': '#FFEB3B'
     }, {
       'title': ':muscle: Skills',
-      'text': '{{{vars.profile.currentSkills}}}',
+      'text': '{{#vars.currentSkills}}{{{vars.currentSkills}}}{{/vars.currentSkills}}{{^vars.currentSkills}}No one{{/vars.currentSkills}}',
       'color': '#FF9800'
     })
   }
@@ -115,25 +111,20 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
             'Fresh your profile',
             'fresh_profile',
             'Fresh')
-          .addText('Update your location', 'Location', convo.vars.profile.location, {
+          .addText('Update your location', 'Location', convo.vars.location, {
             placeholder: 'What is your current location (City, Country)?'
           })
-          .addTextarea('Share your focus', 'Focus', convo.vars.profile.focus, {
+          .addTextarea('Share your focus', 'Focus', convo.vars.focus, {
             max_length: 300,
             placeholder: 'What is your main focus for the next two weeks?'
           })
-          .addTextarea('Share your challenges', 'Challenges', convo.vars.profile.challenges, {
+          .addTextarea('Share your challenges', 'Challenges', convo.vars.challenges, {
             max_length: 300,
             optional: true,
             placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
-          .addSelect('Add a new skill', 'Skills', null, convo.vars.skills, {
-            placeholder: 'Do you have a new skill? Which one?',
-            optional: true,
-            hint: 'Add a new skill only if you feel able to teach it to someone else.'
-          })
-          .addTextarea('Edit your bio', 'Bio', convo.vars.profile.bio, {
+          .addTextarea('Edit your bio', 'Bio', convo.vars.bio, {
             max_length: 500,
             placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
           })
