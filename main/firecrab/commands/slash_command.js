@@ -19,7 +19,7 @@ controller.on('slash_command', async function (bot, message) {
       case '/g-done':
         bot.whisper(message, 'Your */done* is saving...')
         let doneWith = [message.user]
-        const regExNameWith = /(with)\s(@[a-z._0-9]+\s*(,|and|&)?\s*)+/g
+        const regExNameWith = /(with)\s(@[a-z_0-9]+\s*(,|and|&)?\s*)+/g
         const newText = regExNameWith.exec(text)
         let savedText = text
         if (newText !== null) {
