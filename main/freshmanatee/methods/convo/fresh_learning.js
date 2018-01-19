@@ -74,7 +74,8 @@ export default (convo, nextThread = 'exit') => {
     }]
   }, function (reply, convo) {
     if (reply.callback_id === 'ask_learning') {
-      convo.context.bot.replyInteractive(reply, {
+      const { bot } = convo.context
+      bot.replyInteractive(reply, {
         attachments: [{
           title: 'What do you want to do?',
           text: `_${reply.actions[0].value}_`,
@@ -191,8 +192,9 @@ export default (convo, nextThread = 'exit') => {
     }]
   }, function (reply, convo) {
     if (reply.callback_id === 'add_learning') {
-      const value = reply.actions[0].type === 'select' ? _.find(convo.vars.learningList, { value: reply.actions[0].selected_options[0].value }).text : reply.actions[0].value
-      convo.context.bot.replyInteractive(reply, {
+      const { context: { bot }, vars: { learningList } } = convo
+      const value = reply.actions[0].type === 'select' ? _.find(learningList, { value: reply.actions[0].selected_options[0].value }).text : reply.actions[0].value
+      bot.replyInteractive(reply, {
         attachments: [
           {
             title: 'Which learning do you want to add?',
@@ -269,8 +271,9 @@ export default (convo, nextThread = 'exit') => {
     }]
   }, function (reply, convo) {
     if (reply.callback_id === 'remove_learning') {
-      const value = reply.actions[0].type === 'select' ? _.find(convo.vars.ownLearningList, { value: reply.actions[0].selected_options[0].value }).text : reply.actions[0].value
-      convo.context.bot.replyInteractive(reply, {
+      const { context: { bot }, vars: { ownLearningList } } = convo
+      const value = reply.actions[0].type === 'select' ? _.find(ownLearningList, { value: reply.actions[0].selected_options[0].value }).text : reply.actions[0].value
+      bot.replyInteractive(reply, {
         attachments: [
           {
             title: 'Which learning do you want to remove?',

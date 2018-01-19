@@ -4,24 +4,19 @@
 
 import _ from 'lodash'
 
-import freshLearning from './fresh_learning'
-import freshSkill from './fresh_skill'
 import controller, { log } from '../../config'
 import { getMemberWithSkills, saveProfile, sort } from '../index'
 import moment from 'moment'
 
-export default (bot, message) => bot.createPrivateConversation(message, (err, convo) => {
-  if (err) log('the `fresh_profile` conversation', err)
-
-  convo.setTimeout(1500000)
-
+export default (convo, nextThread = 'exit') => {
   convo.addMessage({
     text: 'I\'m searching your profile :sleuth_or_spy:',
     action: 'search'
-  }, 'default')
+  }, 'fresh_profile')
 
   convo.beforeThread('search', (convo, next) => {
-    getMemberWithSkills(message.user)
+    const { context: { user } } = convo
+    getMemberWithSkills(user)
       .then((profile) => {
         const currentSkills = _.map(profile.get('Skills'), ({ text }) => text)
         currentSkills.sort(sort)
@@ -99,6 +94,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
     }]
   }, function (reply, convo) {
     if (reply.callback_id === 'update_info') {
+      const { context: { bot, user }, vars: { location, focus, challenges, bio } } = convo
       bot.replyInteractive(reply, {
         attachments: [{
           title: 'Do you want to update these information?',
@@ -112,20 +108,20 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
             'Fresh your profile',
             'fresh_profile',
             'Fresh')
-          .addText('Update your location', 'Location', convo.vars.location, {
+          .addText('Update your location', 'Location', location, {
             placeholder: 'What is your current location (City, Country)?'
           })
-          .addTextarea('Share your focus', 'Focus', convo.vars.focus, {
+          .addTextarea('Share your focus', 'Focus', focus, {
             max_length: 300,
             placeholder: 'What is your main focus for the next two weeks?'
           })
-          .addTextarea('Share your challenges', 'Challenges', convo.vars.challenges, {
+          .addTextarea('Share your challenges', 'Challenges', challenges, {
             max_length: 300,
             optional: true,
             placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
-          .addTextarea('Edit your bio', 'Bio', convo.vars.bio, {
+          .addTextarea('Edit your bio', 'Bio', bio, {
             max_length: 500,
             placeholder: 'What are your current projects? What made you happy recently (outside of projects)?'
           })
@@ -133,37 +129,28 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
           if (err) {
             const text = log('the dialog creation', err)
             convo.say(text)
+            convo.stop()
+            convo.next()
           }
+          controller.on('dialog_submission', function (bot, { submission }) {
+            bot.dialogOk()
+            saveProfile(user, submission)
+              .then((isUpdated) => {
+                if (isUpdated === true) convo.say(`Your profile has been freshed!`)
+                convo.gotoThread(nextThread)
+                convo.next()
+              })
+              .catch(err => {
+                log('the `saveProfile` method', err)
+                convo.stop()
+                convo.next()
+              })
+          })
         })
       } else {
-        convo.say('I\'m looking for your learning right now!')
-        freshLearning(bot, message, () => {
-          convo.say('I\'m looking for your skills right now!')
-          freshSkill(bot, message)
-        })
+        convo.gotoThread(nextThread)
+        convo.next()
       }
     }
-    convo.next()
   }, {}, 'search')
-
-  convo.addMessage('Hum... you seem busy. Come back say `fresh` when you want!', 'on_timeout')
-
-  convo.activate()
-})
-
-controller.on('dialog_submission', function (bot, message) {
-  bot.dialogOk()
-  console.log(message.submission)
-  saveProfile(message.user, message.submission)
-    .then(({ isUpdated, learningRemoved, newSkill }) => bot.startPrivateConversation(message, (err, convo) => {
-      if (err) return log('the `dialog_submission` conversation', err)
-      if (isUpdated === true) convo.say(`Your profile has been freshed!`)
-      if (learningRemoved === true) {
-        convo.say(`Congratulation!! :tada: Your learning *${newSkill}* is finally become a new skill! :clap::clap::clap:`)
-        convo.say(`Don't forget to celebrate that! :cocktail:`)
-      }
-      convo.say(`I'm looking for your learning right now!`)
-      convo.on('end', () => freshLearning(bot, message, () => freshSkill(bot, message)))
-    }))
-    .catch(err => log('the `saveProfile` method', err))
-})
+}

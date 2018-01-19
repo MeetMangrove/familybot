@@ -1,11 +1,24 @@
 import controller, { log } from '../config'
 import freshProfile from '../methods/convo/fresh_profile'
+import freshSkill from '../methods/convo/fresh_skill'
+import freshLearning from '../methods/convo/fresh_learning'
 
 controller.hears('fresh', 'direct_message', (bot, message) => {
   bot.startPrivateConversation(message, (err, convo) => {
     if (err) log('the `fresh` conversation', err)
-    convo.say([`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`, `Yo <@${message.user}>!`, `Hi <@${message.user}>!`][Math.floor(Math.random() * 5)])
-    convo.say(`Let's check your information.`)
-    convo.on('end', () => freshProfile(bot, message))
+    convo.setTimeout(1500000)
+    convo.addMessage({
+      text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`, `Yo <@${message.user}>!`, `Hi <@${message.user}>!`][Math.floor(Math.random() * 5)]
+    }, 'default')
+    convo.addMessage({
+      text: ['Let\'s check your information.'],
+      action: 'fresh_profile'
+    }, 'default')
+    freshProfile(convo, 'fresh_learning')
+    freshLearning(convo, 'fresh_skills')
+    freshSkill(convo)
+    convo.addMessage(`Okay, see you! :wave:`, 'exit')
+    convo.addMessage('Hum... you seem busy. Come back say `learning` when you want!', 'on_timeout')
+    convo.activate()
   })
 })

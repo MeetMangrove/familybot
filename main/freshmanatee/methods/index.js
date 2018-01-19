@@ -19,11 +19,9 @@ export const saveProfile = async (slackId, newProfile) => {
     'Is new focus?': oldProfile.get('Is new focus?') === true ? true : !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
     'Is new challenges?': oldProfile.get('Is new challenges?') === true ? true : !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']) && newProfile['Challenges'] !== '',
   })
-  return {
-    isUpdated: !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
+  return !_.isEqual(oldProfile.get('Location'), newProfile['Location']) ||
     !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']) ||
-    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges']),
-  }
+    !_.isEqual(oldProfile.get('Challenges'), newProfile['Challenges'])
 }
 
 export const getUpdates = async () => {
