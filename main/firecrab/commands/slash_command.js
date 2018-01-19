@@ -25,12 +25,10 @@ controller.on('slash_command', async function (bot, message) {
         if (newText !== null) {
           do {
             name = regExName.exec(newText[0])
-            console.log(name)
             if (name) {
               doneWith.push(name[0].trim().replace(/^@/, '').replace(/[.]$/, ''))
             }
           } while (name)
-          console.log(doneWith)
           doneWith = _.map(doneWith, name => {
             const member = _.find(members, { name })
             return member ? member.id : name
