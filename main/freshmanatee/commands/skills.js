@@ -11,7 +11,7 @@ controller.hears('skills', 'direct_message', (bot, message) => {
     }, 'default')
     freshSkill(convo)
     convo.addMessage(`Okay, see you! :wave:`, 'exit')
-    convo.addMessage('Hum... you seem busy. Come back say `learning` when you want!', 'on_timeout')
+    convo.addMessage('Hum... you seem busy. Come back say `skills` when you want!', 'on_timeout')
     convo.activate()
   })
 })

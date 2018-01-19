@@ -136,8 +136,11 @@ export default (convo, nextThread = 'exit') => {
             bot.dialogOk()
             saveProfile(user, submission)
               .then((isUpdated) => {
-                if (isUpdated === true) convo.say(`Your profile has been freshed!`)
-                convo.gotoThread(nextThread)
+                if (isUpdated === true) {
+                  convo.gotoThread('profile_freshed')
+                } else {
+                  convo.gotoThread(nextThread)
+                }
                 convo.next()
               })
               .catch(err => {
@@ -153,4 +156,9 @@ export default (convo, nextThread = 'exit') => {
       }
     }
   }, {}, 'search')
+
+  convo.addMessage({
+    text: 'Your profile has been freshed!',
+    action: nextThread
+  }, 'profile_freshed')
 }

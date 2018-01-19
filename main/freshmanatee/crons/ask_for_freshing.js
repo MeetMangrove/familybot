@@ -3,6 +3,8 @@ import cron from 'cron'
 import moment from 'moment'
 
 import freshProfile from '../methods/convo/fresh_profile'
+import freshLearning from '../methods/convo/fresh_learning'
+import freshSkill from '../methods/convo/fresh_skill'
 import { bots, log, isProd } from '../config'
 import Slack from '../../api/slack'
 
@@ -19,16 +21,25 @@ const askForFreshing = new cron.CronJob({
       } else {
         list = chunk[1]
       }
-      _.forEach(list, ({ id: slackId }) => {
+      _.forEach(list, ({ id: user }) => {
         if (isProd === true) {
-          bots[0].startPrivateConversation({ user: slackId }, (err, convo) => {
+          bots[0].createPrivateConversation({ user }, (err, convo) => {
             if (err) log('the `fresh` conversation', err)
-            convo.say(`Hi <@${slackId}>!`)
-            convo.say(`I'd like to know if you have some fresh news for me :blush:`)
-            convo.on('end', () => freshProfile(bots[0], { user: slackId }))
+            convo.setTimeout(1500000)
+            convo.addMessage(`Hi <@${user}>!`, 'default')
+            convo.addMessage({
+              text: 'I\'d like to know if you have some fresh news for me :blush:',
+              action: 'fresh_profile'
+            }, 'default')
+            freshProfile(convo, 'fresh_learning')
+            freshLearning(convo, 'fresh_skills')
+            freshSkill(convo)
+            convo.addMessage(`Okay, see you! :wave:`, 'exit')
+            convo.addMessage('Hum... you seem busy. Come back say `fresh` when you want!', 'on_timeout')
+            convo.activate()
           })
         } else {
-          console.log('send message to', slackId)
+          console.log('send message to', user)
         }
       })
     } catch (e) {
