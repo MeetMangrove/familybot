@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Promise from 'bluebird'
+import moment from 'moment'
 
 import { base, _getAllRecords, getMember } from '../../api/airtable'
 
@@ -53,25 +54,49 @@ export const getActivities = async (listDone, listThanks) => {
   const inactives = []
   const records = await _getAllRecords(base('Members').select({
     view: 'Familybot View',
-    fields: ['Slack ID']
+    fields: ['Slack ID', 'Last contribution', 'Member Since'],
+    filterByFormula: '{Status} != \'Veteran\''
   }))
   const allRecords = []
-  records.forEach(({ id: airtableId, fields: { 'Slack ID': slackId } }) => allRecords.push({ airtableId, slackId }))
+  records.forEach(({ id: airtableId, fields: { 'Slack ID': slackId, 'Last contribution': lastContribution, 'Member Since': memberSince } }) => allRecords.push({
+    airtableId,
+    slackId,
+    lastContribution,
+    memberSince
+  }))
   for (let record of allRecords) {
-    const { airtableId, slackId } = record
+    const { airtableId, slackId, lastContribution, memberSince } = record
     const dones = []
     listDone.forEach(done => (done['By'][0] === airtableId ? dones.push(done['Text']) : null))
-    const helps = []
+    const helpsIds = []
     for (let help of listThanks) {
       if (help['To'][0] === airtableId) {
         const { fields } = await getMember(help['By'][0])
-        helps.push(fields['Slack ID'])
+        helpsIds.push(fields['Slack ID'])
       }
     }
-    if (dones.length >= 1 || helps.length >= 1) {
-      activities.push({ slackId, dones, helps: _.uniq(helps) })
+    if (dones.length >= 1 || helpsIds.length >= 1) {
+      const helps = []
+      helpsIds.forEach((slackId) => {
+        let exist = false
+        let index = 0
+        helps.forEach(({ slackId: uniq }, i) => {
+          if (uniq === slackId) {
+            exist = true
+            index = i
+          }
+        })
+        if (exist === true) {
+          helps[index].number += 1
+        } else {
+          helps.push({ slackId, number: 1 })
+        }
+      })
+      activities.push({ slackId, dones, helps })
     } else {
-      inactives.push(slackId)
+      const difference = lastContribution > 0 ? Date.now() - lastContribution : Date.now() - moment(memberSince).valueOf()
+      const number = Math.round(moment.duration(difference).asWeeks())
+      inactives.push({ slackId, number })
     }
   }
   return { activities, inactives }
