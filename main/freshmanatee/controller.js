@@ -4,6 +4,7 @@
 
 import './crons/ask_for_freshing'
 import './crons/post_digest'
+import './crons/check_newsletter'
 import './crons/send_newsletter'
 
 import './commands/fresh'
