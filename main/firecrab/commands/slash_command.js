@@ -19,16 +19,18 @@ controller.on('slash_command', async function (bot, message) {
       case '/g-done':
         bot.whisper(message, 'Your */done* is saving...')
         let doneWith = [message.user]
-        const regExNameWith = /(with)\s(@[a-z_0-9]+\s*(,|and|&)?\s*)+/g
+        const regExNameWith = /(with)\s(@[a-z_.0-9]+\s*(,|and|&)?\s*)+/g
         const newText = regExNameWith.exec(text)
         let savedText = text
         if (newText !== null) {
           do {
             name = regExName.exec(newText[0])
+            console.log(name)
             if (name) {
-              doneWith.push(name[0].trim().replace(/^@/, ''))
+              doneWith.push(name[0].trim().replace(/^@/, '').replace(/[.]$/, ''))
             }
           } while (name)
+          console.log(doneWith)
           doneWith = _.map(doneWith, name => {
             const member = _.find(members, { name })
             return member ? member.id : name
@@ -37,14 +39,14 @@ controller.on('slash_command', async function (bot, message) {
           const endText = text.slice(text.indexOf(newText[0]) + newText[0].length).trim()
           savedText = startText.concat(' ', endText)
         }
-        await saveDone(doneWith, savedText, date)
+        if (isProd === true) await saveDone(doneWith, savedText, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
         bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
           if (err) log('the `/done` saved message', err)
           bot.say({
             attachments: [{
               author_name: `${real_name}`,
-              text: `*done* ${parseSlackMessage(text)}`,
+              text: `*done* ${parseSlackMessage(text.replace(/,/, ' ,').replace(/[.]$/, ' .'))}`,
               color: '#81C784',
               thumb_url: image_192,
               mrkdwn_in: ['text']
@@ -69,7 +71,7 @@ controller.on('slash_command', async function (bot, message) {
         } else {
           const thanksText = text.slice(text.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length).trim()
           thanksTo = _.map(thanksTo, name => _.find(members, { name }).id)
-          await saveThanks(message.user, thanksTo, thanksText, date)
+          if (isProd === true) await saveThanks(message.user, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
           bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
             if (err) log('the `/thanks` saved message', err)

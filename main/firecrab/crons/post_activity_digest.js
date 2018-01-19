@@ -6,7 +6,7 @@ import { log, bots, isProd } from '../config'
 import { getLastWeekDone, getLastWeekThanks, getActivities } from '../methods/index'
 
 const postActivityDigest = new cron.CronJob({
-  cronTime: '00,20,40 * * * * *',
+  cronTime: '00 00 18 * * 0',
   onTick: async function () {
     try {
       const sendMessage = Promise.promisify(bots[0].say)
