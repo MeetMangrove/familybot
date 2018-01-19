@@ -59,8 +59,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
 
   convo.addMessage(`Say \`fresh\` if you want me to share your latest news, goals and challenges!`, 'fresh')
   convo.addMessage(`One goal of Mangrove is helping you to resolve your challenges,`, 'fresh')
-  convo.addMessage(`this command allowed you to share your challenges according to your focus`, 'fresh')
-  convo.addMessage(`and to share your learning according to your challenges.`, 'fresh')
+  convo.addMessage(`this command allowed you to share your challenges according to your focus.`, 'fresh')
   convo.addMessage(`This will be displayed in <#C0KD37VUP> every wednesday at 6PM Paris time :rocket:`, 'fresh')
   convo.addMessage({
     text: `The <!subteam^S7WBYB6TZ|catalysts> team will help you to resolve them thanks to what you have shared :mangrove:`,
