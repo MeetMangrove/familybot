@@ -56,5 +56,7 @@ export default ({ SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, FIREBASE_URI, name, scop
   controller.on('create_bot', bot => startRTM(bot))
   controller.on('rtm_close', bot => startRTM(bot))
 
+  controller.optionsLoad = []
+
   return { controller, bots, isProd }
 }

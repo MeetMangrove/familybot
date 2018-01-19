@@ -5,8 +5,9 @@
 import _ from 'lodash'
 
 import freshLearning from './fresh_learning'
+import freshSkill from './fresh_skill'
 import controller, { log } from '../../config'
-import { getMemberWithSkills, getSkillsList, saveProfile, sort } from '../index'
+import { getMemberWithSkills, saveProfile, sort } from '../index'
 import moment from 'moment'
 
 export default (bot, message) => bot.createPrivateConversation(message, (err, convo) => {
@@ -136,7 +137,10 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
         })
       } else {
         convo.say('I\'m looking for your learning right now!')
-        freshLearning(bot, message)
+        freshLearning(bot, message, () => {
+          convo.say('I\'m looking for your skills right now!')
+          freshSkill(bot, message)
+        })
       }
     }
     convo.next()
@@ -159,7 +163,7 @@ controller.on('dialog_submission', function (bot, message) {
         convo.say(`Don't forget to celebrate that! :cocktail:`)
       }
       convo.say(`I'm looking for your learning right now!`)
-      convo.on('end', () => freshLearning(bot, message))
+      convo.on('end', () => freshLearning(bot, message, () => freshSkill(bot, message)))
     }))
     .catch(err => log('the `saveProfile` method', err))
 })

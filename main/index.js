@@ -35,6 +35,7 @@ const mountBot = (controller) => {
 
   controller.config.port = app.get('port')
   controller.config.hostname = HOSTNAME
+  controller.webserver = botApp
   // use botkit to set up endpoints on the dedicated app
   controller
     .createWebhookEndpoints(botApp)
@@ -43,6 +44,15 @@ const mountBot = (controller) => {
       if (err) return res.status(500).send('ERROR: ' + err)
       res.send('Success!')
     })
+
+  botApp.post(`/${controller.config.app_name}/slack/options-load-endpoint`, (req, res) => {
+    res.status(200)
+    const data = JSON.parse(req.body.payload)
+    if (controller.optionsLoad[data.callback_id]) {
+      const options = controller.optionsLoad[data.callback_id](data.value)
+      res.json({ options })
+    }
+  })
   // mount the botApp on the main app, on its own hostname
   app.use(vhost(HOSTNAME, botApp))
 }

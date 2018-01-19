@@ -41,6 +41,7 @@
     "moment-timezone": "0.5.13",
     "nodemailer": "4.4.1",
     "request": "2.81.0",
+    "sifter": "0.5.3",
     "vhost": "^3.0.2"
   },
   "devDependencies": {

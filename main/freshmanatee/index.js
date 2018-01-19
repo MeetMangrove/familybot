@@ -31,5 +31,14 @@ controller
     res.send('Success!')
   })
 
+botApp.post(`/${controller.config.app_name}/slack/options-load-endpoint`, (req, res) => {
+  res.status(200)
+  const data = JSON.parse(req.body.payload)
+  if (controller.optionsLoad[data.callback_id]) {
+    const options = controller.optionsLoad[data.callback_id](data.value)
+    res.json({ options })
+  }
+})
+
 app.use(vhost(HOSTNAME, botApp))
 app.listen(app.get('port'), () => console.log(`Ghost of freshmanatee listening on port ${app.get('port')}!`))

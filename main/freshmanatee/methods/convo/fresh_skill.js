@@ -6,7 +6,7 @@ import {
   getSkillsList, setNewSkill, getMemberWithSkills, removeSkill, sort, getLearningPeople
 } from '../index'
 
-export default (bot, message, introConvo) => Promise.all([getSkillsList(message.user), getMemberWithSkills(message.user)])
+export default (bot, message, introConvo, callback) => Promise.all([getSkillsList(message.user), getMemberWithSkills(message.user)])
   .then(([skills, profile]) => bot.createPrivateConversation(message, (err, convo) => {
     if (err) log('the `add_new_skill` conversation', err)
 
@@ -60,7 +60,7 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
             type: 'button'
           },
           {
-            name: 'exit',
+            name: 'end',
             text: 'Do nothing',
             value: 'Do nothing',
             type: 'button'
@@ -288,11 +288,15 @@ export default (bot, message, introConvo) => Promise.all([getSkillsList(message.
       action: 'ask_skill'
     }, 'learn_new_skill')
 
-    convo.addMessage({
-      text: `Okay, next time!`
-    }, 'exit')
-
     convo.addMessage('Hum... you seem busy. Come back say `skills` when you want!', 'on_timeout')
+
+    convo.on('end', () => {
+      if (!callback) {
+        bot.reply(message, `Okay, next time!`)
+      } else {
+        callback()
+      }
+    })
 
     convo.activate()
   }))
