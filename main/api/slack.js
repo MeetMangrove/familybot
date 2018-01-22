@@ -8,7 +8,7 @@ export default {
     const apiUser = Promise.promisifyAll(bot.api.users)
     const res = await apiUser.listAsync({ token: bot.config.bot.app_token })
     if (res.error) throw new Error(res.error)
-    _.remove(res.members, ({ is_bot: isBot, deleted }) => isBot === true || deleted === true)
+    _.remove(res.members, ({ id, is_bot: isBot, deleted }) => (id === 'USLACKBOT' || isBot === true || deleted === true))
     return res.members
   }
 }
