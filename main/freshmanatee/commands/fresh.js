@@ -12,7 +12,7 @@ controller.hears('fresh', 'direct_message', (bot, message) => {
       text: ['Let\'s check your information.'],
       action: 'fresh_profile'
     }, 'default')
-    freshProfile(convo)
+    freshProfile(convo, message.user)
     convo.addMessage(`Okay, see you! :wave:`, 'exit')
     convo.addMessage('Hum... you seem busy. Come back say `fresh` when you want!', 'on_timeout')
     convo.activate()

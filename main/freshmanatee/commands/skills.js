@@ -9,7 +9,7 @@ controller.hears('skills', 'direct_message', (bot, message) => {
       text: [`Hello  <@${message.user}>!`, `Hey  <@${message.user}>!`, `Aloha  <@${message.user}>!`, `Yo <@${message.user}>!`, `Hi <@${message.user}>!`][Math.floor(Math.random() * 5)],
       action: 'fresh_skills'
     }, 'default')
-    freshSkill(convo)
+    freshSkill(convo, message.user)
     convo.addMessage(`Okay, see you! :wave:`, 'exit')
     convo.addMessage('Hum... you seem busy. Come back say `skills` when you want!', 'on_timeout')
     convo.activate()

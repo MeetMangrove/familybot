@@ -31,9 +31,9 @@ const askForFreshing = new cron.CronJob({
               text: 'I\'d like to know if you have some fresh news for me :blush:',
               action: 'fresh_profile'
             }, 'default')
-            freshProfile(convo, 'fresh_learning')
-            freshLearning(convo, 'fresh_skills')
-            freshSkill(convo)
+            freshProfile(convo, user, 'fresh_learning')
+            freshLearning(convo, user, 'fresh_skills')
+            freshSkill(convo, user)
             convo.addMessage(`Okay, see you! :wave:`, 'exit')
             convo.addMessage('Hum... you seem busy. Come back say `fresh` when you want!', 'on_timeout')
             convo.activate()

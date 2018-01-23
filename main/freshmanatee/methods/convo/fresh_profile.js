@@ -8,14 +8,13 @@ import controller, { log } from '../../config'
 import { getMemberWithSkills, saveProfile, sort } from '../index'
 import moment from 'moment'
 
-export default (convo, nextThread = 'exit') => {
+export default (convo, user, nextThread = 'exit') => {
   convo.addMessage({
     text: 'I\'m searching your profile :sleuth_or_spy:',
     action: 'search'
   }, 'fresh_profile')
 
   convo.beforeThread('search', (convo, next) => {
-    const { context: { user } } = convo
     getMemberWithSkills(user)
       .then((profile) => {
         const currentSkills = _.map(profile.get('Skills'), ({ text }) => text)
@@ -94,7 +93,7 @@ export default (convo, nextThread = 'exit') => {
     }]
   }, function (reply, convo) {
     if (reply.callback_id === 'update_info') {
-      const { context: { bot, user }, vars: { location, focus, challenges, bio } } = convo
+      const { context: { bot }, vars: { location, focus, challenges, bio } } = convo
       bot.replyInteractive(reply, {
         attachments: [{
           title: 'Do you want to update these information?',
