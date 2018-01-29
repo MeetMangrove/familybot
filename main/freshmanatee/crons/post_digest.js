@@ -48,7 +48,7 @@ const postDigest = new cron.CronJob({
                 textTeachingPeople = textTeachingPeople.concat(`, <@${id}>`)
               }
             })
-            text = text.concat(textTeachingPeople, ` maybe can you help <@${slackId}> to learn this skill?_ :pray:`)
+            text = text.concat(textTeachingPeople, ` maybe you’ll be able to help <@${slackId}> learn this skill?_ :pray:`)
           }
         }
         attachments.push({ title: `<@${slackId}>`, text, mrkdwn_in: ['text'] })
