@@ -116,7 +116,7 @@ export default (convo, user, nextThread = 'exit') => {
           })
           .addTextarea('Share your challenges', 'Challenges', challenges, {
             max_length: 300,
-            optional: true,
+            optional: false,
             placeholder: 'What challenges do you currently face in your projects and life?',
             hint: '@catalyst team are here to help you to resolve them. Try to write actionable challenges for a better mutual help.'
           })
