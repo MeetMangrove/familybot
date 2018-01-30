@@ -12,8 +12,9 @@ export const sort = (a, b) => {
 
 export const saveProfile = async (slackId, newProfile) => {
   const oldProfile = await getMember(slackId)
+  if (oldProfile.get('Slack ID') !== slackId) return new Error(`The \`getMember\` methods find <@${oldProfile.get('Slack ID')}> instead of <@${slackId}>.`)
   const update = Promise.promisify(base('Moods').update)
-  await update(oldProfile.id, {
+  await update(oldProfile.get('Airtable ID'), {
     ...newProfile,
     'Is new location?': oldProfile.get('Is new location?') === true ? true : !_.isEqual(oldProfile.get('Location'), newProfile['Location']),
     'Is new focus?': oldProfile.get('Is new focus?') === true ? true : !_.isEqual(oldProfile.get('Focus'), newProfile['Focus']),
