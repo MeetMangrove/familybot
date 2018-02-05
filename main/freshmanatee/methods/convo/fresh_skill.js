@@ -7,13 +7,14 @@ import {
   getSkillsList, setNewSkill, getMemberWithSkills, removeSkill, sort, getLearningPeople
 } from '../index'
 
-export default (convo, user, nextThread = 'exit') => {
+export default (convo, nextThread = 'exit') => {
   convo.addMessage({
     text: 'I\'m looking for your skills :sleuth_or_spy:',
     action: 'get_skills'
   }, 'fresh_skills')
 
   convo.beforeThread('get_skills', async (convo, next) => {
+    const { user } = convo.context
     const [skillList, profile] = await Promise.all([getSkillsList(user), getMemberWithSkills(user)])
     const ownSkillList = profile.get('Skills')
     skillList.sort(sort)
@@ -216,7 +217,7 @@ export default (convo, user, nextThread = 'exit') => {
   }, { key: 'skill' }, 'add_new_skill')
 
   convo.beforeThread('saved', (convo, next) => {
-    const { vars: { ownSkillList, skillList } } = convo
+    const { vars: { ownSkillList, skillList }, context: { user } } = convo
     const skill = convo.extractResponse('skill')
     setNewSkill(user, skill)
       .then(({ skill, learningRemoved }) => {
@@ -294,7 +295,7 @@ export default (convo, user, nextThread = 'exit') => {
   }, { key: 'skill' }, 'remove_skill')
 
   convo.beforeThread('removed', (convo, next) => {
-    const { vars: { ownSkillList, skillList } } = convo
+    const { vars: { ownSkillList, skillList }, context: { user } } = convo
     const skill = convo.extractResponse('skill')
     removeSkill(user, skill)
       .then((skill) => {

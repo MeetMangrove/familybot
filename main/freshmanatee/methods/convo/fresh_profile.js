@@ -8,14 +8,14 @@ import controller, { log } from '../../config'
 import { getMemberWithSkills, saveProfile, sort } from '../index'
 import moment from 'moment'
 
-export default (convo, user, nextThread = 'exit') => {
+export default (convo, nextThread = 'exit') => {
   convo.addMessage({
     text: 'I\'m searching your profile :sleuth_or_spy:',
     action: 'search'
   }, 'fresh_profile')
 
   convo.beforeThread('search', (convo, next) => {
-    getMemberWithSkills(user)
+    getMemberWithSkills(convo.context.user)
       .then((profile) => {
         const currentSkills = _.map(profile.get('Skills'), ({ text }) => text)
         currentSkills.sort(sort)
@@ -131,7 +131,7 @@ export default (convo, user, nextThread = 'exit') => {
             convo.stop()
             convo.next()
           }
-          controller.on('dialog_submission', function (bot, { submission }) {
+          controller.on('dialog_submission', function (bot, { user, submission }) {
             bot.dialogOk()
             saveProfile(user, submission)
               .then((isUpdated) => {

@@ -5,13 +5,14 @@ import Sifter from 'sifter'
 import controller, { log } from '../../config'
 import { getLearningList, setNewLearning, removeLearning, getMemberWithSkills, sort, getTeachingPeople } from '../index'
 
-export default (convo, user, nextThread = 'exit') => {
+export default (convo, nextThread = 'exit') => {
   convo.addMessage({
     text: 'I\'m looking for your learning :sleuth_or_spy:',
     action: 'get_learning'
   }, 'fresh_learning')
 
   convo.beforeThread('get_learning', async (convo, next) => {
+    const { user } = convo.context
     const [learningList, profile] = await Promise.all([getLearningList(user), getMemberWithSkills(user)])
     const ownLearningList = profile.get('Learning')
     ownLearningList.sort(sort)
@@ -214,7 +215,7 @@ export default (convo, user, nextThread = 'exit') => {
   }, { key: 'learning' }, 'add_new_learning')
 
   convo.beforeThread('saved', (convo, next) => {
-    const { vars: { ownLearningList, learningList } } = convo
+    const { vars: { ownLearningList, learningList }, context: { user } } = convo
     const learning = convo.extractResponse('learning')
     setNewLearning(user, learning)
       .then((learning) => {
@@ -287,7 +288,7 @@ export default (convo, user, nextThread = 'exit') => {
   }, { key: 'learning' }, 'remove_learning')
 
   convo.beforeThread('removed', (convo, next) => {
-    const { vars: { ownLearningList, learningList } } = convo
+    const { vars: { ownLearningList, learningList }, context: { user } } = convo
     const learning = convo.extractResponse('learning')
     removeLearning(user, learning)
       .then((learning) => {
