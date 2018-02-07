@@ -91,7 +91,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   }, 'four')
 
   convo.addMessage({
-    text: ['Thanks for recording your mood.js :slightly_smiling_face:', 'Okay! :+1:', 'Thank you :sparkling_heart:'][Math.floor(Math.random() * 3)],
+    text: ['Thanks for recording your mood :slightly_smiling_face:', 'Okay! :+1:', 'Thank you :sparkling_heart:'][Math.floor(Math.random() * 3)],
     action: 'description'
   }, 'three')
 
