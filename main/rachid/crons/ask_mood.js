@@ -14,7 +14,12 @@ const askMood = new cron.CronJob({
   onTick: async function () {
     try {
       const members = await Slack.all(bots[0])
-      _.forEach(members, ({ id: slackId }) => giveMood(bots[0], { user: slackId }))
+      _.forEach(members, ({ id: slackId }) => {
+        const random = Math.floor(Math.random() * Math.floor(3))
+        if (random === 1) {
+          giveMood(bots[0], { user: slackId })
+        }
+      })
     } catch (e) {
       log('the `ask_mood` cron', e)
     }
