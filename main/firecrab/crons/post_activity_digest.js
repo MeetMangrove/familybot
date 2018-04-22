@@ -48,18 +48,18 @@ const postActivityDigest = new cron.CronJob({
       await sendMessage({
         text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
         attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ['text'] })),
-        channel: isProd ? '#general' : '#ghost-playground'
+        channel: isProd ? '#done' : '#ghost-playground'
       })
 
       // Catalyst Thanks KPI
-      await sendMessage({
+      /* await sendMessage({
         text: `Hi <!subteam^S7WBYB6TZ>!\nThere is a total of *${listThanks.length} thanks* this week :heavy_heart_exclamation_mark_ornament:`,
         attachments: _.map(sortHelps, ({ text }) => ({ text, mrkdwn_in: ['text'] })),
         channel: isProd ? '#track-catalysts' : '#ghost-playground'
-      })
+      }) */
 
       // Inactive member message
-      if (inactives.length > 0) {
+      /* if (inactives.length > 0) {
         let textInactives = ''
         inactives.forEach(({ slackId, number }, index) => {
           if (index === 0) {
@@ -78,7 +78,7 @@ const postActivityDigest = new cron.CronJob({
           text: `No activity recorded this week: ${textInactives}.`,
           channel: isProd ? '#residents' : '#ghost-playground'
         })
-      }
+      } */
     } catch (e) {
       log('the `post_activity_digest` cron', e)
     }
