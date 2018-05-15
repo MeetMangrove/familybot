@@ -32,7 +32,7 @@ const sendNewsletter = new cron.CronJob({
             resource: { raw }
           })
           await sendMessage({
-            text: `The newsletter has been sent to *${emails.length} Veterans* from hello@mangrove.io :airplane_departure:`,
+            text: `Newsletter sent to *${emails.length} Veterans* from hello@mangrove.io :airplane_departure:`,
             channel: isProd ? '#track-connectors' : '#ghost-playground'
           })
         } catch (e) {

@@ -7,7 +7,7 @@ import { getLearningList, setNewLearning, removeLearning, getMemberWithSkills, s
 
 export default (convo, nextThread = 'exit') => {
   convo.addMessage({
-    text: 'I\'m looking for your learning :sleuth_or_spy:',
+    text: 'Looking for your learning :sleuth_or_spy:',
     action: 'get_learning'
   }, 'fresh_learning')
 
@@ -34,7 +34,7 @@ export default (convo, nextThread = 'exit') => {
   }, 'get_learning')
 
   convo.addMessage({
-    text: `Your learning can help you to achieve your challenges! :fire:`,
+    text: `Your learning can help you overcome your challenges! :fire:`,
     action: 'ask_learning'
   }, 'get_learning')
 
@@ -101,7 +101,7 @@ export default (convo, nextThread = 'exit') => {
           let text = ''
           list.forEach(({ learning, teachingPeople }) => {
             if (teachingPeople.length > 0) {
-              text = text.concat(`*${learning}* can be teaching by `)
+              text = text.concat(`*${learning}* can be taught by `)
               teachingPeople.forEach((id, index) => {
                 if (index === 0) {
                   text = text.concat(`<@${id}>`)
@@ -126,17 +126,17 @@ export default (convo, nextThread = 'exit') => {
   })
 
   convo.addMessage({
-    text: `You don't have any learning to achieve.`,
+    text: `You don't have any learning to do.`,
     action: 'ask_learning'
   }, 'no_learning')
 
   convo.addMessage({
-    text: `There is no people to learn something from.`,
+    text: `Nobody's providing teaching at the moment. Come back later!There is no people to learn something from.`,
     action: 'ask_learning'
   }, 'no_people')
 
   convo.addMessage({
-    text: `Here is the list of people that can help you to achieve your learning:`
+    text: `Here are the people who can help you achieve your learning:`
   }, 'teaching_people')
 
   convo.addMessage({
@@ -144,7 +144,7 @@ export default (convo, nextThread = 'exit') => {
   }, 'teaching_people')
 
   convo.addMessage({
-    text: `You just have to send a Slack message and ask for a call or a lunch :v:`,
+    text: `Just send a Slack message and ask for a call or a lunch :v:`,
     action: 'ask_learning'
   }, 'teaching_people')
 
@@ -209,7 +209,7 @@ export default (convo, nextThread = 'exit') => {
   }, { key: 'learning' }, 'add_learning')
 
   convo.addQuestion({
-    text: `What is the name of your new learning?`
+    text: `What's the name of this new learning?`
   }, (response, convo) => {
     convo.gotoThread('saved')
   }, { key: 'learning' }, 'add_new_learning')
@@ -309,12 +309,12 @@ export default (convo, nextThread = 'exit') => {
   })
 
   convo.addMessage({
-    text: `Awesome, your new learning *{{{vars.learning}}}* has been successfully saved! :rocket:`,
+    text: `Awesome, your new learning *{{{vars.learning}}}* was saved! :rocket:`,
     action: 'ask_learning'
   }, 'saved')
 
   convo.addMessage({
-    text: `Your old learning *{{{vars.learning}}}* has been successfully removed!`,
+    text: `Your old learning *{{{vars.learning}}}* was removed!`,
     action: 'ask_learning'
   }, 'removed')
 }

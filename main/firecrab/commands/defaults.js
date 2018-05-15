@@ -8,13 +8,13 @@ const dialog = (convo, slackId, context) => {
     }
     case 'intro': {
       convo.say(`Hi <@${slackId}> :heart_eyes:`)
-      convo.say(`Welcome in Mangrove :flag-mangrove:`)
+      convo.say(`Welcome to Mangrove :flag-mangrove:`)
       convo.say(`I'm <@${convo.context.bot.identity.id}>!`)
-      convo.say(`I gather all the Mangrove fire.`)
+      convo.say(`I gather the Mangrove fire.`)
       break
     }
     case 'error': {
-      convo.say(`Sorry <@${slackId}>, but I'm too young to understand what you mean :flushed:`)
+      convo.say(`Sorry <@${slackId}>, I'm too young to understand what you mean :flushed:`)
       break
     }
     default: {
@@ -22,9 +22,9 @@ const dialog = (convo, slackId, context) => {
       break
     }
   }
-  convo.say(`Thanks to me, you can say */done* in <#C1JCYV3S8> to share your mangrove contribution`)
-  convo.say(`and */thanks* in <#C7PP2P7KQ> to show your gratitude to someone.`)
-  convo.say(`I'll share all activities in <#C0KD37VUP> every sunday at 6PM Paris time :fire:`)
+  convo.say(`You can write */done* in <#C1JCYV3S8> to share your contributions with Mangrove`)
+  convo.say(`and */thanks* in <#C7PP2P7KQ> to show someone your gratitude.`)
+  convo.say(`I'll share an activity summary in <#C0KD37VUP> every Sunday at 6PM Paris time :fire:`)
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {

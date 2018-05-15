@@ -39,7 +39,7 @@ controller.on('slash_command', async function (bot, message) {
         }
         if (isProd === true) await saveDone(doneWith, savedText, date)
         const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
-        bot.whisper(message, 'Your */done* has been saved :clap:', (err) => {
+        bot.whisper(message, 'Your */done* is saved :clap:', (err) => {
           if (err) log('the `/done` saved message', err)
           bot.say({
             attachments: [{
@@ -55,7 +55,7 @@ controller.on('slash_command', async function (bot, message) {
         break
       case '/thanks':
       case '/g-thanks':
-        bot.whisper(message, 'Your */thanks* is saving...')
+        bot.whisper(message, 'Saving */thanks*...')
         let thanksTo = []
         do {
           name = regExName.exec(text)
@@ -65,13 +65,13 @@ controller.on('slash_command', async function (bot, message) {
         } while (name)
         if (thanksTo.length === 0 || _.difference(thanksTo, _.map(members, 'name')).length !== 0) {
           const notValid = _.difference(thanksTo, _.map(members, 'name'))
-          bot.whisper(message, `This values are not valid: ${notValid.map(name => `<@${name}>`)}\nTry again!`)
+          bot.whisper(message, `Invalid values: ${notValid.map(name => `<@${name}>`)}\nPlease try again!`)
         } else {
           const thanksText = text.slice(text.indexOf(thanksTo[thanksTo.length - 1]) + thanksTo[thanksTo.length - 1].length).trim()
           thanksTo = _.map(thanksTo, name => _.find(members, { name }).id)
           if (isProd === true) await saveThanks(message.user, thanksTo, thanksText, date)
           const { user: { profile: { real_name, image_192 } } } = await apiUser.infoAsync({ user: message.user })
-          bot.whisper(message, 'Your */thanks* has been saved :relaxed:', (err) => {
+          bot.whisper(message, 'Your */thanks* is saved :relaxed:', (err) => {
             if (err) log('the `/thanks` saved message', err)
             bot.say({
               attachments: [{

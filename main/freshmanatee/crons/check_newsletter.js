@@ -14,7 +14,7 @@ const checkNewsletter = new cron.CronJob({
       // Connector Newsletter
       const { text, id } = await createNewsletter(members)
       await sendMessage({
-        text: `Hi <!subteam^S7W60V3L6>!\nHere is the content of the Veteran Newsletter to be sent :love_letter:`,
+        text: `Hi <!subteam^S7W60V3L6>!\nHere\'s the content of the Veteran Newsletter to be sent :love_letter:`,
         attachments: [{
           title: 'Draft Veteran Newsletter',
           text: `\`\`\`${text}\`\`\``,

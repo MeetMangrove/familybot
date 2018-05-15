@@ -16,9 +16,9 @@ const postDigest = new cron.CronJob({
         let text = ''
         if (location) text = text.concat(`:house_with_garden: just moved to *${location}*`)
         if (focus) text = text.concat(`\n:rocket: has a new focus: \`\`\`${focus}\`\`\``)
-        if (challenges) text = text.concat(`\n:tornado: is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``)
+        if (challenges) text = text.concat(`\n:tornado: is dealing with the following challenge(s): \`\`\`${challenges}\`\`\``)
         if (skill) {
-          text = text.concat(`\n:muscle: has developed a new skill: *${skill}*, congratulation :tada:`)
+          text = text.concat(`\n:muscle: learned a new skill: *${skill}*, congratulation :tada:`)
           const learningPeople = await getLearningPeople(skill)
           if (learningPeople.length > 0) {
             let textLearningPeople = '\n_You can teach this skill to '
@@ -48,7 +48,7 @@ const postDigest = new cron.CronJob({
                 textTeachingPeople = textTeachingPeople.concat(`, <@${id}>`)
               }
             })
-            text = text.concat(textTeachingPeople, ` maybe you’ll be able to help <@${slackId}> learn this skill?_ :pray:`)
+            text = text.concat(textTeachingPeople, ` maybe you can help <@${slackId}> learn this skill?_ :pray:`)
           }
         }
         attachments.push({ title: `<@${slackId}>`, text, mrkdwn_in: ['text'] })
@@ -56,7 +56,7 @@ const postDigest = new cron.CronJob({
 
       // General Message
       await sendMessage({
-        text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
+        text: `:heart:️ *Members updates* :heart:️\nWhat changed in Mangrovers' lives:`,
         attachments,
         channel: isProd ? '#general' : '#ghost-playground'
       })
@@ -69,14 +69,14 @@ const postDigest = new cron.CronJob({
 
       // Catalyst Challenges
       await sendMessage({
-        text: `Hi <!subteam^S7WBYB6TZ>!\nHere is the currents Mangrovers' challenges :tornado:`,
+        text: `Hi <!subteam^S7WBYB6TZ>!\nCurrent Mangrovers' challenges :tornado:`,
         channel: isProd ? '#track-catalysts' : '#ghost-playground'
       })
       for (let member of members) {
         const { slackId, challenges } = member
         if (challenges) {
           await sendMessage({
-            text: `<@${slackId}> is currently dealing with the following challenge(s): \`\`\`${challenges}\`\`\``,
+            text: `<@${slackId}> is dealing with the following challenge(s): \`\`\`${challenges}\`\`\``,
             channel: isProd ? '#track-catalysts' : '#ghost-playground'
           })
         }

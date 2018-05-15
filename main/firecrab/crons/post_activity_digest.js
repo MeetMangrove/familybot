@@ -46,7 +46,7 @@ const postActivityDigest = new cron.CronJob({
 
       // General Message
       await sendMessage({
-        text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
+        text: `:fire: *Activity Digest* :fire:\nWhat Mangrovers did last week:`,
         attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ['text'] })),
         channel: isProd ? '#done' : '#ghost-playground'
       })

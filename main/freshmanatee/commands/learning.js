@@ -11,7 +11,7 @@ controller.hears('learning', 'direct_message', (bot, message) => {
     }, 'default')
     freshLearning(convo)
     convo.addMessage(`Okay, see you! :wave:`, 'exit')
-    convo.addMessage('Hum... you seem busy. Come back say `learning` when you want!', 'on_timeout')
+    convo.addMessage('You seem busy. Say `learning` when you come back!', 'on_timeout')
     convo.activate()
   })
 })
