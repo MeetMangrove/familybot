@@ -46,12 +46,12 @@ export const getMember = async (id) => {
       maxRecords: 1
     }))
     if (records[0]) return records[0]
-    throw new Error(`The member with the Slack ID ${id} doesn't exist.`)
+    throw new Error(`Slack ID ${id} doesn't exist.`)
   } else if (regExAirtableId.test(id) === true) {
     const findMember = Promise.promisify(base('Members').find)
     const member = await findMember(id)
     if (member) return member
-    throw new Error(`The member with the Airtable ID ${id} doesn't exist.`)
+    throw new Error(`Airtable ID ${id} doesn't exist.`)
   }
   throw new Error(`${id} is not a Slack ID or a Airtable ID.`)
 }

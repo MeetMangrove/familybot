@@ -10,7 +10,7 @@ import moment from 'moment'
 
 export default (convo, nextThread = 'exit') => {
   convo.addMessage({
-    text: 'I\'m searching your profile :sleuth_or_spy:',
+    text: 'Looking your profile :sleuth_or_spy:',
     action: 'search'
   }, 'fresh_profile')
 
@@ -66,13 +66,13 @@ export default (convo, nextThread = 'exit') => {
   }
 
   convo.addMessage({
-    text: `Okay, so this is your current information:`,
+    text: `Here's your current information:`,
     attachments
   }, 'search')
 
   convo.addQuestion({
     attachments: [{
-      title: 'Do you want to update these information?',
+      title: 'Do you want to update this information?',
       callback_id: 'update_info',
       attachment_type: 'default',
       actions: [
@@ -96,7 +96,7 @@ export default (convo, nextThread = 'exit') => {
       const { context: { bot }, vars: { location, focus, challenges, bio } } = convo
       bot.replyInteractive(reply, {
         attachments: [{
-          title: 'Do you want to update these information?',
+          title: 'Do you want to update this information?',
           text: `_${reply.actions[0].value}_`,
           mrkdwn_in: ['text']
         }]
@@ -108,7 +108,7 @@ export default (convo, nextThread = 'exit') => {
             'fresh_profile',
             'Fresh')
           .addText('Update your location', 'Location', location, {
-            placeholder: 'What is your current location (City, Country)?'
+            placeholder: 'Whats your current location (City, Country)?'
           })
           .addTextarea('Share your focus', 'Focus', focus, {
             max_length: 300,

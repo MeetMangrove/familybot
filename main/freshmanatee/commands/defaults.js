@@ -9,13 +9,13 @@ const dialog = (bot, convo, slackId, context) => {
     }
     case 'intro': {
       convo.say(`Hi <@${slackId}> :sunglasses:`)
-      convo.say(`Welcome in Mangrove :flag-mangrove:`)
+      convo.say(`Welcome to Mangrove :flag-mangrove:`)
       convo.say(`I'm <@${convo.context.bot.identity.id}>!`)
-      convo.say(`I like fresh news about Mangrovers.`)
+      convo.say(`I like getting fresh news from Mangrovers.`)
       break
     }
     case 'error': {
-      convo.say(`Sorry <@${slackId}>, but I'm too young to understand what you mean :flushed:`)
+      convo.say(`Sorry <@${slackId}>, I'm too young to understand what you mean :flushed:`)
       break
     }
     default: {

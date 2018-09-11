@@ -27,7 +27,7 @@ export default (convo, nextThread = 'exit') => {
   })
 
   convo.addMessage({
-    text: `This is your current skills:`,
+    text: `Your current skills:`,
     attachments: [{
       'title': ':muscle: Skills',
       'text': '{{{vars.currentSkills}}}',
@@ -36,7 +36,7 @@ export default (convo, nextThread = 'exit') => {
   }, 'get_skills')
 
   convo.addMessage({
-    text: `You can teach your skills to someone how want to learn! :sparkles:`,
+    text: `You can teach your skills to somebody how wants to learn! :sparkles:`,
     action: 'ask_skill'
   }, 'get_skills')
 
@@ -103,7 +103,7 @@ export default (convo, nextThread = 'exit') => {
           let text = ''
           list.forEach(({ skill, learningPeople }) => {
             if (learningPeople.length > 0) {
-              text = text.concat(`*${skill}* can be teaching to `)
+              text = text.concat(`*${skill}* can be taught to `)
               learningPeople.forEach((id, index) => {
                 if (index === 0) {
                   text = text.concat(`<@${id}>`)
@@ -128,17 +128,17 @@ export default (convo, nextThread = 'exit') => {
   })
 
   convo.addMessage({
-    text: `You don't have any skill to teach.`,
+    text: `You don't have any skills to teach.`,
     action: 'ask_skill'
   }, 'no_skill')
 
   convo.addMessage({
-    text: `There is no people to teach something to.`,
+    text: `There aren't any people looking to learn a new skill at the moment. Come back later!.`,
     action: 'ask_skill'
   }, 'no_people')
 
   convo.addMessage({
-    text: `Here is the list of people that you can help to achieve their learning:`
+    text: `Here is the list of people you can help with their learning:`
   }, 'learning_people')
 
   convo.addMessage({
@@ -146,7 +146,7 @@ export default (convo, nextThread = 'exit') => {
   }, 'learning_people')
 
   convo.addMessage({
-    text: `You just have to send a Slack message and propose a call or a lunch :facepunch:`,
+    text: `Just send them a Slack message offering a call or a lunch :facepunch:`,
     action: 'ask_skill'
   }, 'learning_people')
 
