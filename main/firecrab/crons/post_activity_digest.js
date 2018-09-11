@@ -45,11 +45,13 @@ const postActivityDigest = new cron.CronJob({
       })
 
       // General Message
-      await sendMessage({
-        text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
-        attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ['text'] })),
-        channel: isProd ? '#done' : '#ghost-playground'
-      })
+      if (sortActivities.length > 0) {
+        await sendMessage({
+          text: `:fire: *Activity Digest* :fire:\nWhat has been done inside Mangrove last week:`,
+          attachments: _.map(sortActivities, ({ text, title }) => ({ title, text, mrkdwn_in: ['text'] })),
+          channel: isProd ? '#done' : '#ghost-playground'
+        })
+      }
 
       // Catalyst Thanks KPI
       /* await sendMessage({

@@ -55,19 +55,22 @@ const postDigest = new cron.CronJob({
       }
 
       // General Message
-      await sendMessage({
-        text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
-        attachments,
-        channel: isProd ? '#general' : '#ghost-playground'
-      })
-      await sendMessage({
-        text: `Go Mangrove :facepunch:`,
-        channel: isProd ? '#general' : '#ghost-playground'
-      })
+      if (attachments.length > 0) {
+        await sendMessage({
+          text: `:heart:️ *Members updates* :heart:️\nThis is what changed in the lives of fellow Mangrovers:`,
+          attachments,
+          channel: isProd ? '#general' : '#ghost-playground'
+        })
+        await sendMessage({
+          text: `Go Mangrove :facepunch:`,
+          channel: isProd ? '#general' : '#ghost-playground'
+        })
+      }
 
       if (isProd === true) cleanUpdates(members)
 
       // Catalyst Challenges
+      /*
       await sendMessage({
         text: `Hi <!subteam^S7WBYB6TZ>!\nHere is the currents Mangrovers' challenges :tornado:`,
         channel: isProd ? '#track-catalysts' : '#ghost-playground'
@@ -81,6 +84,7 @@ const postDigest = new cron.CronJob({
           })
         }
       }
+      */
     } catch (e) {
       log('the postDigest cron', e)
     }
