@@ -5,8 +5,8 @@ import dotenv from 'dotenv'
 import vhost from 'vhost'
 
 import rachid from './rachid/controller'
-import firecrab from './firecrab/controller'
-import freshmanatee from './freshmanatee/controller'
+// import firecrab from './firecrab/controller'
+// import freshmanatee from './freshmanatee/controller'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
@@ -25,7 +25,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.set('port', process.env.PORT || 5000)
 
-const bots = [rachid, firecrab, freshmanatee]
+const bots = [rachid]
 
 const mountBot = (controller) => {
   console.log(`Mounting ${controller.config.app_name} bot on ${HOSTNAME}`)
