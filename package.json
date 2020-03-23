@@ -13,6 +13,9 @@
     "build": "babel main -d dist",
     "test": "mocha; exit 0"
   },
+  "engines": {
+    "node": "7.7.3"
+  },
   "dependencies": {
     "airtable": "0.4.5",
     "babel-cli": "6.26.0",

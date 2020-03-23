@@ -5,8 +5,6 @@ import dotenv from 'dotenv'
 import vhost from 'vhost'
 
 import rachid from './rachid/controller'
-// import firecrab from './firecrab/controller'
-// import freshmanatee from './freshmanatee/controller'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
