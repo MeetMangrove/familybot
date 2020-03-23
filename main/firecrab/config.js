@@ -32,7 +32,7 @@ const log = (context, e) => {
     `Damned! :rage: Something from ${context} is broken: \`${e.message || e.error || e}\``,
     `WHAT? :scream: ${context} doesn't work: \`${e.message || e.error || e}\``
   ][Math.floor(Math.random() * 4)]
-  bots[0].say({ text, channel: isProd ? '#mangrove-tech' : '#ghost-playground' })
+  bots[0].say({ text, channel: isProd ? '#debug' : '#debug' })
   return text
 }
 

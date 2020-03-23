@@ -57,6 +57,7 @@ export default (bot, message) => bot.createPrivateConversation(message, (err, co
   }, (reply, convo) => {
     if (reply.callback_id === 'get_mood') {
       const value = parseInt(reply.actions[0].value, 10)
+      console.log(value)
       bot.replyInteractive(reply, {
         attachments: [{
           title: 'What is your mood today?',
