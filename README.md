@@ -97,8 +97,3 @@ Building app:
 ```bash
 $ npm run build
 ```
-
-Deploy:
-```bash
-$ git push heroku master
-```
