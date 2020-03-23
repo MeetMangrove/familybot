@@ -32,7 +32,7 @@
     "googleapis": "23.0.0",
     "i18n": "0.8.3",
     "js-base64": "2.4.0",
-    "lodash": "4.17.4",
+    "lodash": "4.17.13",
     "mangrove-botkit": "0.6.4",
     "moment": "2.18.1",
     "moment-timezone": "0.5.13",
