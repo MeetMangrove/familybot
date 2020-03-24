@@ -21,7 +21,7 @@ export default async (bot, message) => {
           'title': `${getEmoji(mood['Level'])} <@${user['Slack ID']}> is at ${mood['Level']}/5`,
           'text': mood['Comment'],
           'color': getColor(mood['Level']),
-          'thumb_url': user['Profile Picture'][0].url,
+          'thumb_url': user['Profile Picture'] ? user['Profile Picture'][0].url : null,
           'footer': moment(mood['Date']).tz('Europe/Paris').format('MMM Do [at] h:mm A')
         })
       }
