@@ -29,9 +29,10 @@ const dialog = (convo, slackId, context) => {
       break
     }
   }
+  const moodChannel = process.env.MOOD_CHANNEL
   convo.say(`You can say \`mood\` to save your mood`)
   convo.say(`or \`daily\` if you want to see last Mangrovers' moods.`)
-  convo.say(`I'll share your mood in <#C7Q1V7V7H> every day at 7PM Paris time :tada:`)
+  convo.say(`I'll share your mood in <#${moodChannel}> every day at 7PM Paris time :tada:`)
 }
 
 controller.hears(['^Hello$', '^Yo$', '^Hey$', '^Hi$', '^Ouch$'], ['direct_message', 'direct_mention'], (bot, message) => {
