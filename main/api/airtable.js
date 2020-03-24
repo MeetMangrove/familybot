@@ -42,7 +42,7 @@ export const getMember = async (id) => {
   if (regExSlackId.test(id) === true) {
     const records = await _getAllRecords(base('Members').select({
       view: 'Familybot View',
-      filterByFormula: `{Slack ID}='${id}'`,
+      filterByFormula: `(FIND("${id}",{Slack ID}))`,
       maxRecords: 1
     }))
     if (records[0]) return records[0]
