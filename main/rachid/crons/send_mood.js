@@ -7,13 +7,11 @@ require('dotenv').config()
 
 const channelName = process.env.MOOD_CHANNEL_NAME
 
-const sendMood = new cron.CronJob({
-  cronTime: '00 00 19 * * *',
-  onTick: async function () {
+export default async function () {
+  try {
     await getMood(bots[0], { channel: `#${channelName}` })
-  },
-  start: false,
-  timeZone: 'Europe/Paris'
-})
-
-sendMood.start()
+    return { sucess: true };
+  } catch (e) {
+    return { sucess: false, error: e.message };
+  }
+}
