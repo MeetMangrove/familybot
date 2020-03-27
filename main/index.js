@@ -5,6 +5,8 @@ import dotenv from 'dotenv'
 import vhost from 'vhost'
 
 import rachid from './rachid/controller'
+import askMood from './rachid/crons/ask_mood'
+import sendMood from './rachid/crons/send_mood'
 
 dotenv.load({ silent: process.env.NODE_ENV === 'production' })
 
@@ -51,6 +53,18 @@ const mountBot = (controller) => {
       res.json({ options })
     }
   })
+
+  // TODO: refactor this
+  botApp.get('/rachid/ask_mood', async (req, res) => {
+    const result = await askMood();
+    res.json(result)
+  })
+  
+  botApp.get('/rachid/send_mood', async (req, res) => {
+    const result = await sendMood();
+    res.json(result)
+  })
+
   // mount the botApp on the main app, on its own hostname
   app.use(vhost(HOSTNAME, botApp))
 }

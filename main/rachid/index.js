@@ -8,9 +8,6 @@ import bodyParser from 'body-parser'
 import vhost from 'vhost'
 
 import controller from './controller'
-import askMood from './crons/ask_mood'
-import sendMood from './crons/send_mood'
-
 require('dotenv').config()
 
 const { HOSTNAME } = process.env
@@ -31,15 +28,7 @@ const botApp = express()
 controller.config.port = app.get('port')
 controller.config.hostname = HOSTNAME
 
-botApp.get(`/${controller.config.app_name}/ask_mood`, async (req, res) => {
-  const result = await askMood();
-  res.json(result)
-})
 
-botApp.get(`/${controller.config.app_name}/send_mood`, async (req, res) => {
-  const result = await sendMood();
-  res.json(result)
-})
 
 controller
   .createWebhookEndpoints(botApp)
