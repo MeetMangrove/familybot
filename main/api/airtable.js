@@ -35,6 +35,14 @@ export const _getAllRecords = (select) => {
   })
 }
 
+// reads all records from a table
+export const getAllMembers = async () => {
+  const records = await _getAllRecords(base('Members').select({
+    view: 'Familybot View'
+  }))
+  return records
+}
+
 // get a member by Slack ID or Airtable ID
 export const getMember = async (id) => {
   const regExSlackId = /^U[A-Z0-9]{8}$/g
