@@ -37,7 +37,7 @@
     "js-base64": "2.4.0",
     "lodash": "4.17.4",
     "mangrove-botkit": "0.6.4",
-    "moment": "2.18.1",
+    "moment": "2.24.0",
     "moment-timezone": "0.5.13",
     "nodemailer": "4.4.1",
     "request": "2.81.0",
