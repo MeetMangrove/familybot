@@ -17,7 +17,7 @@
     "node": "7.7.3"
   },
   "dependencies": {
-    "airtable": "0.4.5",
+    "airtable": "0.9.0",
     "babel-cli": "6.26.0",
     "babel-eslint": "7.2.3",
     "babel-plugin-transform-object-rest-spread": "6.26.0",
